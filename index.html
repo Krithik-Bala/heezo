@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HEEZO — Where Curiosity Lives</title>
+    <title>HEEZO â Where Curiosity Lives</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -766,10 +766,10 @@
         <div class="footer-brand">HEEZO</div>
         <p>Crafted with obsession. Built for the curious.</p>
         <div class="footer-links">
-            <a href="#">Lore</a>
-            <a href="#">Life</a>
-            <a href="#">About</a>
-            <a href="#">Contact</a>
+            <a href="/lore">Lore</a>
+            <a href="/life">Life</a>
+            <a href="/about">About</a>
+            <a href="mailto:heezoverse@gmail.com">Contact</a>
         </div>
     </footer>
 
@@ -1005,6 +1005,16 @@
         animatePortals();
         animateCounters();
     }, 1500);
+    </script>
+
+    <script>
+    // Portal navigation
+    document.querySelectorAll('.portal-cta').forEach((btn, i) => {
+        btn.style.cursor = 'pointer';
+        btn.addEventListener('click', () => {
+            window.location.href = i === 0 ? '/lore' : '/life';
+        });
+    });
     </script>
 </body>
 </html>
