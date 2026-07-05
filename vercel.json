@@ -29,6 +29,14 @@
       "destination": "/lore/easter-eggs.html"
     },
     {
+      "source": "/lore/is-it-worth-it",
+      "destination": "/lore/is-it-worth-it.html"
+    },
+    {
+      "source": "/lore/deep-lore",
+      "destination": "/lore/deep-lore.html"
+    },
+    {
       "source": "/life",
       "destination": "/life/index.html"
     },
