@@ -6,7 +6,15 @@
     <title>Investment Calculator — HEEZO LIFE</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        // Load Space Grotesk font dynamically
+        (function() {
+            var link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = 'https://fonts.googleapis.com/css2?family=Space+Grotesk:wght' + '@' + '300;400;500;600;700&display=swap';
+            document.head.appendChild(link);
+        })();
+    </script>
     <style>
         *, *::before, *::after {
             margin: 0;
@@ -651,7 +659,7 @@
 
     <!-- Main Content -->
     <main>
-        <a href="/life" class="back-link">← Back to Life</a>
+        <a href="/life" class="back-link">&#8592; Back to Life</a>
 
         <div class="page-header">
             <h1>Investment Calculator</h1>
@@ -670,11 +678,11 @@
         <div class="calc-panel active" id="panel-sip">
             <div class="calc-grid">
                 <div class="glass-card">
-                    <div class="card-title"><span class="icon">⟡</span> SIP Parameters</div>
+                    <div class="card-title"><span class="icon">&#10022;</span> SIP Parameters</div>
                     <div class="slider-group">
                         <div class="slider-label">
                             <span>Monthly Investment</span>
-                            <span class="slider-value" id="sip-amount-val">₹5,000</span>
+                            <span class="slider-value" id="sip-amount-val">&#8377;5,000</span>
                         </div>
                         <input type="range" id="sip-amount" min="500" max="100000" step="500" value="5000" oninput="calculateSIP()">
                     </div>
@@ -694,15 +702,15 @@
                     </div>
                 </div>
                 <div class="glass-card results-card">
-                    <div class="result-big" id="sip-fv">₹11,61,695</div>
+                    <div class="result-big" id="sip-fv">&#8377;11,61,695</div>
                     <div class="result-label">Future Value</div>
                     <div class="result-row">
                         <div class="result-item">
-                            <div class="value invested" id="sip-invested">₹6,00,000</div>
+                            <div class="value invested" id="sip-invested">&#8377;6,00,000</div>
                             <div class="label">Total Invested</div>
                         </div>
                         <div class="result-item">
-                            <div class="value gained" id="sip-gains">₹5,61,695</div>
+                            <div class="value gained" id="sip-gains">&#8377;5,61,695</div>
                             <div class="label">Wealth Gained</div>
                         </div>
                     </div>
@@ -724,11 +732,11 @@
         <div class="calc-panel" id="panel-lumpsum">
             <div class="calc-grid">
                 <div class="glass-card">
-                    <div class="card-title"><span class="icon">⟡</span> Lump Sum Parameters</div>
+                    <div class="card-title"><span class="icon">&#10022;</span> Lump Sum Parameters</div>
                     <div class="slider-group">
                         <div class="slider-label">
                             <span>Investment Amount</span>
-                            <span class="slider-value" id="ls-amount-val">₹1,00,000</span>
+                            <span class="slider-value" id="ls-amount-val">&#8377;1,00,000</span>
                         </div>
                         <input type="range" id="ls-amount" min="1000" max="10000000" step="1000" value="100000" oninput="calculateLumpSum()">
                     </div>
@@ -748,15 +756,15 @@
                     </div>
                 </div>
                 <div class="glass-card results-card">
-                    <div class="result-big" id="ls-fv">₹3,10,585</div>
+                    <div class="result-big" id="ls-fv">&#8377;3,10,585</div>
                     <div class="result-label">Future Value</div>
                     <div class="result-row">
                         <div class="result-item">
-                            <div class="value invested" id="ls-invested">₹1,00,000</div>
+                            <div class="value invested" id="ls-invested">&#8377;1,00,000</div>
                             <div class="label">Total Invested</div>
                         </div>
                         <div class="result-item">
-                            <div class="value gained" id="ls-gains">₹2,10,585</div>
+                            <div class="value gained" id="ls-gains">&#8377;2,10,585</div>
                             <div class="label">Wealth Gained</div>
                         </div>
                     </div>
@@ -778,11 +786,11 @@
         <div class="calc-panel" id="panel-goal">
             <div class="calc-grid">
                 <div class="glass-card">
-                    <div class="card-title"><span class="icon">⟡</span> Define Your Goal</div>
+                    <div class="card-title"><span class="icon">&#10022;</span> Define Your Goal</div>
                     <div class="slider-group">
                         <div class="slider-label">
                             <span>Target Amount</span>
-                            <span class="slider-value" id="goal-target-val">₹50,00,000</span>
+                            <span class="slider-value" id="goal-target-val">&#8377;50,00,000</span>
                         </div>
                         <input type="range" id="goal-target" min="100000" max="100000000" step="100000" value="5000000" oninput="calculateGoal()">
                     </div>
@@ -802,14 +810,14 @@
                     </div>
                 </div>
                 <div class="glass-card results-card">
-                    <div class="card-title" style="justify-content:center;"><span class="icon">⟡</span> You Need</div>
+                    <div class="card-title" style="justify-content:center;"><span class="icon">&#10022;</span> You Need</div>
                     <div class="goal-result-cards">
                         <div class="goal-card">
-                            <div class="goal-value" id="goal-sip">₹10,001</div>
+                            <div class="goal-value" id="goal-sip">&#8377;10,001</div>
                             <div class="goal-label">Monthly SIP</div>
                         </div>
                         <div class="goal-card">
-                            <div class="goal-value" id="goal-lumpsum">₹9,12,671</div>
+                            <div class="goal-value" id="goal-lumpsum">&#8377;9,12,671</div>
                             <div class="goal-label">One-time Lump Sum</div>
                         </div>
                     </div>
@@ -825,11 +833,11 @@
             <div class="compare-grid">
                 <div class="glass-card compare-card">
                     <div class="badge">Plan A</div>
-                    <div class="card-title" style="margin-top:0.5rem;"><span class="icon">⟡</span> Scenario A</div>
+                    <div class="card-title" style="margin-top:0.5rem;"><span class="icon">&#10022;</span> Scenario A</div>
                     <div class="slider-group">
                         <div class="slider-label">
                             <span>Monthly SIP</span>
-                            <span class="slider-value" id="cmp-a-amount-val">₹5,000</span>
+                            <span class="slider-value" id="cmp-a-amount-val">&#8377;5,000</span>
                         </div>
                         <input type="range" id="cmp-a-amount" min="500" max="100000" step="500" value="5000" oninput="calculateCompare()">
                     </div>
@@ -848,17 +856,17 @@
                         <input type="range" id="cmp-a-years" min="1" max="40" step="1" value="10" oninput="calculateCompare()">
                     </div>
                     <div style="text-align:center; margin-top:1rem;">
-                        <div class="result-big" id="cmp-a-fv" style="font-size:1.6rem;">₹11,61,695</div>
+                        <div class="result-big" id="cmp-a-fv" style="font-size:1.6rem;">&#8377;11,61,695</div>
                         <div class="result-label">Future Value</div>
                     </div>
                 </div>
                 <div class="glass-card compare-card">
                     <div class="badge b">Plan B</div>
-                    <div class="card-title" style="margin-top:0.5rem;"><span class="icon">⟡</span> Scenario B</div>
+                    <div class="card-title" style="margin-top:0.5rem;"><span class="icon">&#10022;</span> Scenario B</div>
                     <div class="slider-group">
                         <div class="slider-label">
                             <span>Monthly SIP</span>
-                            <span class="slider-value" id="cmp-b-amount-val">₹10,000</span>
+                            <span class="slider-value" id="cmp-b-amount-val">&#8377;10,000</span>
                         </div>
                         <input type="range" id="cmp-b-amount" min="500" max="100000" step="500" value="10000" oninput="calculateCompare()">
                     </div>
@@ -877,17 +885,17 @@
                         <input type="range" id="cmp-b-years" min="1" max="40" step="1" value="10" oninput="calculateCompare()">
                     </div>
                     <div style="text-align:center; margin-top:1rem;">
-                        <div class="result-big" id="cmp-b-fv" style="font-size:1.6rem; color:var(--gain-color);">₹27,86,573</div>
+                        <div class="result-big" id="cmp-b-fv" style="font-size:1.6rem; color:var(--gain-color);">&#8377;27,86,573</div>
                         <div class="result-label">Future Value</div>
                     </div>
                 </div>
             </div>
             <div class="glass-card compare-results" style="margin-top:2rem;">
-                <div class="card-title"><span class="icon">⟡</span> Comparison</div>
+                <div class="card-title"><span class="icon">&#10022;</span> Comparison</div>
                 <div class="compare-bar">
                     <div class="compare-bar-label">
-                        <span>Plan A: <span id="cmp-a-bar-val">₹11,61,695</span></span>
-                        <span>Plan B: <span id="cmp-b-bar-val">₹27,86,573</span></span>
+                        <span>Plan A: <span id="cmp-a-bar-val">&#8377;11,61,695</span></span>
+                        <span>Plan B: <span id="cmp-b-bar-val">&#8377;27,86,573</span></span>
                     </div>
                     <div class="compare-bar-track">
                         <div class="compare-bar-fill-a" id="cmp-bar-a" style="width:40%"></div>
@@ -895,7 +903,7 @@
                     </div>
                 </div>
                 <div style="text-align:center; margin-top:1rem;">
-                    <p style="color:var(--white-dim); font-size:0.9rem;" id="cmp-verdict">Plan B grows <strong style="color:var(--gain-color)">₹16,24,878</strong> more than Plan A</p>
+                    <p style="color:var(--white-dim); font-size:0.9rem;" id="cmp-verdict">Plan B grows <strong style="color:var(--gain-color)">&#8377;16,24,878</strong> more than Plan A</p>
                 </div>
                 <div class="chart-container">
                     <canvas id="cmp-growth" width="500" height="200"></canvas>
@@ -937,7 +945,7 @@
                 lastThree = ',' + lastThree;
             }
             var formatted = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ',') + lastThree;
-            return (isNegative ? '-' : '') + '₹' + formatted;
+            return (isNegative ? '-' : '') + '\u20B9' + formatted;
         }
 
         function updateSliderFill(slider) {
@@ -970,7 +978,7 @@
             document.getElementById('sip-rate-val').textContent = annualRate + '%';
             document.getElementById('sip-years-val').textContent = years + ' yrs';
 
-            // SIP FV = P × [((1+r)^n - 1) / r] × (1+r)
+            // SIP FV = P * [((1+r)^n - 1) / r] * (1+r)
             var r = annualRate / 12 / 100;
             var n = years * 12;
             var fv = P * (((Math.pow(1 + r, n) - 1) / r) * (1 + r));
@@ -1003,7 +1011,7 @@
             document.getElementById('ls-rate-val').textContent = rate + '%';
             document.getElementById('ls-years-val').textContent = years + ' yrs';
 
-            // Lump FV = P × (1 + r/100)^years
+            // Lump FV = P * (1 + r/100)^years
             var fv = P * Math.pow(1 + rate / 100, years);
             var gains = fv - P;
 
@@ -1035,7 +1043,7 @@
             // Lump sum needed: target / (1 + r/100)^years
             var lumpNeeded = target / Math.pow(1 + rate / 100, years);
 
-            // SIP needed: FV × r / [((1+r)^n - 1) × (1+r)]
+            // SIP needed: FV * r / [((1+r)^n - 1) * (1+r)]
             var r = rate / 12 / 100;
             var n = years * 12;
             var sipNeeded = target * r / (((Math.pow(1 + r, n) - 1)) * (1 + r));
@@ -1046,6 +1054,7 @@
             // Draw growth toward goal
             drawGrowthChart('goal-growth', years, function(y) {
                 var nm = y * 12;
+                if (nm === 0) return 0;
                 return sipNeeded * (((Math.pow(1 + r, nm) - 1) / r) * (1 + r));
             }, function(y) {
                 return sipNeeded * y * 12;
@@ -1095,7 +1104,8 @@
 
             var diff = Math.abs(fvB - fvA);
             var winner = fvB >= fvA ? 'B' : 'A';
-            document.getElementById('cmp-verdict').innerHTML = 'Plan ' + winner + ' grows <strong style="color:var(--gain-color)">' + formatIndianCurrency(diff) + '</strong> more than Plan ' + (winner === 'A' ? 'B' : 'A');
+            var loser = winner === 'A' ? 'B' : 'A';
+            document.getElementById('cmp-verdict').innerHTML = 'Plan ' + winner + ' grows <strong style="color:var(--gain-color)">' + formatIndianCurrency(diff) + '</strong> more than Plan ' + loser;
 
             // Draw comparison growth chart
             var maxYears = Math.max(aY, bY);
@@ -1122,10 +1132,18 @@
             var radius = 70;
             var lineWidth = 22;
             var total = invested + gains;
+            if (total === 0) total = 1;
             var investedAngle = (invested / total) * Math.PI * 2;
             var gainsAngle = (gains / total) * Math.PI * 2;
 
             ctx.clearRect(0, 0, size, size);
+
+            // Background ring
+            ctx.beginPath();
+            ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(20, 36, 68, 0.8)';
+            ctx.lineWidth = lineWidth;
+            ctx.stroke();
 
             // Invested arc
             ctx.beginPath();
@@ -1136,22 +1154,24 @@
             ctx.stroke();
 
             // Gains arc
-            ctx.beginPath();
-            ctx.arc(cx, cy, radius, -Math.PI / 2 + investedAngle, -Math.PI / 2 + investedAngle + gainsAngle);
-            ctx.strokeStyle = '#00e88f';
-            ctx.lineWidth = lineWidth;
-            ctx.lineCap = 'round';
-            ctx.stroke();
+            if (gainsAngle > 0.02) {
+                ctx.beginPath();
+                ctx.arc(cx, cy, radius, -Math.PI / 2 + investedAngle + 0.04, -Math.PI / 2 + investedAngle + gainsAngle);
+                ctx.strokeStyle = '#00e88f';
+                ctx.lineWidth = lineWidth;
+                ctx.lineCap = 'round';
+                ctx.stroke();
+            }
 
             // Center text
-            var pct = Math.round((gains / total) * 100);
+            var pct = total > 0 ? Math.round((gains / total) * 100) : 0;
             ctx.fillStyle = '#f0f4f8';
-            ctx.font = '600 1.3rem Space Grotesk, sans-serif';
+            ctx.font = '600 22px Space Grotesk, sans-serif';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText(pct + '%', cx, cy - 8);
             ctx.fillStyle = 'rgba(240,244,248,0.6)';
-            ctx.font = '400 0.65rem Space Grotesk, sans-serif';
+            ctx.font = '400 11px Space Grotesk, sans-serif';
             ctx.fillText('returns', cx, cy + 12);
         }
 
@@ -1189,6 +1209,7 @@
             }
             if (targetLine && targetLine > maxVal) maxVal = targetLine;
             maxVal *= 1.1;
+            if (maxVal === 0) maxVal = 1;
 
             // Draw grid lines
             ctx.strokeStyle = 'rgba(0,212,255,0.06)';
@@ -1272,24 +1293,22 @@
                 ctx.stroke();
                 ctx.setLineDash([]);
                 ctx.fillStyle = 'rgba(0,212,255,0.8)';
-                ctx.font = '500 0.65rem Space Grotesk, sans-serif';
+                ctx.font = '500 11px Space Grotesk, sans-serif';
                 ctx.textAlign = 'right';
                 ctx.fillText('Target', padLeft + chartW - 5, targetY - 6);
             }
 
             // Year labels
             ctx.fillStyle = 'rgba(240,244,248,0.4)';
-            ctx.font = '400 0.65rem Space Grotesk, sans-serif';
+            ctx.font = '400 10px Space Grotesk, sans-serif';
             ctx.textAlign = 'center';
             var labelStep = years <= 10 ? 2 : years <= 20 ? 5 : 10;
             for (var i = 0; i <= years; i += labelStep) {
                 var x = padLeft + (i / years) * chartW;
                 ctx.fillText(i + 'y', x, h - 8);
             }
-            // Always draw last year
             if (years % labelStep !== 0) {
-                var x = padLeft + chartW;
-                ctx.fillText(years + 'y', x, h - 8);
+                ctx.fillText(years + 'y', padLeft + chartW, h - 8);
             }
 
             // End dot
@@ -1332,12 +1351,10 @@
             var maxVal = 0;
             for (var i = 0; i <= maxYears; i++) {
                 var nA = Math.min(i, yearsA) * 12;
-                var valA = pA * (((Math.pow(1 + rA, nA) - 1) / rA) * (1 + rA));
-                if (i > yearsA) valA = pA * (((Math.pow(1 + rA, yearsA * 12) - 1) / rA) * (1 + rA));
+                var valA = nA > 0 ? pA * (((Math.pow(1 + rA, nA) - 1) / rA) * (1 + rA)) : 0;
 
                 var nB = Math.min(i, yearsB) * 12;
-                var valB = pB * (((Math.pow(1 + rB, nB) - 1) / rB) * (1 + rB));
-                if (i > yearsB) valB = pB * (((Math.pow(1 + rB, yearsB * 12) - 1) / rB) * (1 + rB));
+                var valB = nB > 0 ? pB * (((Math.pow(1 + rB, nB) - 1) / rB) * (1 + rB)) : 0;
 
                 pointsA.push(valA);
                 pointsB.push(valB);
@@ -1345,6 +1362,7 @@
                 if (valB > maxVal) maxVal = valB;
             }
             maxVal *= 1.1;
+            if (maxVal === 0) maxVal = 1;
 
             // Grid
             ctx.strokeStyle = 'rgba(0,212,255,0.06)';
@@ -1357,6 +1375,34 @@
                 ctx.stroke();
             }
 
+            // Plan A area fill
+            ctx.beginPath();
+            for (var i = 0; i <= maxYears; i++) {
+                var x = padLeft + (i / maxYears) * chartW;
+                var y = padTop + chartH - (pointsA[i] / maxVal) * chartH;
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.lineTo(padLeft + chartW, padTop + chartH);
+            ctx.lineTo(padLeft, padTop + chartH);
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(0, 212, 255, 0.08)';
+            ctx.fill();
+
+            // Plan B area fill
+            ctx.beginPath();
+            for (var i = 0; i <= maxYears; i++) {
+                var x = padLeft + (i / maxYears) * chartW;
+                var y = padTop + chartH - (pointsB[i] / maxVal) * chartH;
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.lineTo(padLeft + chartW, padTop + chartH);
+            ctx.lineTo(padLeft, padTop + chartH);
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(0, 232, 143, 0.08)';
+            ctx.fill();
+
             // Plan A line
             ctx.beginPath();
             for (var i = 0; i <= maxYears; i++) {
@@ -1368,6 +1414,7 @@
             ctx.strokeStyle = '#00d4ff';
             ctx.lineWidth = 2.5;
             ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
             ctx.stroke();
 
             // Plan B line
@@ -1380,11 +1427,13 @@
             }
             ctx.strokeStyle = '#00e88f';
             ctx.lineWidth = 2.5;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
             ctx.stroke();
 
             // Labels
             ctx.fillStyle = 'rgba(240,244,248,0.4)';
-            ctx.font = '400 0.65rem Space Grotesk, sans-serif';
+            ctx.font = '400 10px Space Grotesk, sans-serif';
             ctx.textAlign = 'center';
             var labelStep = maxYears <= 10 ? 2 : maxYears <= 20 ? 5 : 10;
             for (var i = 0; i <= maxYears; i += labelStep) {
@@ -1408,13 +1457,13 @@
             ctx.fillStyle = '#00e88f';
             ctx.fill();
 
-            // Legend
-            ctx.font = '500 0.7rem Space Grotesk, sans-serif';
+            // Legend in chart
+            ctx.font = '500 11px Space Grotesk, sans-serif';
             ctx.textAlign = 'left';
             ctx.fillStyle = '#00d4ff';
-            ctx.fillText('● Plan A', padLeft + 5, padTop - 5);
+            ctx.fillText('\u25CF Plan A', padLeft + 5, padTop - 5);
             ctx.fillStyle = '#00e88f';
-            ctx.fillText('● Plan B', padLeft + 75, padTop - 5);
+            ctx.fillText('\u25CF Plan B', padLeft + 75, padTop - 5);
         }
 
         // ==================== TAB SWITCHING ====================
@@ -1423,14 +1472,14 @@
             // Update buttons
             var btns = document.querySelectorAll('.tab-btn');
             btns.forEach(function(btn) { btn.classList.remove('active'); });
-            event.target.classList.add('active');
+            event.currentTarget.classList.add('active');
 
             // Update panels
             var panels = document.querySelectorAll('.calc-panel');
             panels.forEach(function(p) { p.classList.remove('active'); });
             document.getElementById('panel-' + tab).classList.add('active');
 
-            // Recalculate for the active tab (charts need correct width)
+            // Recalculate for the active tab (charts need correct container width)
             setTimeout(function() {
                 if (tab === 'sip') calculateSIP();
                 else if (tab === 'lumpsum') calculateLumpSum();
@@ -1508,7 +1557,7 @@
                     document.getElementById('cmp-b-years').value = data.cmpB.years;
                 }
             } catch (e) {
-                // localStorage not available or corrupt
+                // localStorage not available or data corrupt
             }
         }
 
@@ -1523,7 +1572,7 @@
             calculateCompare();
         }
 
-        // Handle resize for charts
+        // Handle window resize for responsive charts
         var resizeTimer;
         window.addEventListener('resize', function() {
             clearTimeout(resizeTimer);
@@ -1539,7 +1588,7 @@
             }, 200);
         });
 
-        // Run on load
+        // Run on DOM ready
         document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
