@@ -1,0 +1,54 @@
+name: Heezo Daily Publisher
+
+on:
+  schedule:
+    # Runs at 8:00 AM UTC (1:30 PM IST) — 2 hours after laptop publisher (11:30 AM IST)
+    # If laptop published already, this detects it and skips
+    - cron: '0 8 * * *'
+  workflow_dispatch: # Manual trigger
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.CONTENT_BOT_TOKEN }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests google-generativeai
+
+      - name: Check if laptop already published today
+        id: check
+        run: |
+          TODAY=$(date +%Y-%m-%d)
+          # Check if any article was committed today
+          LAST_COMMIT_DATE=$(git log -1 --format=%cd --date=short -- lore/articles/*.html 2>/dev/null || echo "none")
+          if [ "$LAST_COMMIT_DATE" = "$TODAY" ]; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+            echo "✅ Laptop already published today. Skipping."
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+            echo "📝 No article today yet. Publishing via Gemini..."
+          fi
+
+      - name: Generate and publish article
+        if: steps.check.outputs.skip == 'false'
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python scripts/cloud_publisher.py
+
+      - name: Commit and push
+        if: steps.check.outputs.skip == 'false'
+        run: |
+          git config user.name "Heezo Bot"
+          git config user.email "heezoverse@gmail.com"
+          git add .
+          git diff --cached --quiet || (git commit -m "📰 Daily article via cloud publisher" && git push)
