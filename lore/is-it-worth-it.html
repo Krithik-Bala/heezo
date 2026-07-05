@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Is It Worth It? Verdicts — Heezo</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --obsidian: #0a0a0f;
+  --obsidian-light: #12121a;
+  --obsidian-card: #1a1a2e;
+  --gold: #d4af37;
+  --gold-light: #f4d03f;
+  --gold-dark: #b8860b;
+  --gold-gradient: linear-gradient(135deg, #d4af37, #f4d03f, #b8860b);
+  --text-primary: #e8e6e3;
+  --text-secondary: #9a9a9a;
+  --text-muted: #5a5a6a;
+  --glass-bg: rgba(26, 26, 46, 0.6);
+  --glass-border: rgba(212, 175, 55, 0.15);
+  --glass-border-hover: rgba(212, 175, 55, 0.4);
+  --watch: #2ecc71;
+  --skip: #e74c3c;
+  --conditional: #f39c12;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--obsidian);
+  color: var(--text-primary);
+  font-family: 'Space Grotesk', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1000;
+  opacity: 0.5;
+}
+
+/* Navigation */
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  padding: 20px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 100;
+  backdrop-filter: blur(20px);
+  background: rgba(10, 10, 15, 0.8);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+}
+
+.nav-brand {
+  font-size: 1.2rem;
+  font-weight: 700;
+  background: var(--gold-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-decoration: none;
+}
+
+.nav-links {
+  display: flex;
+  gap: 24px;
+  list-style: none;
+}
+
+.nav-links a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 400;
+  transition: color 0.3s ease;
+}
+
+.nav-links a:hover { color: var(--gold); }
+
+/* Hero */
+.hero {
+  padding: 140px 20px 60px;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: 1px solid var(--glass-border);
+  border-radius: 100px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--gold);
+  margin-bottom: 24px;
+}
+
+.hero-title {
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  font-weight: 700;
+  line-height: 1.1;
+  background: var(--gold-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 16px;
+}
+
+.hero-subtitle {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin: 0 auto 32px;
+  line-height: 1.6;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--gold);
+  text-decoration: none;
+  font-size: 0.85rem;
+  margin-bottom: 24px;
+  transition: opacity 0.3s;
+}
+
+.back-link:hover { opacity: 0.7; }
+
+/* Controls */
+.controls {
+  max-width: 1200px;
+  margin: 0 auto 40px;
+  padding: 0 20px;
+  position: relative;
+  z-index: 2;
+}
+
+.search-bar {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto 24px;
+  display: block;
+  padding: 14px 20px 14px 48px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  color: var(--text-primary);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.95rem;
+  outline: none;
+  backdrop-filter: blur(10px);
+  transition: border-color 0.3s;
+}
+
+.search-bar:focus { border-color: var(--gold); }
+
+.search-wrapper {
+  position: relative;
+  max-width: 500px;
+  margin: 0 auto 24px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.filter-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.filter-pill {
+  padding: 8px 18px;
+  border-radius: 100px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  font-family: 'Space Grotesk', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s;
+  backdrop-filter: blur(10px);
+}
+
+.filter-pill:hover { border-color: var(--gold); color: var(--gold); }
+
+.filter-pill.active {
+  background: rgba(212, 175, 55, 0.15);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.sort-select {
+  padding: 8px 16px;
+  border-radius: 100px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  font-family: 'Space Grotesk', sans-serif;
+  cursor: pointer;
+  outline: none;
+  backdrop-filter: blur(10px);
+  margin-left: 12px;
+}
+
+.sort-select option { background: var(--obsidian); }
+
+/* Grid */
+.verdicts-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px 80px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  position: relative;
+  z-index: 1;
+}
+
+.verdict-card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 28px;
+  backdrop-filter: blur(20px);
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  position: relative;
+  overflow: hidden;
+}
+
+.verdict-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+
+.verdict-card.watch::before { background: var(--watch); }
+.verdict-card.skip::before { background: var(--skip); }
+.verdict-card.conditional::before { background: var(--conditional); }
+
+.verdict-card:hover {
+  border-color: var(--glass-border-hover);
+  transform: translateY(-4px);
+  box-shadow: 0 20px 60px rgba(212, 175, 55, 0.08);
+}
+
+.verdict-card:hover::before { opacity: 1; }
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.card-category {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+}
+
+.verdict-badge {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.badge-watch { background: rgba(46, 204, 113, 0.15); color: var(--watch); border: 1px solid rgba(46, 204, 113, 0.3); }
+.badge-skip { background: rgba(231, 76, 60, 0.15); color: var(--skip); border: 1px solid rgba(231, 76, 60, 0.3); }
+.badge-conditional { background: rgba(243, 156, 18, 0.15); color: var(--conditional); border: 1px solid rgba(243, 156, 18, 0.3); }
+
+.card-title {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.card-summary {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  z-index: 500;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-overlay.active { display: flex; }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.modal {
+  background: var(--obsidian-light);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 40px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  position: relative;
+  backdrop-filter: blur(40px);
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+.modal-close {
+  position: absolute;
+  top: 16px; right: 16px;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  color: var(--text-secondary);
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+}
+
+.modal-close:hover { border-color: var(--gold); color: var(--gold); }
+
+.modal-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+  padding-right: 40px;
+}
+
+.modal-verdict-badge {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 20px;
+}
+
+.modal-full-verdict {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.modal-section {
+  margin-bottom: 20px;
+}
+
+.modal-section-title {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+
+.modal-section-text {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.rating-bars {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid var(--glass-border);
+}
+
+.rating-bar-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.rating-label {
+  width: 110px;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.rating-track {
+  flex: 1;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-right: 12px;
+}
+
+.rating-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: var(--gold-gradient);
+  transition: width 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.rating-value {
+  font-size: 0.8rem;
+  color: var(--gold);
+  font-weight: 600;
+  width: 30px;
+  text-align: right;
+}
+
+/* No Results */
+.no-results {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  grid-column: 1 / -1;
+}
+
+/* Footer */
+.footer {
+  padding: 60px 20px;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+  border-top: 1px solid rgba(212, 175, 55, 0.1);
+}
+
+.footer-brand {
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: var(--gold-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 12px;
+}
+
+.footer-text {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .verdicts-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .nav { padding: 16px 20px; }
+  .verdicts-grid { grid-template-columns: 1fr; }
+  .modal { padding: 28px; }
+  .filter-row { gap: 8px; }
+}
+
+@media (max-width: 480px) {
+  .nav-links { display: none; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="/" class="nav-brand">HEEZO</a>
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/lore">Lore</a></li>
+    <li><a href="/life">Life</a></li>
+  </ul>
+</nav>
+
+<section class="hero">
+  <a href="/lore" class="back-link">← Back to Lore Hub</a>
+  <div class="hero-badge">Quick Verdicts</div>
+  <h1 class="hero-title">IS IT WORTH IT?</h1>
+  <p class="hero-subtitle">Not reviews — just answers. Yes, no, or "only if you liked X." Your time is valuable. We respect that.</p>
+</section>
+
+<div class="controls">
+  <div class="search-wrapper">
+    <span class="search-icon">🔍</span>
+    <input type="text" class="search-bar" id="searchBar" placeholder="Search titles...">
+  </div>
+  <div class="filter-row">
+    <button class="filter-pill active" data-category="all">All</button>
+    <button class="filter-pill" data-category="movies">Movies</button>
+    <button class="filter-pill" data-category="anime">Anime</button>
+    <button class="filter-pill" data-category="tv">TV Shows</button>
+    <button class="filter-pill" data-category="gaming">Gaming</button>
+    <select class="sort-select" id="sortSelect">
+      <option value="newest">Newest First</option>
+      <option value="rating-high">Rating: High → Low</option>
+      <option value="rating-low">Rating: Low → High</option>
+    </select>
+  </div>
+</div>
+
+<div class="verdicts-grid" id="verdictsGrid"></div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modal">
+    <button class="modal-close" id="modalClose">×</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-brand">HEEZO</div>
+  <p class="footer-text">Entertainment Intelligence — Built for the obsessed.</p>
+</footer>
+
+<script>
+var verdicts = [
+  {
+    id: 1, title: "Deadpool 4", category: "movies", verdict: "watch",
+    summary: "Ryan Reynolds somehow keeps it fresh. The fourth-wall breaks hit different this time.",
+    fullVerdict: "Deadpool 4 manages to avoid franchise fatigue by leaning even harder into meta-comedy while delivering surprisingly emotional stakes. The new villain dynamic works, the cameos are earned (not forced), and it proves the character still has gas in the tank.",
+    bestFor: "Fans of irreverent humor who also want actual character development",
+    skipIf: "You're exhausted by self-referential comedy or found Deadpool 3 too chaotic",
+    watchInstead: "The Nice Guys, Free Guy, or rewatch Deadpool 1",
+    ratings: { story: 7, visuals: 8, pacing: 8, rewatch: 7 },
+    date: "2026-05"
+  },
+  {
+    id: 2, title: "Captain America: Brave New World", category: "movies", verdict: "conditional",
+    summary: "A solid political thriller that struggles to justify its MCU connections.",
+    fullVerdict: "Brave New World works best when it's a grounded espionage story. Anthony Mackie owns the shield, and the Harrison Ford dynamic delivers. But it occasionally stops its own momentum to set up future MCU threads that feel forced. If you accept it as a mid-tier MCU entry, you'll enjoy it.",
+    bestFor: "MCU completionists and fans of Winter Soldier's political thriller tone",
+    skipIf: "You want the high-energy spectacle of Avengers-level events",
+    watchInstead: "Captain America: Winter Soldier, Sicario, or The Falcon and the Winter Soldier",
+    ratings: { story: 6, visuals: 7, pacing: 6, rewatch: 5 },
+    date: "2025-02"
+  },
+  {
+    id: 3, title: "The Batman 2", category: "movies", verdict: "watch",
+    summary: "Reeves proves the first film wasn't a fluke. Gotham has never felt this alive.",
+    fullVerdict: "The Batman 2 expands Gotham's criminal underworld while keeping Bruce Wayne's detective work front and center. The new villain is terrifyingly grounded, the cinematography is still god-tier, and the 3-hour runtime actually earns its length. This is THE superhero film for people who want cinema, not content.",
+    bestFor: "Anyone who loved Se7en, Zodiac, or the first Batman film's noir tone",
+    skipIf: "You need quips and spectacle from your superhero movies",
+    watchInstead: "Se7en, Zodiac, or Dark Knight if you somehow haven't",
+    ratings: { story: 9, visuals: 10, pacing: 8, rewatch: 9 },
+    date: "2026-04"
+  },
+  {
+    id: 4, title: "Mission: Impossible 8 — The Final Reckoning", category: "movies", verdict: "watch",
+    summary: "Tom Cruise really said 'I'll top myself one last time' and actually did.",
+    fullVerdict: "The Final Reckoning delivers exactly what you want: impossible stunts, breakneck pacing, and genuine tension despite knowing Ethan Hunt will survive. The AI antagonist storyline wraps satisfyingly, and the practical stunts are genuinely jaw-dropping. A masterclass in blockbuster filmmaking.",
+    bestFor: "Action fans, practical stunt enthusiasts, anyone with a pulse",
+    skipIf: "You've never seen an MI film (start with Fallout first)",
+    watchInstead: "Mission: Impossible — Fallout, Mad Max: Fury Road, or Top Gun: Maverick",
+    ratings: { story: 7, visuals: 10, pacing: 9, rewatch: 8 },
+    date: "2025-05"
+  },
+  {
+    id: 5, title: "Demon Slayer: Infinity Castle", category: "anime", verdict: "watch",
+    summary: "Ufotable turned a manga finale into a theatrical experience that redefines anime cinema.",
+    fullVerdict: "Infinity Castle adapts the final arc with the visual spectacle only Ufotable can deliver. Every fight is a masterpiece of animation, the emotional beats hit harder than expected, and the pacing keeps you locked in. Whether you're caught up or not, this is anime at its absolute peak production value.",
+    bestFor: "Demon Slayer fans, animation enthusiasts, and action anime lovers",
+    skipIf: "You haven't watched the series — this is a finale, not a starting point",
+    watchInstead: "Mugen Train (to catch up), Jujutsu Kaisen 0, or Sword of the Stranger",
+    ratings: { story: 8, visuals: 10, pacing: 9, rewatch: 8 },
+    date: "2025-10"
+  },
+  {
+    id: 6, title: "One Piece — Elbaf Arc", category: "anime", verdict: "watch",
+    summary: "The crew finally reaches the land of giants, and Oda is cooking on another level.",
+    fullVerdict: "The Elbaf arc delivers on 25+ years of setup. Usopp finally gets development worthy of his dream, the worldbuilding is vintage Oda, and the mysteries deepen without losing momentum. The anime adaptation has maintained Egghead's improved pacing. This is One Piece firing on all cylinders.",
+    bestFor: "Long-time One Piece readers/watchers who've been waiting for Elbaf since Little Garden",
+    skipIf: "You're not caught up — this is 1100+ chapters deep and context matters",
+    watchInstead: "Start One Piece from East Blue, or try the One Pace fan edit for faster pacing",
+    ratings: { story: 9, visuals: 8, pacing: 8, rewatch: 7 },
+    date: "2026-03"
+  },
+  {
+    id: 7, title: "Jujutsu Kaisen (Complete)", category: "anime", verdict: "conditional",
+    summary: "Incredible highs, controversial ending. The journey matters more than the destination.",
+    fullVerdict: "JJK delivered some of the best shonen fights ever animated and genuinely subverted expectations with its willingness to kill characters. However, the manga's rushed final chapters left many unsatisfied. The anime smooths some rough edges, but if endings make or break a series for you, manage expectations.",
+    bestFor: "Battle shonen fans who prioritize fights and atmosphere over neat endings",
+    skipIf: "Unresolved plot threads and abrupt conclusions ruin entire series for you",
+    watchInstead: "Chainsaw Man, Hunter x Hunter, or Mob Psycho 100 for complete satisfaction",
+    ratings: { story: 7, visuals: 10, pacing: 7, rewatch: 6 },
+    date: "2025-12"
+  },
+  {
+    id: 8, title: "Dragon Ball Daima", category: "anime", verdict: "watch",
+    summary: "Toriyama's final gift to the franchise. It's Dragon Ball with actual adventure again.",
+    fullVerdict: "Daima strips away the power-scaling bloat and returns to what made Dragon Ball magical: adventure, humor, and genuine wonder. The Demon Realm setting is fresh, kid Goku works better than expected, and Toriyama's direct involvement ensures the tone is pitch-perfect. It's the most 'Dragon Ball' thing since the original series.",
+    bestFor: "OG Dragon Ball fans, anyone burned out by Super's tournament arcs",
+    skipIf: "You only care about transformations and power levels going higher",
+    watchInstead: "Original Dragon Ball, Dr. Slump, or Dragon Ball Z: Bardock special",
+    ratings: { story: 8, visuals: 9, pacing: 8, rewatch: 8 },
+    date: "2025-04"
+  },
+  {
+    id: 9, title: "Solo Leveling Season 2", category: "anime", verdict: "watch",
+    summary: "The power fantasy payoff you've been waiting for. Sung Jinwoo stops holding back.",
+    fullVerdict: "Season 2 delivers on everything Season 1 set up. Jinwoo is now fully realized as the Shadow Monarch, the Jeju Island raid is spectacular, and A-1 Pictures maintains jaw-dropping animation quality. It's pure, unapologetic power fantasy done right — and sometimes that's exactly what you need.",
+    bestFor: "Power fantasy fans, manhwa readers, and anyone who loved Season 1's progression",
+    skipIf: "You need deep character development and complex themes from your anime",
+    watchInstead: "Overlord, The Beginning After the End (manhwa), or Mob Psycho for a subversion",
+    ratings: { story: 7, visuals: 9, pacing: 8, rewatch: 7 },
+    date: "2025-07"
+  },
+  {
+    id: 10, title: "House of the Dragon Season 3", category: "tv", verdict: "watch",
+    summary: "The Dance of the Dragons kicks into full gear. Major battles, major deaths, zero filler.",
+    fullVerdict: "Season 3 fixes Season 2's pacing issues by throwing us into the war's bloodiest chapters. Dragon battles are rendered with film-quality VFX, character deaths actually shock, and the political scheming reaches peak Game of Thrones levels. This is the Westeros show we deserved.",
+    bestFor: "GoT fans who stuck through HotD's slower moments, political drama lovers",
+    skipIf: "You checked out of Westeros after GoT S8 and can't re-engage emotionally",
+    watchInstead: "The Last Kingdom, Vikings, or rewatch GoT Seasons 1-4",
+    ratings: { story: 9, visuals: 10, pacing: 8, rewatch: 7 },
+    date: "2026-06"
+  },
+  {
+    id: 11, title: "The Last of Us Season 2", category: "tv", verdict: "conditional",
+    summary: "Masterfully acted, brutally told. But if you hated the game's direction, nothing changes.",
+    fullVerdict: "Season 2 adapts Part II's controversial storyline with even more emotional nuance than the game delivered. The performances are career-defining, especially the new cast additions. But the narrative still goes where it goes — if that broke the story for you in 2020, the show won't fix it. If you're open to it, this is prestige TV at its most devastating.",
+    bestFor: "Those who appreciated Part II's ambition, prestige drama fans, acting showcase lovers",
+    skipIf: "The game's story direction genuinely angered you — the show doubles down",
+    watchInstead: "Station Eleven, Chernobyl, or replay The Last of Us Part I",
+    ratings: { story: 8, visuals: 9, pacing: 7, rewatch: 5 },
+    date: "2025-04"
+  },
+  {
+    id: 12, title: "Squid Game Season 3", category: "tv", verdict: "watch",
+    summary: "The final season sticks the landing. The commentary hits harder when it's personal.",
+    fullVerdict: "Season 3 wraps Gi-hun's story with a finale that's equal parts thrilling and thematically resonant. The new games are inventive, the Front Man's backstory pays off, and it avoids the sequel trap of just being 'bigger.' It remembers it's a story about people, not just spectacle.",
+    bestFor: "Anyone who watched Seasons 1-2, fans of social commentary thrillers",
+    skipIf: "You only liked S1 for the novelty and found S2 underwhelming",
+    watchInstead: "Alice in Borderland, Kaiji, or Battle Royale",
+    ratings: { story: 8, visuals: 8, pacing: 9, rewatch: 6 },
+    date: "2026-06"
+  },
+  {
+    id: 13, title: "Stranger Things Season 5", category: "tv", verdict: "conditional",
+    summary: "A love letter to the fans with crowd-pleasing payoffs. Logic takes a back seat.",
+    fullVerdict: "The final season prioritizes emotional resolution over narrative tightness. Every character gets their moment, the Vecna conclusion is visually stunning, and if you've been invested since 2016, the nostalgia alone will carry you. But newcomers or logic-first viewers will find plot holes you could drive a Demogorgon through.",
+    bestFor: "Day-one Stranger Things fans who want emotional closure above all else",
+    skipIf: "You dropped off after S3 or need your finales to make rigorous sense",
+    watchInstead: "Dark (Netflix), IT (2017), or Super 8",
+    ratings: { story: 6, visuals: 9, pacing: 7, rewatch: 6 },
+    date: "2025-11"
+  },
+  {
+    id: 14, title: "GTA 6", category: "gaming", verdict: "watch",
+    summary: "It was worth the decade-long wait. Rockstar built a living, breathing world.",
+    fullVerdict: "GTA 6 redefines open-world gaming with a Leonida (Vice City) that feels genuinely alive. The dual-protagonist system works brilliantly, the story balances dark crime drama with Rockstar's signature satire, and the attention to detail is obsessive. Online integration at launch is ambitious but doesn't overshadow single-player. This is the new benchmark.",
+    bestFor: "Open-world fans, anyone who's been gaming since the PS2 era, crime drama lovers",
+    skipIf: "You're looking for a quick 20-hour experience — this demands 60+ hours minimum",
+    watchInstead: "Red Dead Redemption 2 (if you haven't), Cyberpunk 2077 post-patches, or Mafia: Definitive Edition",
+    ratings: { story: 9, visuals: 10, pacing: 8, rewatch: 10 },
+    date: "2025-10"
+  },
+  {
+    id: 15, title: "Elden Ring: Shadow of the Erdtree", category: "gaming", verdict: "watch",
+    summary: "The best DLC FromSoftware has ever made. Possibly the best DLC ever made, period.",
+    fullVerdict: "Shadow of the Erdtree adds a landmass that rivals most full games in scope and quality. The new weapon types are creative, the boss design reaches new heights (and difficulty), and the lore connections to the base game are masterfully woven. If you beat Elden Ring, this is mandatory. If you bounced off, this won't convert you.",
+    bestFor: "Elden Ring completionists, Souls veterans, exploration-driven gamers",
+    skipIf: "You couldn't finish the base game — the DLC is harder, not easier",
+    watchInstead: "Dark Souls 3: The Ringed City, Bloodborne: Old Hunters, or Lies of P",
+    ratings: { story: 9, visuals: 9, pacing: 8, rewatch: 9 },
+    date: "2024-06"
+  },
+  {
+    id: 16, title: "Marvel's Wolverine", category: "gaming", verdict: "watch",
+    summary: "Insomniac did it again. This is the Wolverine game we've wanted since X-Men Origins.",
+    fullVerdict: "Insomniac brings the same care they gave Spider-Man to Logan's world, but with a distinctly mature edge. The combat is visceral and weighty, the story explores Logan's healing factor as a curse rather than a superpower, and the open-world Madripoor setting is dripping with atmosphere. It's not just a good superhero game — it's a great character study.",
+    bestFor: "X-Men fans, action-adventure gamers, anyone who loved Insomniac's Spider-Man",
+    skipIf: "You need multiplayer or can't handle M-rated violence",
+    watchInstead: "Spider-Man 2, God of War Ragnarök, or the Logan film",
+    ratings: { story: 9, visuals: 9, pacing: 8, rewatch: 7 },
+    date: "2025-09"
+  },
+  {
+    id: 17, title: "Indiana Jones and the Great Circle", category: "gaming", verdict: "conditional",
+    summary: "A love letter to Raiders. MachineGames nailed the vibe but the gameplay loops can tire.",
+    fullVerdict: "The Great Circle absolutely captures the feel of being Indiana Jones — the whip, the puzzles, the globe-trotting set pieces. MachineGames brought their Wolfenstein storytelling chops, and it shows. However, the stealth-heavy gameplay can feel repetitive in the back half, and the first-person perspective occasionally clashes with platforming sections.",
+    bestFor: "Indiana Jones fans, narrative FPS players, puzzle-adventure enthusiasts",
+    skipIf: "You want a pure action game or find first-person platforming frustrating",
+    watchInstead: "Uncharted series, Tomb Raider reboot trilogy, or Wolfenstein: New Order",
+    ratings: { story: 8, visuals: 9, pacing: 6, rewatch: 6 },
+    date: "2024-12"
+  },
+  {
+    id: 18, title: "Black Myth: Wukong", category: "gaming", verdict: "watch",
+    summary: "China's first AAA triumph. The boss design alone is worth the price of admission.",
+    fullVerdict: "Black Myth: Wukong came out of nowhere and delivered one of the best action games in years. The combat system rewards mastery, the boss variety is staggering (80+ unique encounters), and the Chinese mythology setting is refreshingly different from Western fantasy defaults. Some camera issues and a thin story hold it back from all-time greatness, but the gameplay carries hard.",
+    bestFor: "Souls-like fans, action combat enthusiasts, anyone craving a fresh mythological setting",
+    skipIf: "You need deep narrative investment or find boss-rush structures exhausting",
+    watchInstead: "Sekiro, Nioh 2, or God of War (2018) for similar combat highs",
+    ratings: { story: 6, visuals: 10, pacing: 7, rewatch: 7 },
+    date: "2024-08"
+  },
+  {
+    id: 19, title: "Arcane Season 2", category: "tv", verdict: "watch",
+    summary: "The best video game adaptation ever made gets a worthy conclusion.",
+    fullVerdict: "Arcane Season 2 concludes Vi and Jinx's story with the same breathtaking animation, nuanced writing, and emotional devastation that made Season 1 special. The expanded scope into Noxus works, the action sequences push animation boundaries further, and it sticks the landing without pulling punches. You don't need to play League of Legends to appreciate this as elite storytelling.",
+    bestFor: "Animation fans, anyone who watched S1, narrative-driven viewers of any medium",
+    skipIf: "You haven't seen Season 1 — do NOT start here",
+    watchInstead: "Castlevania (Netflix), Invincible, or Spider-Verse films",
+    ratings: { story: 9, visuals: 10, pacing: 8, rewatch: 8 },
+    date: "2024-11"
+  },
+  {
+    id: 20, title: "Cyberpunk 2077: Orion (Sequel)", category: "gaming", verdict: "conditional",
+    summary: "CDPR learned from 2077's launch. Ambitious vision, still rough in spots.",
+    fullVerdict: "Orion brings the Cyberpunk franchise to a new city with Unreal Engine 5, and the visual upgrade is staggering. The RPG systems are deeper, the branching narrative is genuinely reactive, and the world feels more interactive than 2077 ever managed. However, launch performance on last-gen is questionable and some features feel half-baked. Give it 2-3 months for patches if you're on older hardware.",
+    bestFor: "Cyberpunk 2077 fans (post-Phantom Liberty), RPG enthusiasts, sci-fi worldbuilding lovers",
+    skipIf: "You were burned by 2077's launch and need guarantees before buying at launch",
+    watchInstead: "Cyberpunk 2077: Phantom Liberty, Deus Ex: Mankind Divided, or Starfield (patched)",
+    ratings: { story: 8, visuals: 10, pacing: 7, rewatch: 7 },
+    date: "2026-06"
+  }
+];
+
+var currentCategory = 'all';
+var currentSearch = '';
+var currentSort = 'newest';
+
+function getFilteredVerdicts() {
+  var filtered = verdicts.filter(function(v) {
+    var matchesCategory = currentCategory === 'all' || v.category === currentCategory;
+    var matchesSearch = v.title.toLowerCase().includes(currentSearch.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
+
+  if (currentSort === 'newest') {
+    filtered.sort(function(a, b) { return b.date.localeCompare(a.date); });
+  } else if (currentSort === 'rating-high') {
+    filtered.sort(function(a, b) {
+      var avgB = (b.ratings.story + b.ratings.visuals + b.ratings.pacing + b.ratings.rewatch) / 4;
+      var avgA = (a.ratings.story + a.ratings.visuals + a.ratings.pacing + a.ratings.rewatch) / 4;
+      return avgB - avgA;
+    });
+  } else if (currentSort === 'rating-low') {
+    filtered.sort(function(a, b) {
+      var avgA = (a.ratings.story + a.ratings.visuals + a.ratings.pacing + a.ratings.rewatch) / 4;
+      var avgB = (b.ratings.story + b.ratings.visuals + b.ratings.pacing + b.ratings.rewatch) / 4;
+      return avgA - avgB;
+    });
+  }
+
+  return filtered;
+}
+
+function renderGrid() {
+  var grid = document.getElementById('verdictsGrid');
+  var filtered = getFilteredVerdicts();
+
+  if (filtered.length === 0) {
+    grid.innerHTML = '<div class="no-results">No titles found. Try a different search or category.</div>';
+    return;
+  }
+
+  var html = '';
+  filtered.forEach(function(v) {
+    var badgeClass = v.verdict === 'watch' ? 'badge-watch' : v.verdict === 'skip' ? 'badge-skip' : 'badge-conditional';
+    var badgeText = v.verdict === 'watch' ? 'WATCH IT' : v.verdict === 'skip' ? 'SKIP IT' : 'CONDITIONAL';
+    var categoryLabel = v.category === 'tv' ? 'TV SHOW' : v.category.toUpperCase();
+
+    html += '<div class="verdict-card ' + v.verdict + '" onclick="openModal(' + v.id + ')">';
+    html += '<div class="card-header"><span class="card-category">' + categoryLabel + '</span>';
+    html += '<span class="verdict-badge ' + badgeClass + '">' + badgeText + '</span></div>';
+    html += '<h3 class="card-title">' + v.title + '</h3>';
+    html += '<p class="card-summary">' + v.summary + '</p>';
+    html += '</div>';
+  });
+
+  grid.innerHTML = html;
+}
+
+function openModal(id) {
+  var v = verdicts.find(function(item) { return item.id === id; });
+  if (!v) return;
+
+  var badgeClass = v.verdict === 'watch' ? 'badge-watch' : v.verdict === 'skip' ? 'badge-skip' : 'badge-conditional';
+  var badgeText = v.verdict === 'watch' ? '✓ WATCH IT' : v.verdict === 'skip' ? '✗ SKIP IT' : '⚡ CONDITIONAL';
+
+  var html = '';
+  html += '<h2 class="modal-title">' + v.title + '</h2>';
+  html += '<span class="modal-verdict-badge ' + badgeClass + '">' + badgeText + '</span>';
+  html += '<p class="modal-full-verdict">' + v.fullVerdict + '</p>';
+
+  html += '<div class="modal-section"><p class="modal-section-title">Best For</p>';
+  html += '<p class="modal-section-text">' + v.bestFor + '</p></div>';
+
+  html += '<div class="modal-section"><p class="modal-section-title">Skip If</p>';
+  html += '<p class="modal-section-text">' + v.skipIf + '</p></div>';
+
+  html += '<div class="modal-section"><p class="modal-section-title">Watch Instead</p>';
+  html += '<p class="modal-section-text">' + v.watchInstead + '</p></div>';
+
+  html += '<div class="rating-bars">';
+  var ratingLabels = { story: 'Story', visuals: 'Visuals', pacing: 'Pacing', rewatch: 'Rewatch Value' };
+  Object.keys(ratingLabels).forEach(function(key) {
+    var val = v.ratings[key];
+    html += '<div class="rating-bar-item">';
+    html += '<span class="rating-label">' + ratingLabels[key] + '</span>';
+    html += '<div class="rating-track"><div class="rating-fill" style="width: ' + (val * 10) + '%"></div></div>';
+    html += '<span class="rating-value">' + val + '/10</span>';
+    html += '</div>';
+  });
+  html += '</div>';
+
+  document.getElementById('modalContent').innerHTML = html;
+  document.getElementById('modalOverlay').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function handleFilterClick(e) {
+  if (!e.target.classList.contains('filter-pill')) return;
+  document.querySelectorAll('.filter-pill').forEach(function(p) { p.classList.remove('active'); });
+  e.target.classList.add('active');
+  currentCategory = e.target.dataset.category;
+  renderGrid();
+}
+
+function handleSearch(e) {
+  currentSearch = e.target.value;
+  renderGrid();
+}
+
+function handleSort(e) {
+  currentSort = e.target.value;
+  renderGrid();
+}
+
+// Event Listeners
+document.getElementById('modalClose').addEventListener('click', closeModal);
+document.getElementById('modalOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeModal();
+});
+document.querySelector('.filter-row').addEventListener('click', handleFilterClick);
+document.getElementById('searchBar').addEventListener('input', handleSearch);
+document.getElementById('sortSelect').addEventListener('change', handleSort);
+
+// Initial render
+renderGrid();
+</script>
+</body>
+</html>
