@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Lore Vault — Heezo</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --obsidian: #0a0a0f;
+  --obsidian-light: #12121a;
+  --obsidian-card: #1a1a2e;
+  --gold: #d4af37;
+  --gold-light: #f4d03f;
+  --gold-dark: #b8860b;
+  --gold-gradient: linear-gradient(135deg, #d4af37, #f4d03f, #b8860b);
+  --text-primary: #e8e6e3;
+  --text-secondary: #9a9a9a;
+  --text-muted: #5a5a6a;
+  --glass-bg: rgba(26, 26, 46, 0.6);
+  --glass-border: rgba(212, 175, 55, 0.15);
+  --glass-border-hover: rgba(212, 175, 55, 0.4);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--obsidian);
+  color: var(--text-primary);
+  font-family: 'Space Grotesk', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Film Grain Overlay */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1000;
+  opacity: 0.5;
+}
+
+/* Particle Canvas */
+#particles {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Navigation */
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  padding: 20px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 100;
+  backdrop-filter: blur(20px);
+  background: rgba(10, 10, 15, 0.8);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+}
+
+.nav-brand {
+  font-size: 1.2rem;
+  font-weight: 700;
+  background: var(--gold-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-decoration: none;
+}
+
+.nav-links {
+  display: flex;
+  gap: 24px;
+  list-style: none;
+}
+
+.nav-links a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 400;
+  transition: color 0.3s ease;
+}
+
+.nav-links a:hover { color: var(--gold); }
+
+/* Hero Section */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 120px 20px 80px;
+  position: relative;
+  z-index: 1;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: 1px solid var(--glass-border);
+  border-radius: 100px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--gold);
+  margin-bottom: 32px;
+}
+
+.hero-badge::before {
+  content: '';
+  width: 6px; height: 6px;
+  background: var(--gold);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.5); }
+}
+
+.hero-title {
+  font-size: clamp(3rem, 8vw, 7rem);
+  font-weight: 700;
+  line-height: 1;
+  background: var(--gold-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 24px;
+  letter-spacing: -0.02em;
+}
+
+.hero-subtitle {
+  font-size: clamp(1rem, 2.5vw, 1.4rem);
+  color: var(--text-secondary);
+  font-weight: 300;
+  max-width: 600px;
+  line-height: 1.6;
+  margin-bottom: 48px;
+}
+
+.hero-divider {
+  width: 80px;
+  height: 1px;
+  background: var(--gold-gradient);
+  margin-bottom: 48px;
+}
+
+.scroll-indicator {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-8px); }
+}
+
+.scroll-indicator svg {
+  width: 20px;
+  height: 20px;
+  stroke: var(--gold);
+}
+
+/* Section Styling */
+.section {
+  padding: 100px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.section-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+
+.section-title {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--text-primary);
+}
+
+.section-desc {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  max-width: 600px;
+  line-height: 1.6;
+  margin-bottom: 60px;
+}
+
+/* Category Cards Grid */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 24px;
+}
+
+.card {
+  position: relative;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 32px;
+  backdrop-filter: blur(20px);
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  cursor: pointer;
+  overflow: hidden;
+  text-decoration: none;
+  display: block;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.card:hover {
+  border-color: var(--glass-border-hover);
+  transform: translateY(-4px);
+  box-shadow: 0 20px 60px rgba(212, 175, 55, 0.08);
+}
+
+.card:hover::before { opacity: 1; }
+
+.card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  margin-bottom: 20px;
+  background: rgba(212, 175, 55, 0.1);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.card-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.card-desc {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.card-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 100px;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 500;
+}
+
+.badge-active {
+  background: rgba(212, 175, 55, 0.15);
+  color: var(--gold);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.badge-coming {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-muted);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Stats Section */
+.stats-section {
+  padding: 80px 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.stats-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  gap: 60px;
+  flex-wrap: wrap;
+  padding: 60px 40px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  backdrop-filter: blur(20px);
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-number {
+  font-size: clamp(2.5rem, 5vw, 3.5rem);
+  font-weight: 700;
+  background: var(--gold-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.2;
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-top: 8px;
+  font-weight: 400;
+}
+
+/* Footer */
+.footer {
+  padding: 60px 20px;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+  border-top: 1px solid rgba(212, 175, 55, 0.1);
+}
+
+.footer-brand {
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: var(--gold-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 12px;
+}
+
+.footer-text {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+/* Scroll Reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .nav { padding: 16px 20px; }
+  .nav-links { gap: 16px; }
+  .nav-links a { font-size: 0.8rem; }
+  .cards-grid { grid-template-columns: 1fr; }
+  .stats-container { gap: 40px; padding: 40px 20px; }
+  .section { padding: 60px 20px; }
+  .hero { padding: 100px 20px 60px; }
+}
+
+@media (max-width: 480px) {
+  .nav-links { display: none; }
+  .stats-container { flex-direction: column; gap: 32px; }
+}
+</style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+
+<nav class="nav">
+  <a href="/" class="nav-brand">HEEZO</a>
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="#tools">Tools</a></li>
+    <li><a href="#stats">Stats</a></li>
+  </ul>
+</nav>
+
+<section class="hero">
+  <div class="hero-badge">Entertainment Intelligence</div>
+  <h1 class="hero-title">THE LORE<br>VAULT</h1>
+  <p class="hero-subtitle">Entertainment Intelligence. Not opinions — answers. Every franchise mapped. Every watch order perfected. Every mystery decoded.</p>
+  <div class="hero-divider"></div>
+  <div class="scroll-indicator">
+    <span>Explore</span>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M12 5v14M5 12l7 7 7-7"/>
+    </svg>
+  </div>
+</section>
+
+<section class="section" id="tools">
+  <div class="reveal">
+    <p class="section-label">Intelligence Tools</p>
+    <h2 class="section-title">Pick Your Weapon</h2>
+    <p class="section-desc">Precision-built tools for the chronically curious. No filler, no ads, no "top 10 lists." Just the answers you actually need.</p>
+  </div>
+
+  <div class="cards-grid">
+    <a href="heezo_watch_order.html" class="card reveal">
+      <div class="card-icon">🎬</div>
+      <h3 class="card-title">Watch Order Generator</h3>
+      <p class="card-desc">Perfect watch orders for 7 major franchises. Chronological, release, or best experience — you choose. Track your progress as you go.</p>
+      <span class="card-badge badge-active">● Live Now</span>
+    </a>
+
+    <div class="card reveal">
+      <div class="card-icon">🌌</div>
+      <h3 class="card-title">Universe Explorer</h3>
+      <p class="card-desc">Interactive maps of fictional universes. See how characters, events, and timelines connect across entire franchises.</p>
+      <span class="card-badge badge-coming">Coming Soon</span>
+    </div>
+
+    <div class="card reveal">
+      <div class="card-icon">⚡</div>
+      <h3 class="card-title">Power Scaling Charts</h3>
+      <p class="card-desc">Data-driven power levels across anime and comics. Who actually wins? We did the math so you don't have to argue.</p>
+      <span class="card-badge badge-coming">Coming Soon</span>
+    </div>
+
+    <div class="card reveal">
+      <div class="card-icon">🔍</div>
+      <h3 class="card-title">Easter Egg Tracker</h3>
+      <p class="card-desc">Every hidden reference, callback, and easter egg — catalogued and cross-referenced. Never miss a detail again.</p>
+      <span class="card-badge badge-coming">Coming Soon</span>
+    </div>
+
+    <div class="card reveal">
+      <div class="card-icon">✅</div>
+      <h3 class="card-title">"Is It Worth It?" Verdicts</h3>
+      <p class="card-desc">Quick, honest verdicts on whether something is worth your time. Not reviews — just answers. Yes, no, or "only if you liked X."</p>
+      <span class="card-badge badge-coming">Coming Soon</span>
+    </div>
+
+    <div class="card reveal">
+      <div class="card-icon">📚</div>
+      <h3 class="card-title">Deep Lore Archive</h3>
+      <p class="card-desc">Long-form breakdowns of complex storylines, timeline analyses, and theory deep-dives. For when the wiki isn't enough.</p>
+      <span class="card-badge badge-coming">Coming Soon</span>
+    </div>
+  </div>
+</section>
+
+<section class="stats-section" id="stats">
+  <div class="stats-container reveal">
+    <div class="stat-item">
+      <div class="stat-number" data-target="7">0</div>
+      <div class="stat-label">Franchises Mapped</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number" data-target="200">0</div>
+      <div class="stat-label">Titles Ordered</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number" data-target="0">0</div>
+      <div class="stat-label">Confusion</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number" data-target="3">0</div>
+      <div class="stat-label">Order Types</div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-brand">HEEZO</div>
+  <p class="footer-text">Entertainment Intelligence — Built for the obsessed.</p>
+</footer>
+
+<script>
+// Particle System
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+let particles = [];
+let animFrameId;
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+class Particle {
+  constructor() {
+    this.reset();
+  }
+  reset() {
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.size = Math.random() * 2 + 0.5;
+    this.speedX = (Math.random() - 0.5) * 0.3;
+    this.speedY = (Math.random() - 0.5) * 0.3;
+    this.opacity = Math.random() * 0.5 + 0.1;
+    this.gold = Math.random() > 0.7;
+  }
+  update() {
+    this.x += this.speedX;
+    this.y += this.speedY;
+    if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) {
+      this.reset();
+    }
+  }
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    if (this.gold) {
+      ctx.fillStyle = `rgba(212, 175, 55, ${this.opacity})`;
+    } else {
+      ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity * 0.3})`;
+    }
+    ctx.fill();
+  }
+}
+
+for (let i = 0; i < 60; i++) {
+  particles.push(new Particle());
+}
+
+function animateParticles() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles.forEach(p => { p.update(); p.draw(); });
+  animFrameId = requestAnimationFrame(animateParticles);
+}
+animateParticles();
+
+// Scroll Reveal
+const revealElements = document.querySelectorAll('.reveal');
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach((entry, index) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => {
+        entry.target.classList.add('visible');
+      }, index * 100);
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1 });
+
+revealElements.forEach(el => revealObserver.observe(el));
+
+// Counter Animation
+const statNumbers = document.querySelectorAll('.stat-number');
+const counterObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const el = entry.target;
+      const target = parseInt(el.dataset.target);
+      let current = 0;
+      const increment = target / 40;
+      const timer = setInterval(() => {
+        current += increment;
+        if (current >= target) {
+          el.textContent = target === 200 ? '200+' : target.toString();
+          clearInterval(timer);
+        } else {
+          el.textContent = Math.floor(current).toString();
+        }
+      }, 40);
+      counterObserver.unobserve(el);
+    }
+  });
+}, { threshold: 0.5 });
+
+statNumbers.forEach(el => counterObserver.observe(el));
+</script>
+</body>
+</html>
