@@ -1,9 +1,8 @@
-# HEEZO
+# HEEZO - Where Curiosity Lives
 
-Where Curiosity Lives.
+Static site hosted on Vercel. Auto-deploys from main branch.
 
-**LORE** — Entertainment Intelligence (Movies, Anime, Gaming, Pop Culture)
-
-**LIFE** — Life Optimization (Finance, Tech, Health)
-
-Deployed on Vercel.
+## Pages
+- / - Homepage
+- /lore - The Lore Vault
+- /lore/watch-order - Watch Order Generator
