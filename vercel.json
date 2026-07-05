@@ -29,6 +29,14 @@
       "destination": "/lore/easter-eggs.html"
     },
     {
+      "source": "/life",
+      "destination": "/life/index.html"
+    },
+    {
+      "source": "/life/investment-calculator",
+      "destination": "/life/investment-calculator.html"
+    },
+    {
       "source": "/about",
       "destination": "/about.html"
     },
