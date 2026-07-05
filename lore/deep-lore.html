@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deep Lore Archive — Heezo</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --obsidian: #0a0a0f;
+  --obsidian-light: #12121a;
+  --obsidian-card: #1a1a2e;
+  --gold: #d4af37;
+  --gold-light: #f4d03f;
+  --gold-dark: #b8860b;
+  --gold-gradient: linear-gradient(135deg, #d4af37, #f4d03f, #b8860b);
+  --text-primary: #e8e6e3;
+  --text-secondary: #9a9a9a;
+  --text-muted: #5a5a6a;
+  --glass-bg: rgba(26, 26, 46, 0.6);
+  --glass-border: rgba(212, 175, 55, 0.15);
+  --glass-border-hover: rgba(212, 175, 55, 0.4);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--obsidian);
+  color: var(--text-primary);
+  font-family: 'Space Grotesk', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1000;
+  opacity: 0.5;
+}
+
+/* Navigation */
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  padding: 20px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 100;
+  backdrop-filter: blur(20px);
+  background: rgba(10, 10, 15, 0.8);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+}
+
+.nav-brand {
+  font-size: 1.2rem;
+  font-weight: 700;
+  background: var(--gold-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-decoration: none;
+}
+
+.nav-links {
+  display: flex;
+  gap: 24px;
+  list-style: none;
+}
+
+.nav-links a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 400;
+  transition: color 0.3s ease;
+}
+
+.nav-links a:hover { color: var(--gold); }
+
+/* Hero */
+.hero {
+  padding: 140px 20px 60px;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--gold);
+  text-decoration: none;
+  font-size: 0.85rem;
+  margin-bottom: 24px;
+  transition: opacity 0.3s;
+}
+
+.back-link:hover { opacity: 0.7; }
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: 1px solid var(--glass-border);
+  border-radius: 100px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--gold);
+  margin-bottom: 24px;
+}
+
+.hero-title {
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  font-weight: 700;
+  line-height: 1.1;
+  background: var(--gold-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 16px;
+}
+
+.hero-subtitle {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* Hub Grid */
+.hub-section {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 60px 20px 80px;
+  position: relative;
+  z-index: 1;
+}
+
+.hub-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 24px;
+}
+
+.hub-card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 28px;
+  backdrop-filter: blur(20px);
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  position: relative;
+  overflow: hidden;
+}
+
+.hub-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+
+.hub-card:hover {
+  border-color: var(--glass-border-hover);
+  transform: translateY(-4px);
+  box-shadow: 0 20px 60px rgba(212, 175, 55, 0.08);
+}
+
+.hub-card:hover::before { opacity: 1; }
+
+.hub-card-franchise {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--gold);
+  margin-bottom: 10px;
+}
+
+.hub-card-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.hub-card-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.hub-card-meta {
+  display: flex;
+  gap: 16px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* Deep Dive View */
+.deep-dive-view {
+  display: none;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 60px 20px 80px;
+  position: relative;
+  z-index: 1;
+}
+
+.deep-dive-view.active { display: flex; gap: 40px; }
+
+.deep-dive-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--gold);
+  text-decoration: none;
+  font-size: 0.85rem;
+  margin-bottom: 32px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-family: 'Space Grotesk', sans-serif;
+  transition: opacity 0.3s;
+}
+
+.deep-dive-back:hover { opacity: 0.7; }
+
+/* Sidebar TOC */
+.toc-sidebar {
+  width: 250px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 100px;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+  padding-right: 20px;
+}
+
+.toc-title {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--gold);
+  margin-bottom: 16px;
+}
+
+.toc-list {
+  list-style: none;
+}
+
+.toc-item {
+  padding: 8px 12px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-left: 2px solid transparent;
+  transition: all 0.3s;
+  border-radius: 0 6px 6px 0;
+}
+
+.toc-item:hover { color: var(--text-secondary); border-left-color: rgba(212, 175, 55, 0.3); }
+.toc-item.active { color: var(--gold); border-left-color: var(--gold); background: rgba(212, 175, 55, 0.05); }
+
+/* Content Area */
+.deep-dive-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.dd-header {
+  margin-bottom: 40px;
+}
+
+.dd-title {
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+}
+
+.dd-meta {
+  display: flex;
+  gap: 16px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+}
+
+/* TLDR Box */
+.tldr-box {
+  background: rgba(212, 175, 55, 0.05);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-bottom: 40px;
+}
+
+.tldr-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--gold);
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.tldr-text {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* Collapsible Sections */
+.dd-section {
+  margin-bottom: 8px;
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color 0.3s;
+}
+
+.dd-section:hover { border-color: rgba(212, 175, 55, 0.25); }
+
+.dd-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 24px;
+  cursor: pointer;
+  background: rgba(26, 26, 46, 0.3);
+  transition: background 0.3s;
+}
+
+.dd-section-header:hover { background: rgba(26, 26, 46, 0.6); }
+
+.dd-section-title {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.dd-section-toggle {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold);
+  transition: transform 0.3s;
+  font-size: 1.2rem;
+}
+
+.dd-section.open .dd-section-toggle { transform: rotate(45deg); }
+
+.dd-section-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.dd-section.open .dd-section-body { max-height: 2000px; }
+
+.dd-section-content {
+  padding: 0 24px 24px;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+}
+
+.dd-section-content p { margin-bottom: 12px; }
+
+.gold-term {
+  color: var(--gold);
+  font-weight: 500;
+}
+
+/* Footer */
+.footer {
+  padding: 60px 20px;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+  border-top: 1px solid rgba(212, 175, 55, 0.1);
+}
+
+.footer-brand {
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: var(--gold-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 12px;
+}
+
+.footer-text {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .toc-sidebar { display: none; }
+  .deep-dive-view.active { flex-direction: column; }
+}
+
+@media (max-width: 768px) {
+  .nav { padding: 16px 20px; }
+  .hub-grid { grid-template-columns: 1fr; }
+  .dd-section-header { padding: 14px 18px; }
+  .dd-section-content { padding: 0 18px 18px; }
+}
+
+@media (max-width: 480px) {
+  .nav-links { display: none; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="/" class="nav-brand">HEEZO</a>
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/lore">Lore</a></li>
+    <li><a href="/life">Life</a></li>
+  </ul>
+</nav>
+
+<section class="hero">
+  <a href="/lore" class="back-link">← Back to Lore Hub</a>
+  <div class="hero-badge">Long-Form Analysis</div>
+  <h1 class="hero-title">DEEP LORE ARCHIVE</h1>
+  <p class="hero-subtitle">For when the wiki isn't enough. Long-form breakdowns of complex storylines, timeline analyses, and theory deep-dives.</p>
+</section>
+
+<div class="hub-section" id="hubSection">
+  <div class="hub-grid" id="hubGrid"></div>
+</div>
+
+<div class="deep-dive-view" id="deepDiveView">
+  <aside class="toc-sidebar" id="tocSidebar"></aside>
+  <main class="deep-dive-content" id="deepDiveContent"></main>
+</div>
+
+<footer class="footer">
+  <div class="footer-brand">HEEZO</div>
+  <p class="footer-text">Entertainment Intelligence — Built for the obsessed.</p>
+</footer>
+
+<script>
+var deepDives = [
+  {
+    id: "mcu-multiverse",
+    franchise: "Marvel Cinematic Universe",
+    title: "MCU Multiverse Saga Timeline Explained",
+    desc: "Every branching timeline, variant, and incursion mapped out from Loki to Secret Wars.",
+    readTime: "12 min read",
+    wordCount: "~2,400 words",
+    tldr: "The Multiverse Saga spans Phases 4-6 and deals with the consequences of the TVA's collapse. Kang variants, incursions between universes, and the convergence toward Secret Wars are the three pillars. The Sacred Timeline is gone — every choice now creates a branch, and when branches collide, entire universes die.",
+    sections: [
+      {
+        title: "The Sacred Timeline & Its Collapse",
+        content: "<p>The <span class='gold-term'>Sacred Timeline</span> was never about one 'correct' path — it was about preventing any timeline from producing a Kang variant. He Who Remains pruned branches not because free will was wrong, but because free will inevitably creates Kangs, and Kangs inevitably create multiversal war.</p><p>When Sylvie killed He Who Remains at the Citadel at the End of Time, she didn't just free the timeline — she reopened the door to infinite Kang variants. The TVA continued existing but lost its purpose, becoming a rogue organization in a multiverse it no longer controlled. Loki's sacrifice to hold the timelines together as a living nexus delayed the inevitable but didn't prevent it.</p><p>The key concept: <span class='gold-term'>The Threshold</span>. Not every branch produces a Kang. Only branches that pass a critical threshold of technological advancement + specific genetic lineage create the conditions for a Kang to emerge. This is why some timelines are left alone while others are pruned.</p>"
+      },
+      {
+        title: "Kang Variants: A Taxonomy",
+        content: "<p>Understanding the Multiverse Saga requires understanding that Kang is not one villain — he's a <span class='gold-term'>concept</span> that manifests differently across timelines. Here's the hierarchy:</p><p><span class='gold-term'>He Who Remains</span> — The 'winner' of the first Multiversal War. Benevolent dictator who created the TVA. Now dead. <span class='gold-term'>Kang the Conqueror</span> — The warrior variant. Exiled to the Quantum Realm, defeated by Scott Lang, but his death triggered the Council of Kangs. <span class='gold-term'>Rama-Tut</span> — The explorer variant who ruled ancient Egypt. Less malevolent, more curious. <span class='gold-term'>Immortus</span> — The oldest variant who's seen every outcome and seeks only to prevent the worst ones. <span class='gold-term'>The Scarlet Centurion</span> — The strategist variant working behind Secret Wars.</p><p>The critical reveal: all Kangs share one fear — <span class='gold-term'>Doom</span>. In timelines where Victor Von Doom achieves sufficient power before a Kang emerges, the Kang variant is eliminated. This is why Doom becomes central to Secret Wars.</p>"
+      },
+      {
+        title: "Incursions: When Universes Collide",
+        content: "<p>An <span class='gold-term'>incursion</span> occurs when the boundary between two universes erodes to the point of collision. Unlike Kang variants (which are created through branching), incursions are caused by <span class='gold-term'>anchoring events</span> — moments where someone from one universe spends too long in another, creating a gravitational pull between realities.</p><p>Doctor Strange's actions in Multiverse of Madness created multiple incursion points. America Chavez's portal-punching weakened barriers. Spider-Man's multiversal visitors in No Way Home were early symptoms. Each event alone was survivable, but cumulatively they've made Earth-616 an <span class='gold-term'>incursion magnet</span>.</p><p>The Illuminati of Earth-838 knew this. Their Strange destroyed an entire universe to prevent an incursion from reaching them. This is the central moral question of Secret Wars: when two universes are colliding and only one can survive, who decides which one dies?</p>"
+      },
+      {
+        title: "The Road to Secret Wars",
+        content: "<p>Secret Wars in the MCU follows the 2015 comic event's structure: multiple universes collapse into a single <span class='gold-term'>Battleworld</span> ruled by whoever has the power to hold reality together. In comics, that was Doom. The MCU is tracking the same direction.</p><p>The convergence path: Kang variants destabilize the multiverse through war → incursions accelerate as barriers weaken → universes begin colliding → a Beyonder-level event forces all surviving realities into one space → whoever controls that space becomes God-Emperor of Battleworld.</p><p>The Avengers' role isn't to prevent Secret Wars (it's already inevitable) — it's to ensure the reconstruction afterward creates a <span class='gold-term'>livable multiverse</span> rather than a dictatorship. This is why the team must grow: you need heroes from multiple universes working together to prevent any single entity from controlling the rebuild.</p>"
+      },
+      {
+        title: "Post-Secret Wars: What Survives",
+        content: "<p>Marvel has confirmed that Secret Wars is a <span class='gold-term'>soft reboot point</span>. Not everything carries forward. The mechanism: when Battleworld is disassembled and reality is reconstructed, only elements with sufficient 'narrative weight' (read: audience investment and story potential) survive into the new continuity.</p><p>This is how Marvel solves its continuity bloat. Characters whose stories are complete can end. Recasts happen naturally — it's a new universe. Contradictions are erased. But emotional continuity persists: characters remember who they were, even if the specifics change. It's not a hard reset — it's an evolution.</p><p>The key players who bridge old and new: whoever holds an <span class='gold-term'>Infinity Stone</span> during reconstruction maintains full memory. This is why the stones' 'destruction' in the main timeline may not be permanent — they're needed as anchors for the rebuild.</p>"
+      }
+    ]
+  },
+  {
+    id: "one-piece-void-century",
+    franchise: "One Piece",
+    title: "One Piece Void Century Theory Breakdown",
+    desc: "What happened during the 100 years the World Government erased? Everything we know and can deduce.",
+    readTime: "14 min read",
+    wordCount: "~2,800 words",
+    tldr: "The Void Century (800-900 years ago) saw the Ancient Kingdom — a technologically advanced, D-clan civilization — wage war against the Twenty Kingdoms alliance. The Ancient Kingdom lost, the World Government formed, and all records were erased. The Poneglyphs are their final message. Joy Boy made a promise to the merfolk he couldn't keep. The One Piece is likely the full truth of this history, meant to unite the world against the lies.",
+    sections: [
+      {
+        title: "What We Know For Certain",
+        content: "<p>Oda has confirmed these facts through the manga directly: The <span class='gold-term'>Void Century</span> spans exactly 100 years, roughly 800-900 years before the current story. During this period, the <span class='gold-term'>Twenty Kingdoms</span> (ancestors of today's World Nobles/Celestial Dragons) allied against a single opposing force. That force lost, and the Twenty Kingdoms established the World Government.</p><p>The winners then did something unprecedented: they <span class='gold-term'>erased all historical records</span> of those 100 years. Researching it is punishable by death (Ohara's Buster Call). The only surviving records are the <span class='gold-term'>Poneglyphs</span> — indestructible stone tablets written in an ancient language, scattered across the world by the losing side as a final act of preservation.</p><p>The <span class='gold-term'>Ancient Weapons</span> (Pluton, Poseidon, Uranus) existed during this era. Joy Boy was a key figure who made a promise to Fish-Man Island that he failed to keep. The 'D' initial carried by certain bloodlines is connected to the Ancient Kingdom. And Laugh Tale — the final island — contains the full truth, which made Roger's crew laugh.</p>"
+      },
+      {
+        title: "The Ancient Kingdom: Reconstructing a Lost Civilization",
+        content: "<p>From scattered evidence across 1000+ chapters, we can reconstruct the <span class='gold-term'>Ancient Kingdom's</span> nature: They possessed technology far beyond current One Piece standards. The Pluton blueprints (kept in Water 7 for centuries) show warship engineering that modern shipwrights can barely comprehend. The ability to inscribe Poneglyphs on indestructible material suggests material science beyond anything existing.</p><p>The kingdom valued <span class='gold-term'>freedom and connection</span> between races. Joy Boy's promise to the merfolk, the kingdom's apparent alliance with multiple races (giants, fishmen, minks, skypieans), and the 'D' carriers' consistent personality trait of valuing freedom all point to an ideology of liberation and unity.</p><p>Their flag likely bore the same symbol as the <span class='gold-term'>Sun Pirates' jolly roger</span> — a sun. Fisher Tiger unknowingly recreated an ancient symbol of freedom. The kingdom's name may be the word 'D' itself stands for — <span class='gold-term'>Dawn</span>. They were the kingdom of Dawn, and the 'Will of D' is literally the will to bring dawn (freedom/truth) back to the world.</p><p>Geographically, the kingdom likely existed where <span class='gold-term'>Mary Geoise</span> now stands. The World Government built their seat of power directly atop the ruins of their enemy — both as a statement and to hide evidence. The National Treasure that Im-sama guards in the Pangaea Castle may be a remnant of this kingdom.</p>"
+      },
+      {
+        title: "The War: Why The Ancient Kingdom Lost",
+        content: "<p>The Ancient Kingdom had superior technology (Ancient Weapons), allied races (giants, fishmen, minks), and what appears to be the <span class='gold-term'>power of the Nika fruit</span> on their side. So why did they lose? The answer lies in their ideology versus their enemies' tactics.</p><p>The Twenty Kingdoms coalition won through <span class='gold-term'>numbers, betrayal, and willingness to commit atrocity</span>. The Ancient Kingdom's strength was also its weakness: they valued all life and freedom. They wouldn't use the Ancient Weapons to their full, genocidal potential. The Twenty Kingdoms had no such restraint.</p><p>Evidence suggests <span class='gold-term'>internal betrayal</span> played a role. The Nefertari family (Vivi's ancestors) were among the Twenty Kingdoms but refused to ascend to Mary Geoise afterward — suggesting they defected mid-war or were originally allied with the Ancient Kingdom before being forced to switch sides.</p><p>Joy Boy's 'failure' wasn't military — it was a <span class='gold-term'>promise of evacuation</span> he couldn't fulfill. He promised to raise Fish-Man Island to the surface (Noah's purpose), reuniting fishmen with the surface world. The war's outcome prevented this. His apology, written on the Poneglyph in Fish-Man Island, is an apology for failing to keep that specific promise before the kingdom fell.</p>"
+      },
+      {
+        title: "The One Piece: What's On Laugh Tale",
+        content: "<p>Roger found it and laughed. The crew named the island 'Laugh Tale' because of this reaction. This tells us the treasure is not purely material wealth, nor purely tragic history. It's something that, in context, is <span class='gold-term'>absurdly ironic or joyfully defiant</span>.</p><p>The leading theory supported by textual evidence: The One Piece is <span class='gold-term'>Joy Boy's message to the future</span> — the complete, unedited history of the Void Century combined with a plan to reunite the world. It probably includes the locations/activation methods for all Ancient Weapons, the truth about the World Government's founding lie, and Joy Boy's dream (the same dream Luffy, Roger, and Ace share — to throw the biggest party in the world where everyone is free).</p><p>Why Roger laughed: he arrived <span class='gold-term'>too early</span>. The plan requires specific conditions — Poseidon (a mermaid princess born once every few centuries) must be alive, and someone with the Nika fruit must reach Laugh Tale. Roger had neither. He was 'too early' for Joy Boy's grand plan. The absurdity of finding the answer to everything but being unable to act on it — that's the joke. That's why he laughed.</p><p>The 'One Piece' name itself is likely literal: the <span class='gold-term'>one piece of history</span> that connects everything, or the act of making the world 'one piece' again — reuniting the Red Line-divided world into a single connected ocean, destroying Mary Geoise, and fulfilling Joy Boy's promise to bring all races together.</p>"
+      },
+      {
+        title: "The Endgame: How It All Connects to Luffy",
+        content: "<p>Luffy is <span class='gold-term'>Joy Boy's successor</span> in every way that matters. The Nika fruit (Hito Hito no Mi Model: Nika) is literally the 'Warrior of Liberation' — the same power Joy Boy wielded. Luffy carries the 'D.' Luffy's dream (stated to Ace, Sabo, Roger's crew in flashback) mirrors Joy Boy's exactly.</p><p>The endgame is not Luffy 'defeating' the World Government through combat alone. It's Luffy <span class='gold-term'>completing Joy Boy's plan</span>: using the Ancient Weapons to destroy the Red Line (Pluton), raising Fish-Man Island to the surface using Noah (guided by Poseidon/Shirahoshi), and connecting all the world's oceans into the legendary <span class='gold-term'>All Blue</span> (Sanji's dream fulfilled as a byproduct).</p><p>Every Straw Hat's dream converges at this moment. The destruction of the Red Line creates the All Blue (Sanji). The revealed history is the Rio Poneglyph (Robin). The freed world is the greatest adventure (Luffy). The connected oceans are navigable only by the best (Nami). The cure-all is found in freed territories (Chopper). And the world's celebration is the song Bink's Sake promised — the story Brook must deliver.</p><p>Oda has been building to a single event where <span class='gold-term'>every character's dream is fulfilled simultaneously</span>. That's the genius of One Piece's structure. The One Piece isn't a treasure — it's a plan to fix the world. And only someone with Luffy's specific combination of power, will, and allies can execute it.</p>"
+      }
+    ]
+  },
+  {
+    id: "elden-ring-lore",
+    franchise: "Elden Ring / FromSoftware",
+    title: "Elden Ring Full Lore Explained: The Shattering → DLC",
+    desc: "The complete cosmology from the Greater Will's arrival to Miquella's gambit in the Land of Shadow.",
+    readTime: "15 min read",
+    wordCount: "~3,000 words",
+    tldr: "The Greater Will (an Outer God) sent the Elden Beast carrying the Elden Ring to the Lands Between, establishing the Golden Order through Queen Marika. When Marika shattered the Ring (for complex reasons involving her children's fates), her demigod offspring each claimed a shard, and the world descended into war. The DLC reveals Marika's dark past and her brother Messmer's hidden genocide.",
+    sections: [
+      {
+        title: "Before the Golden Order: The Age of the Crucible",
+        content: "<p>Before the <span class='gold-term'>Greater Will</span> imposed its order, the Lands Between existed in a state of primordial chaos — not evil chaos, but untamed life. The <span class='gold-term'>Crucible</span> was the original wellspring of all life, blending aspects of beast, plant, and dragon into single beings. Crucible Knights, with their tails and wings, are remnants of this era.</p><p>The indigenous people worshipped different forces: the <span class='gold-term'>Fire Giants</span> served the Fell God of flame. The <span class='gold-term'>Dragons</span> followed their own draconic god and were the dominant power. The <span class='gold-term'>Nox</span> civilization underground had their own cosmic patrons — the moon and stars (which connects to Ranni's later allegiance to the Dark Moon).</p><p>The Greater Will's arrival wasn't an invasion in the traditional sense. It sent a <span class='gold-term'>golden star</span> (the Elden Beast) crashing into the Lands Between. This star carried the Elden Ring — not a physical ring, but a conceptual framework, a <span class='gold-term'>set of laws governing reality itself</span>. Whoever served as its vessel could define the fundamental rules of existence: life, death, causality, order.</p>"
+      },
+      {
+        title: "Marika's Rise and the Golden Order",
+        content: "<p><span class='gold-term'>Queen Marika</span> was chosen (or chose herself) as the vessel of the Elden Ring — the Empyrean who would enforce the Greater Will's order. But Marika was no puppet. She was a Numen (an ancient race), ambitious, calculating, and willing to reshape divine law to suit her vision.</p><p>Her first act: establishing the <span class='gold-term'>Golden Order</span>, a religion/government/cosmic law that defined reality through the Erdtree's grace. The Erdtree (a parasitic replacement of the original Greattree) channeled souls into a cycle of rebirth that Marika controlled. Death was removed from the Elden Ring by sealing <span class='gold-term'>Destined Death</span> within Maliketh (Marika's shadow-bound beast). This meant Marika's order was literally undying — no one within it could truly die.</p><p>The political consolidation was brutal. Marika warred against the Fire Giants (nearly exterminating them), subjugated the dragons, drove the Nox underground, and persecuted anyone worshipping Outer Gods besides the Greater Will. Her champion in these campaigns was <span class='gold-term'>Godfrey</span>, first Elden Lord, a brutal warrior whose lion-companion Serosh suppressed his bloodlust.</p>"
+      },
+      {
+        title: "The Shattering: Marika's Gambit",
+        content: "<p>The <span class='gold-term'>Shattering</span> is the central event of Elden Ring's story, and its cause is Marika's most complex decision. On the surface: Marika shattered the Elden Ring, breaking divine law, and the resulting shards (Great Runes) were claimed by her demigod children who then warred over them. But why?</p><p>The trigger was the <span class='gold-term'>Night of the Black Knives</span> — the assassination of Godwyn the Golden (Marika's firstborn son) using a fragment of stolen Destined Death. Godwyn's soul died but his body lived, creating the first 'Those Who Live in Death.' This broke Marika's most fundamental law (no death) and corrupted her son into a spreading undead plague beneath the Erdtree's roots.</p><p>Marika's response was calculated rage. She shattered the Ring not in despair, but as <span class='gold-term'>rebellion against the Greater Will</span>. The Greater Will's order had failed her son. Its perfect system allowed this corruption. By shattering the Ring, she simultaneously punished the system, distributed power away from a single controlling entity, and — critically — created the conditions for a <span class='gold-term'>Tarnished</span> champion to eventually reforge reality according to a new vision.</p><p>This is why the Greater Will imprisoned her within the Erdtree and her own other half (Radagon) was tasked with trying to repair the Ring. Marika wanted it broken. Radagon wanted it whole. They are the same body at war with itself — the ultimate metaphor for a god in conflict with their own divine mandate.</p>"
+      },
+      {
+        title: "The Demigods and Their Shards",
+        content: "<p>Each demigod who claimed a <span class='gold-term'>Great Rune</span> (shard of the Elden Ring) was corrupted by it in ways that reflect their character:</p><p><span class='gold-term'>Godrick</span> — obsessed with lineage, used his rune to graft others' limbs onto himself, seeking greatness through accumulation. <span class='gold-term'>Rennala</span> — given the Rune of the Unborn by Ranni, she retreated into madness, endlessly rebirthing students into imperfect forms. <span class='gold-term'>Radahn</span> — the strongest demigod, whose rune enhanced his gravity magic until he literally held back the stars; reduced to a feral beast by Scarlet Rot but still fighting. <span class='gold-term'>Morgott</span> — the Omen King, cursed by birth but the most loyal to the Golden Order; his rune was the Blessing of the Erdtree itself. <span class='gold-term'>Rykard</span> — fed himself to the God-Devouring Serpent, using his rune to fuel an endless cycle of consumption. <span class='gold-term'>Malenia</span> — bearer of Scarlet Rot (a different Outer God's curse), her rune was an angel wing of decay, embodying the paradox of devastating power trapped in a suffering body. <span class='gold-term'>Mohg</span> — stole the slumbering Miquella to create a rival dynasty of blood.</p>"
+      },
+      {
+        title: "Shadow of the Erdtree: Marika's Hidden Sin",
+        content: "<p>The DLC reveals <span class='gold-term'>the Land of Shadow</span> — a realm sealed away by Marika, invisible to the Lands Between. It contains her greatest secret: before the Golden Order's golden age, Marika conducted a <span class='gold-term'>genocide</span>. The Hornsent people (who once tormented her) were exterminated by her hidden son, <span class='gold-term'>Messmer the Impaler</span>.</p><p>Messmer is Marika's child who predates her ascension. She hid him in the Land of Shadow, tasking him with burning the Hornsent civilization to the ground. His loyalty was absolute, but the act corrupted him — <span class='gold-term'>fell flame</span> consumed his being, and he became a figure of tragic devotion, carrying out atrocities for a mother who then sealed him away to hide the evidence.</p><p>Miquella's journey into the Land of Shadow is the DLC's driving force. The most beloved demigod <span class='gold-term'>shed his love, his empathy, and his physical form</span> to become something capable of creating a new order — one beyond the Greater Will, beyond all Outer Gods. His gambit: to become a god through sacrifice of everything that made him good, creating an order of 'gentle companionship' that is functionally mind control. The player must decide whether a benevolent dictatorship of manufactured love is better than the broken freedom of the current world.</p><p>The Land of Shadow recontextualizes Marika entirely. She wasn't just a victim who rebelled against the Greater Will — she was also a <span class='gold-term'>conqueror who committed atrocities</span> to build her empire, then hid the evidence. The Golden Order was built on genocide. Every god in this world is flawed. That's FromSoftware's thesis: divinity doesn't equal morality.</p>"
+      }
+    ]
+  },
+  {
+    id: "star-wars-order66",
+    franchise: "Star Wars",
+    title: "Order 66 — Every Survivor's Fate",
+    desc: "A complete accounting of every Jedi who survived the Purge and what happened to them after.",
+    readTime: "10 min read",
+    wordCount: "~2,000 words",
+    tldr: "Of approximately 10,000 Jedi at the Order's peak, roughly 100-200 survived Order 66 initially. Most were hunted down by Inquisitors within the first few years. By the time of the Original Trilogy, fewer than a dozen confirmed survivors remain in hiding. Each survivor's story is one of trauma, adaptation, and the question: keep fighting or disappear?",
+    sections: [
+      {
+        title: "The Immediate Aftermath",
+        content: "<p><span class='gold-term'>Order 66</span> was executed in 19 BBY, simultaneously across the entire galaxy. Clone troopers received the order and turned on their Jedi commanders mid-battle. The genius of Palpatine's plan was its simplicity: the clones didn't choose this. The inhibitor chips made it neurological — not a betrayal of friendship, but an override of free will.</p><p>At the Jedi Temple on Coruscant, <span class='gold-term'>Anakin Skywalker</span> (now Darth Vader) led the 501st Legion in slaughtering everyone within — including younglings, padawans, temple guards, and librarians. The Temple's distress beacon was altered to broadcast a message calling all surviving Jedi home — a trap that Obi-Wan and Yoda barely avoided and then reversed.</p><p>In the immediate hours, the survival rate depended on three factors: distance from clone troopers at the moment of execution, awareness that something was wrong (Force sensitivity helped), and access to a ship or hiding place. Jedi on the front lines died fastest. Those on solo missions, remote postings, or who had already distanced themselves from the Order fared better.</p>"
+      },
+      {
+        title: "The Confirmed Survivors — Tier 1: Major Canon",
+        content: "<p><span class='gold-term'>Obi-Wan Kenobi</span> — Survived on Utapau (shot by clones, fell into water), fled to Tatooine to watch over Luke. Spent 19 years in exile as 'Ben,' occasionally intervening to protect Luke. Died confronting Vader on the Death Star. <span class='gold-term'>Yoda</span> — Sensed the betrayal on Kashyyyk, escaped with Wookiee help, failed to defeat Palpatine in the Senate, exiled himself to Dagobah for 23 years. Died of old age training Luke.</p><p><span class='gold-term'>Ahsoka Tano</span> — Had already left the Jedi Order (technically not a Jedi during 66), but was targeted anyway. Survived alongside Rex (whose chip was removed). Faked her death, went into hiding, later became 'Fulcrum' intelligence operative for the Rebellion, fought Vader, was saved by Ezra through the World Between Worlds, and continues operating through the New Republic era.</p><p><span class='gold-term'>Kanan Jarrus (Caleb Dume)</span> — A padawan whose master (Depa Billaba) shielded him during Order 66. Spent years hiding his identity, suppressing his Force abilities, and drifting as a smuggler before re-embracing his Jedi identity with the Ghost crew. Died heroically saving his crew on Lothal.</p><p><span class='gold-term'>Cal Kestis</span> — Another surviving padawan who hid as a scrapper on Bracca. Reawakened his powers, evaded Inquisitors, and became an active rebel operative. His story continues through the Jedi: Survivor era.</p>"
+      },
+      {
+        title: "The Confirmed Survivors — Tier 2: Deep Canon",
+        content: "<p><span class='gold-term'>Cere Junda</span> — Cal's mentor figure, a Jedi Knight who cut herself off from the Force after being tortured and inadvertently leading the Empire to hidden younglings. Reconnected with the Force, became a Jedi Master, and died confronting Vader directly to buy Cal time. <span class='gold-term'>Quinlan Vos</span> — A Jedi known for walking the dark side's edge. Confirmed survived Order 66 (referenced in Obi-Wan show). His post-Order 66 activities remain largely unexplored but he's confirmed alive and helping hidden Force-sensitives.</p><p><span class='gold-term'>Naq Med</span> — Survived in the Unknown Regions, went completely off-grid. <span class='gold-term'>Oppo Rancisis</span> — Council member who survived initially but was eventually hunted down by Vader. <span class='gold-term'>Coleman Kcaj</span> — Council member confirmed survived 66, fate afterward unknown. <span class='gold-term'>Jocasta Nu</span> — The Jedi librarian survived the Temple assault, attempted to preserve Jedi knowledge, and was killed by Vader when she tried to access the Temple archives one final time.</p><p><span class='gold-term'>Luminara Unduli</span> — Survived 66 but was captured, not killed. The Empire kept her alive in a prison, using her Force presence as bait to lure other surviving Jedi. She was eventually executed, and her bones were used as a continued lure (encountered by the Ghost crew in Rebels).</p>"
+      },
+      {
+        title: "The Inquisitorius: Hunting the Survivors",
+        content: "<p>Palpatine didn't rely on Vader alone to finish the purge. He created the <span class='gold-term'>Inquisitorius</span> — a cadre of dark-side wielders, all former Jedi who fell or were tortured into submission. Led by the Grand Inquisitor (a former Temple Guard), they were trained to hunt and kill Force-sensitives.</p><p>Key Inquisitors: The <span class='gold-term'>Grand Inquisitor</span> (Pau'an Temple Guard), <span class='gold-term'>Second Sister</span> (Trilla Suduri, Cere's former padawan — tortured into serving), <span class='gold-term'>Third Sister</span> (Reva Sevander, a youngling who survived the Temple massacre by playing dead and infiltrated the Inquisitors seeking revenge on Vader), <span class='gold-term'>Fifth Brother</span>, <span class='gold-term'>Seventh Sister</span>, <span class='gold-term'>Ninth Sister</span>.</p><p>The Inquisitors were deliberately kept weak compared to Vader — Palpatine ensured none could challenge his apprentice. Their lightsabers' spinning feature was designed for intimidation against weakened, traumatized survivors rather than dueling at full Jedi Knight capacity. They were effective against padawans and isolated knights, but struggled against masters or coordinated resistance.</p>"
+      },
+      {
+        title: "Legacy: What the Survivors Preserved",
+        content: "<p>The survivors of Order 66 collectively ensured the Jedi's <span class='gold-term'>knowledge and philosophy</span> wasn't completely extinguished. Obi-Wan and Yoda trained Luke. Ahsoka preserved operational knowledge and Clone Wars-era tactics. Kanan trained Ezra. Cal preserved a Holocron of Force-sensitive children (though he destroyed it to protect them).</p><p>But they also passed on <span class='gold-term'>trauma</span>. Luke's training was rushed and incomplete because his teachers were broken men. The sequel trilogy's Jedi problems stem directly from Order 66's survivors teaching from a place of fear and loss rather than the full tradition. Ben Solo's fall echoes this — trained by a Luke who inherited the paranoia of masters who'd watched their entire order murdered.</p><p>The philosophical question Order 66 raises in canon: was the <span class='gold-term'>Jedi Order's structure</span> itself part of the problem? Their rigidity, their political entanglement, their suppression of attachment — did these create the conditions for their destruction? Survivors like Ahsoka (who left the Order) and Kanan (who embraced love and attachment) suggest that surviving required abandoning orthodox Jedi doctrine. The future of the Jedi, whatever form it takes, will be shaped by survivors who learned that the old way was unsustainable.</p>"
+      }
+    ]
+  },
+  {
+    id: "dragon-ball-power-scaling",
+    franchise: "Dragon Ball",
+    title: "Dragon Ball Power Scaling: Why It Actually Makes Sense",
+    desc: "A defense of DB's scaling system. It's not broken — you're just reading it wrong.",
+    readTime: "9 min read",
+    wordCount: "~1,800 words",
+    tldr: "Dragon Ball power scaling works if you accept three rules: 1) Ki control matters more than raw power, 2) Transformations are multipliers on a base that's always growing, 3) The series tracks martial arts skill separately from energy output. Most 'plot holes' dissolve when you stop treating power levels as the only metric.",
+    sections: [
+      {
+        title: "The Misconception: Power Levels Are Not The System",
+        content: "<p>Here's what most people get wrong: they think <span class='gold-term'>power levels</span> ARE Dragon Ball's scaling system. They're not. Power levels were a narrative device Toriyama introduced specifically to <span class='gold-term'>discredit</span> them. Vegeta's 'It's over 9000!' moment wasn't establishing a measurement system — it was showing a character who relied too heavily on numbers getting beaten by someone whose power fluctuated with emotion and technique.</p><p>After the Frieza Saga, scouters (and by extension, fixed power levels) are explicitly abandoned. Characters stop quantifying power numerically because Toriyama is telling you: <span class='gold-term'>the numbers don't capture what actually determines fights</span>. Ki sensing replaces scouters precisely because it gives qualitative, contextual information rather than a single misleading number.</p><p>The actual scaling system in Dragon Ball is multidimensional: raw energy output (what scouters measure), <span class='gold-term'>ki control efficiency</span> (how much of your power you can deploy at will), technique/martial arts skill, battle IQ and adaptability, transformation multipliers, and stamina/ki reserves. A fighter with lower raw power can win if they're superior in other dimensions.</p>"
+      },
+      {
+        title: "Ki Control: The Hidden Variable",
+        content: "<p><span class='gold-term'>Ki control</span> is Dragon Ball's most overlooked scaling factor. It explains nearly every 'plot hole' fans complain about. The concept: raw power is meaningless if you can't control it efficiently. Goku's mastery of ki control is what actually makes him the strongest, not his base power level.</p><p>Examples: <span class='gold-term'>Super Saiyan Grade 3</span> (Ultra Trunks) had higher raw power than Cell but lost because the form sacrificed speed and ki efficiency for bulk. Cell recognized this instantly — power without control is useless. Goku and Gohan's strategy of mastering base Super Saiyan (making it feel 'natural') was superior because it maintained full ki efficiency at a high power output.</p><p><span class='gold-term'>Ultra Instinct</span> is the ultimate expression of this: it's not a power boost (initially), it's perfect ki control — the body reacts with exactly the necessary force, zero waste, zero thought. It's Toriyama's thesis statement on what 'strength' means in Dragon Ball: not the biggest blast, but the most efficient application of available power.</p><p>This also explains why Krillin can still meaningfully participate in combat despite being astronomically weaker in raw terms — his <span class='gold-term'>ki manipulation techniques</span> (Destructo Disc, Solar Flare) bypass power differentials through precision and cleverness. Technique > raw power is a consistent Dragon Ball theme.</p>"
+      },
+      {
+        title: "Transformations: Multipliers, Not Replacements",
+        content: "<p>Every transformation in Dragon Ball operates as a <span class='gold-term'>multiplier on base power</span>. This is critical for understanding scaling across arcs. When Goku trains and increases his base power from 100 to 1,000, every transformation built on that base increases proportionally.</p><p>The known multipliers (stated or derived): <span class='gold-term'>Super Saiyan</span> = 50x base. <span class='gold-term'>SS2</span> = 2x SS1 (100x base). <span class='gold-term'>SS3</span> = 4x SS2 (400x base). <span class='gold-term'>Super Saiyan God</span> = ???x (massive jump, possibly 10,000x+ base given it rivals universe-busting Beerus). <span class='gold-term'>Super Saiyan Blue</span> = SS1 multiplier applied to God ki (50x SSG). <span class='gold-term'>Ultra Instinct</span> = not a multiplier but an efficiency state that makes any form approach 100% output.</p><p>This multiplicative system explains why early enemies become trivial later without it being a 'plot hole.' Frieza at his peak (~120 million power level) would be insignificant against Namek Saga SSJ Goku grown to current base levels, because Goku's base has been multiplied thousands of times over through decades of training and transformations stacking on an ever-growing foundation.</p>"
+      },
+      {
+        title: "Why 'Inconsistencies' Aren't Inconsistencies",
+        content: "<p>Common complaint: 'If Goku is universal level, why does he struggle with bullets/get hurt by a rock?' Answer: <span class='gold-term'>ki reinforcement is active, not passive</span>. Dragon Ball characters aren't inherently invulnerable — they reinforce their bodies with ki. When their guard is down (sleeping, relaxed, caught off-guard), their durability drops to near-human levels. This is explicitly stated multiple times in the manga.</p><p>Goku getting hurt by a laser in Super wasn't a plot hole — he had <span class='gold-term'>actively powered down and dropped his guard</span>. Frieza's soldier caught him completely off-guard. Whis specifically lectures him about this. It's not inconsistent — it's the established system working as described.</p><p>Common complaint: 'Why can't planet-busters destroy planets in every fight?' Answer: <span class='gold-term'>ki control and directionality</span>. Fighters focus their energy into directed attacks at opponents, not omnidirectional explosions. Goku vs. Beerus's clash waves that threatened the universe? They learned to <span class='gold-term'>nullify the excess energy</span> mid-fight, directing only what was needed at each other. This isn't convenient writing — it's the ki control system demonstrating mastery.</p><p>The Battle of Gods arc explicitly addresses universal-scale power: Goku and Beerus punching each other creates shockwaves that ripple outward, threatening to destroy everything. Goku then figures out how to <span class='gold-term'>match the angle and force precisely</span> to cancel the destructive waves while maintaining combat power. This is the series telling you directly: control, not output, defines strength at the highest levels.</p>"
+      },
+      {
+        title: "The Grand Unified Theory: Toriyama's Intent",
+        content: "<p>Toriyama's consistent message across all of Dragon Ball is this: <span class='gold-term'>obsessing over numerical power is the villain's mistake</span>. Frieza, Cell, Buu (initially), Jiren — they all believed in raw supremacy. The heroes win through adaptability, creativity, bonds, and efficiency. The power scaling 'makes sense' because it's not trying to be a video game stat sheet.</p><p>Dragon Ball is a <span class='gold-term'>martial arts story</span> wearing science fiction clothing. In martial arts, a smaller fighter beats a larger one through technique. A tired fighter loses to a fresh one. A predictable fighter loses to an adaptable one. Dragon Ball applies these martial arts truths at cosmic scale — the fundamentals don't change just because the numbers get bigger.</p><p>The Daima series reinforces this perfectly: de-aged Goku at lower power than his adult form still wins fights through <span class='gold-term'>experience, technique, and battle IQ</span>. The series hasn't forgotten its thesis. It's fans who've been misreading it by treating scouter numbers as gospel instead of recognizing them as the villains' flawed framework from day one.</p>"
+      }
+    ]
+  },
+  {
+    id: "witcher-timeline",
+    franchise: "The Witcher",
+    title: "The Witcher Timeline: Books vs Show vs Games",
+    desc: "Three canons, three timelines, one Geralt. Here's how they connect (and where they don't).",
+    readTime: "11 min read",
+    wordCount: "~2,200 words",
+    tldr: "The books are the original canon. The games are a non-canon sequel to the books. The Netflix show is a loose adaptation of the books with major deviations. They share characters and lore but diverge significantly in plot, characterization, and timeline. Treat them as three parallel interpretations rather than one continuous story.",
+    sections: [
+      {
+        title: "The Book Timeline: Sapkowski's Canon",
+        content: "<p>The <span class='gold-term'>book canon</span> consists of two short story collections (The Last Wish, Sword of Destiny) and five novels (Blood of Elves through The Lady of the Lake), plus a prequel (Season of Storms). The timeline spans roughly 1248-1268 in the Witcher calendar.</p><p>Key events in order: Geralt meets Yennefer at a banquet gone wrong (The Last Wish). Geralt invokes the Law of Surprise and 'claims' Ciri by destiny (Sword of Destiny). The Nilfgaardian Empire invades the Northern Kingdoms, triggering the main saga. Geralt takes Ciri to Kaer Morhen for Witcher training, then to Yennefer for magical education. The Lodge of Sorceresses attempts to control Ciri for her Elder Blood. Ciri bounces between worlds, timelines, and captors. The saga climaxes at <span class='gold-term'>Stygga Castle</span> and a pogrom in Rivia where Geralt 'dies' — impaled by a pitchfork during a riot.</p><p>The books end ambiguously: Geralt and Yennefer may be dead, transported to an afterlife, or healed by Ciri's Elder Blood powers. Sapkowski intentionally left it open. This ambiguity is what allowed CD Projekt Red to create their sequel games.</p>"
+      },
+      {
+        title: "The Game Timeline: CDPR's Continuation",
+        content: "<p>CD Projekt Red's trilogy begins approximately <span class='gold-term'>5 years after the books end</span>, treating the ambiguous ending as 'Geralt survived but lost his memory.' This is non-canon to Sapkowski (he's stated the games aren't part of his story), but they're internally consistent and respectful of book lore.</p><p><span class='gold-term'>The Witcher 1</span> (2007): Amnesiac Geralt returns to Kaer Morhen, deals with political intrigue in Temeria, and slowly recovers fragments of memory. <span class='gold-term'>The Witcher 2: Assassins of Kings</span> (2011): Geralt is accused of assassinating kings, navigates Northern Kingdom politics, and confronts the Wild Hunt's machinations. <span class='gold-term'>The Witcher 3: Wild Hunt</span> (2015): Geralt searches for Ciri (who has returned from her dimension-hopping), confronts the Wild Hunt, and gets multiple possible endings based on player choice.</p><p>The games add significant lore that doesn't exist in books: expanded Skellige culture, deeper Wild Hunt mythology, Gaunter O'Dimm (a god-level entity), the Hearts of Stone and Blood and Wine expansions' storylines. None of this contradicts the books — it extends into territory Sapkowski didn't cover.</p>"
+      },
+      {
+        title: "The Show Timeline: Netflix's Adaptation",
+        content: "<p>The Netflix show <span class='gold-term'>began as a book adaptation</span> but progressively diverged, especially after Henry Cavill's departure. Season 1 adapted short stories with a multi-timeline structure. Season 2 heavily modified Blood of Elves. Season 3 loosely covered Time of Contempt. Seasons 4-5 (with Liam Hemsworth) continue diverging.</p><p>Major deviations from books: <span class='gold-term'>Yennefer's backstory</span> is massively expanded (and changed — her sacrifice of fertility is reversed, contradicting a core book theme). <span class='gold-term'>Cahir</span> is reimagined as more sympathetic earlier. <span class='gold-term'>Eskel</span> is killed in Season 2 (alive much longer in books). The Voleth Meir plot is entirely show-original. Ciri's characterization shifts significantly — more active fighter, less political chess piece.</p><p>The show's timeline is the most compressed: events that span years in books happen in weeks or months. This creates pacing issues where character development feels rushed and political situations escalate unnaturally fast. The multi-timeline structure of Season 1 (which confused many viewers) was the show's most ambitious structural choice, though it was abandoned afterward.</p>"
+      },
+      {
+        title: "Where They Contradict Each Other",
+        content: "<p><span class='gold-term'>Geralt's Character</span>: Book Geralt is verbose, philosophical, and emotionally complex — he talks constantly and uses deflection humor. Game Geralt captures this well through dialogue choices. Show Geralt (Cavill era) was reduced to grunts and 'Hmm' — a simplification that became iconic but isn't book-accurate. </p><p><span class='gold-term'>Yennefer's Agency</span>: In books, Yen is already powerful and established when we meet her — her trauma is backstory that informs but doesn't define her. The show made her origin story a central plot, rewriting her journey to power. The games treat her as book-established but give her less screen time than Triss (a gameplay decision that caused fan-division).</p><p><span class='gold-term'>The Wild Hunt</span>: Books treat them as Aen Elle (elves from another dimension) who want Ciri's Elder Blood for conquest. Games expand this into a full apocalyptic threat. The show has only begun introducing them. The threat level differs dramatically: books = dangerous raiders, games = extinction-level threat, show = TBD.</p><p><span class='gold-term'>Magic System</span>: Books have a relatively grounded magic system with clear costs. Games gamify it into Signs (simplified combat magic) plus full spells. The show's magic is visually spectacular but inconsistent in rules — what magic can and can't do changes based on plot needs.</p>"
+      },
+      {
+        title: "How to Experience Them: A Recommendation",
+        content: "<p>The ideal order for a complete Witcher experience: <span class='gold-term'>Books first</span> (The Last Wish → Sword of Destiny → Blood of Elves → Time of Contempt → Baptism of Fire → Tower of the Swallow → Lady of the Lake → Season of Storms). This gives you the 'true' canon and the deepest characterization.</p><p>Then <span class='gold-term'>games</span> (Witcher 3 alone is fine if you don't want to play dated earlier titles — the journal catches you up). The games are the most satisfying 'ending' to Geralt's story because you choose it yourself. Blood and Wine is widely considered the perfect send-off.</p><p>The show is <span class='gold-term'>optional and separate</span>. Watch it as its own thing — an alternate universe interpretation. If you go in expecting book accuracy, you'll be frustrated. If you accept it as 'inspired by' rather than 'adaptation of,' it's an entertaining dark fantasy show with excellent production design and a perfect casting of Jaskier/Dandelion.</p><p>The key insight: these are <span class='gold-term'>three parallel universes sharing DNA</span>, not one continuous canon. Enjoy each on its own terms. The books are literature. The games are interactive storytelling at its peak. The show is mainstream entertainment. None invalidates the others.</p>"
+      }
+    ]
+  },
+  {
+    id: "jojo-stand-tier",
+    franchise: "JoJo's Bizarre Adventure",
+    title: "JoJo's Bizarre Adventure Stand Tier List (With Logic)",
+    desc: "Every major Stand ranked not by 'cool factor' but by actual combat utility and versatility.",
+    readTime: "10 min read",
+    wordCount: "~2,000 words",
+    tldr: "Stands are ranked by three metrics: raw power ceiling, versatility of application, and exploitability (weaknesses that can be countered). Time-manipulation Stands dominate the top tier, but 'broken' utility Stands like Gold Experience Requiem and D4C Love Train are arguably higher because they have no counter. The 'strongest' Stand depends entirely on matchup and user intelligence.",
+    sections: [
+      {
+        title: "The Tier System: How We're Ranking",
+        content: "<p>Most Stand tier lists rank by 'who beats who' in a direct fight. This is <span class='gold-term'>fundamentally flawed</span> for JoJo because the series explicitly shows that matchup, intelligence, and creativity matter more than raw stats. Instead, we rank by three weighted criteria:</p><p><span class='gold-term'>Power Ceiling</span> (30% weight): What's the maximum this Stand can achieve under optimal conditions? This accounts for raw destructive ability, speed, and range at their peak. <span class='gold-term'>Versatility</span> (40% weight): How many different situations can this Stand meaningfully address? A Stand that only punches hard ranks lower than one that can adapt to multiple scenarios. <span class='gold-term'>Exploitability</span> (30% weight): How easily can the Stand's weaknesses be targeted? A Stand with an obvious counter drops in ranking regardless of power.</p><p>This system means <span class='gold-term'>Star Platinum</span> (incredible power ceiling, moderate versatility, low exploitability) ranks differently than <span class='gold-term'>Heaven's Door</span> (lower power ceiling, extreme versatility, moderate exploitability). Neither is 'better' — they excel in different situations.</p>"
+      },
+      {
+        title: "God Tier: Reality Warpers",
+        content: "<p><span class='gold-term'>Gold Experience Requiem (GER)</span> — The undisputed #1 by our metrics. Infinite power ceiling (negates any action, returns attacks to 'zero'), perfect versatility (works against ANY ability regardless of type), and zero exploitability (there is no known counter — it activates automatically even if Giorno is unaware). The only 'weakness' is that Araki wrote himself into a corner and mostly retired it.</p><p><span class='gold-term'>Made in Heaven</span> — Pucci's final Stand accelerates time toward universal reset. Power ceiling is literally 'destroy and remake reality.' Versatility is limited (it does one thing, but that one thing is omnipotent). Exploitability exists — it requires build-up time and Pucci himself isn't physically enhanced proportionally, meaning a fast enough attacker could kill him during acceleration. But if it completes... game over.</p><p><span class='gold-term'>D4C Love Train</span> — Valentine's Stand with Love Train active is nearly invincible: all misfortune is redirected to random people elsewhere in the world. The 'gap between dimensions' makes him untouchable except by specific holy relics (the Corpse Parts or their equivalents). Effectively immortal until a very specific counter is found.</p><p><span class='gold-term'>Tusk Act 4</span> — Infinite rotation bypasses all dimensional barriers, cannot be stopped by conventional means, and the damage is permanent and irremovable. However, it requires horseback momentum to activate, making it situationally dependent. Still god tier because when conditions are met, nothing stops it.</p>"
+      },
+      {
+        title: "S-Tier: Time Manipulators & Unbeatable Gimmicks",
+        content: "<p><span class='gold-term'>Star Platinum: The World</span> — Time stop is inherently overpowered. 5 seconds of frozen time against an opponent who can't react is nearly unbeatable in direct combat. Combined with Star Platinum's A-rank stats in everything, Jotaro is a walking delete button for most Stand users. Ranked below God Tier only because time stop has a duration limit and Jotaro can be overwhelmed by abilities that don't require time to activate.</p><p><span class='gold-term'>The World (DIO)</span> — Same ability, longer duration (up to 9-11 seconds), but DIO's vampiric overconfidence is an exploitable weakness. Functionally identical to Star Platinum in capability but DIO's ego makes him use it less efficiently than Jotaro's surgical precision.</p><p><span class='gold-term'>King Crimson + Epitaph</span> — Time erasure is conceptually different from time stop: Diavolo erases cause while keeping effect, making him impossible to hit during activation. Combined with Epitaph's 10-second future vision, he essentially can't lose any conventional fight. Exploitability: GER specifically counters him, and his ability requires him to actively trigger it (can be caught off-guard).</p><p><span class='gold-term'>Killer Queen: Bites the Dust</span> — A time loop that automatically kills anyone who investigates Kira, rewinding an hour each time. Effectively makes Kira un-findable and un-catchable once active. Weakness: requires a specific non-Stand-user host and Kira can't use other Killer Queen abilities simultaneously.</p>"
+      },
+      {
+        title: "A-Tier: Extremely Dangerous With Conditions",
+        content: "<p><span class='gold-term'>Heaven's Door</span> — Rohan can write commands into anyone's 'pages,' including 'cannot attack me' or 'will fly backward at 70 mph.' Versatility is near-infinite. Weakness: requires the target to see Rohan's manga or be within touching distance. Any speed-type Stand that blitzes before Heaven's Door activates wins. But if Rohan gets his opening — nearly any opponent loses instantly.</p><p><span class='gold-term'>Cream</span> — Vanilla Ice's Stand creates a void-sphere that erases anything it touches from existence. No defense works against erasure. Weakness: while inside the void, Vanilla Ice is blind. Predictable movement patterns can be exploited by intelligent opponents (as Polnareff demonstrated).</p><p><span class='gold-term'>The Hand</span> — Okuyasu's Stand erases space with a swipe. Conceptually S-tier (erasing space is unblockable). Ranked A because Okuyasu is canonically too stupid to use it effectively. In the hands of a genius, this Stand would be terrifying. As-is, it's held back by its user — a rare case where user intelligence directly caps the Stand's tier.</p><p><span class='gold-term'>Sticky Fingers</span> — Bruno's zipper ability is deceptively versatile: dismember opponents, create portals in any surface, detach his own body parts for evasion, enter enclosed spaces. A-tier because it requires close range and a smart user (fortunately, Bruno IS that smart user). Against ranged Stands, it struggles to close distance.</p>"
+      },
+      {
+        title: "The Meta-Lesson: Why Tier Lists Miss the Point",
+        content: "<p>Here's the truth Araki has demonstrated across 8+ parts: <span class='gold-term'>the tier list is a lie</span>. JoJo's entire combat philosophy is that intelligence, creativity, and determination overcome raw power advantages. The 'weakest' Stand user who thinks creatively will defeat a 'stronger' Stand user who fights conventionally.</p><p><span class='gold-term'>Joseph Joestar</span> defeated immortal, perfect-being Kars with zero combat ability — just by being the luckiest, most adaptable fighter alive. Jolyne used Stone Free (a 'weak' string Stand) to defeat opponents with far more powerful abilities through sheer creativity. Gyro's Steel Ball Run isn't even a Stand for most of the part, yet he's one of the most dangerous fighters in the series.</p><p>Araki's thesis: <span class='gold-term'>there is no strongest Stand — only the strongest Stand USER in a given moment</span>. The Stand reflects the user's spirit. A determined, creative user makes any Stand S-tier. A lazy or arrogant user makes any Stand beatable. This is why JoJo remains engaging after decades — you can never predict a fight's outcome purely from comparing Stand stats, because the human element is the actual variable.</p><p>That said, GER is still busted. Some things are just objectively unfair. Araki knew it too — that's why Giorno sits out Parts 6-8. Even narrative can't overcome 'your attack literally cannot happen.'</p>"
+      }
+    ]
+  },
+  {
+    id: "demon-slayer-moons",
+    franchise: "Demon Slayer",
+    title: "Demon Slayer: The Full Moon Hierarchy Explained",
+    desc: "Upper and Lower Moons ranked, explained, and contextualized within Muzan's power structure.",
+    readTime: "8 min read",
+    wordCount: "~1,600 words",
+    tldr: "The Twelve Kizuki are Muzan's elite demons, split into Upper Moons (1-6, each worth hundreds of regular demons) and Lower Moons (1-6, dispensable fodder by comparison). Upper Moons haven't been killed in centuries. The gap between Upper and Lower isn't a ladder — it's a cliff. Each Upper Moon represents a unique philosophical corruption of human desire.",
+    sections: [
+      {
+        title: "The Structure: Muzan's Corporate Hierarchy",
+        content: "<p>Think of Muzan Kibutsuji as a <span class='gold-term'>CEO of destruction</span> — not a traditional villain but a corporate tyrant who delegates annihilation. The Twelve Kizuki (Demon Moons) are his executives, ranked by blood concentration and combat performance. Higher rank = more of Muzan's blood = exponentially more power.</p><p>The <span class='gold-term'>Lower Moons</span> (Lower 1 through Lower 6) are, bluntly, disposable. Muzan disbands them entirely after Rui's (Lower 5) defeat, slaughtering most in a meeting that demonstrates his core character: failure is death, regardless of loyalty or past service. Only Lower 1 (Enmu) survives by begging to be useful.</p><p>The <span class='gold-term'>Upper Moons</span> (Upper 6 through Upper 1) are a completely different category. No Upper Moon had been killed in over 100 years before the current generation of Demon Slayers. Each one is worth an army. The Hashira (elite slayers) consider killing a single Upper Moon a generational achievement. Understanding the gap between Upper and Lower is understanding the series' actual threat hierarchy.</p>"
+      },
+      {
+        title: "Upper Moons 6-4: The Outer Circle",
+        content: "<p><span class='gold-term'>Upper Moon 6: Gyutaro & Daki</span> — A sibling pair sharing one position. Daki operates as the visible threat (beautiful, arrogant, relatively beatable), while Gyutaro is the true Upper Moon hiding within her body. Their dynamic represents <span class='gold-term'>toxic codependence</span> — Gyutaro's resentment of the beautiful world that rejected him, Daki's dependency on her brother's protection. Defeated by Tanjiro, Uzui, Zenitsu, and Inosuke — requiring a full Hashira plus three talented juniors. Even then, Uzui nearly died.</p><p><span class='gold-term'>Upper Moon 5: Gyokko</span> — A potter demon who creates 'art' from mutilated bodies. Represents <span class='gold-term'>perverted creativity</span> — artistic talent twisted into grotesquerie. Defeated by Muichiro Tokito (Mist Hashira) solo after unlocking his Demon Slayer Mark. This is notable because solo Upper Moon kills are almost unheard of — it demonstrates Muichiro's prodigy status.</p><p><span class='gold-term'>Upper Moon 4: Hantengu</span> — An emotion demon who splits into multiple bodies, each representing a different emotion (joy, anger, sorrow, pleasure), while his true body hides at microscopic size. Represents <span class='gold-term'>avoiding responsibility</span> — he genuinely believes he's the victim in every situation, even while murdering. Required Tanjiro, Nezuko, Genya, and Mitsuri (Love Hashira) to defeat — and only Tanjiro's enhanced smell could locate the hidden true body.</p>"
+      },
+      {
+        title: "Upper Moons 3-1: The Inner Circle",
+        content: "<p><span class='gold-term'>Upper Moon 3: Akaza</span> — The martial artist demon. Formerly Hakuji, a human fighter who lost everything he loved and was turned by Muzan. Represents <span class='gold-term'>the tragedy of eternal stagnation</span> — he seeks strong opponents forever because fighting is all he has left. He killed Rengoku (Flame Hashira). Later defeated by Tanjiro and Giyu (Water Hashira) — but ultimately, Akaza defeated himself by choosing to stop regenerating once his human memories resurfaced. He's the most sympathetic Upper Moon, embodying Demon Slayer's thesis that demons are tragic figures, not pure evil.</p><p><span class='gold-term'>Upper Moon 2: Doma</span> — The cult leader demon who feels nothing. While most demons retain warped human emotions, Doma is a <span class='gold-term'>genuine sociopath</span> — born without the ability to feel, he founded a religion he doesn't believe in and eats his followers with a smile. He represents the horror of a being without empathy who mimics emotion perfectly. Defeated by Shinobu (Poison Hashira, who sacrificed herself), Kanao, and Inosuke. Shinobu's entire body was poison — she let herself be absorbed to destroy him from within.</p><p><span class='gold-term'>Upper Moon 1: Kokushibo</span> — Born Michikatsu Tsugikuni, the older twin brother of Yoriichi (the strongest Demon Slayer who ever lived). Became a demon out of <span class='gold-term'>jealousy</span> — unable to accept his brother's natural superiority, he chose immortality to continue growing stronger. After 400+ years, he's the closest any demon gets to Muzan's power. His Moon Breathing combines swordsmanship with demonic crescent-blade attacks. Required three Hashira (Muichiro, Sanemi, Gyomei) plus Genya to defeat — and even then, he nearly won.</p>"
+      },
+      {
+        title: "The Philosophical Pattern",
+        content: "<p>Each Upper Moon represents a <span class='gold-term'>human failing magnified to demonic extremes</span>: Gyutaro = resentment/envy. Gyokko = vanity/narcissism. Hantengu = cowardice/victimhood. Akaza = despair/inability to let go. Doma = apathy/emptiness. Kokushibo = jealousy/pride. This isn't accidental — it's Demon Slayer's core narrative structure.</p><p>The Demon Slayers who defeat each Moon must confront and overcome the <span class='gold-term'>corresponding human weakness</span> in themselves. Uzui overcomes his flashy ego to protect his wives (vs. Gyutaro's toxic love). Muichiro overcomes his emotional detachment (vs. Gyokko's false art). Tanjiro's unshakeable compassion exposes Hantengu's cowardice. Giyu overcomes survivor's guilt against Akaza. Shinobu transforms her hidden rage into calculated sacrifice against Doma. And the three Hashira against Kokushibo must all face their mortality and limitations — the very fear that drove Kokushibo to become a demon.</p><p>This mirroring elevates Demon Slayer's fights beyond spectacle. Each battle is thematically resonant — the Slayer grows as a person while the Demon's tragic humanity is revealed. It's why Demon Slayer hits emotionally despite relatively simple characterization: the structural storytelling does the heavy lifting.</p>"
+      },
+      {
+        title: "Muzan: Above the System",
+        content: "<p><span class='gold-term'>Muzan Kibutsuji</span> exists outside his own hierarchy. He's not 'Upper Moon 0' — he's the source of all demon power. Every demon's blood traces back to him. He can kill any demon instantly by destroying the cells he distributed to them. The Moons serve at his pleasure, and their terror of him exceeds their fear of death.</p><p>Muzan's power compared to Upper Moon 1: Kokushibo required three Hashira-level fighters and a demon hybrid. Muzan fought ALL remaining Hashira plus Tanjiro simultaneously and nearly won. He was only defeated through the combination of the red Nichirin blade (from Yoriichi's legacy), Tamayo's aging medicine (forcing him to burn through power faster), an entire night of combat to weaken him, and ultimately being held until sunrise destroyed him.</p><p>The final lesson: even the strongest hierarchy is meaningless against collective human will. No single Slayer could challenge Muzan. But together — carrying the legacy of every generation that fought and died before them — humanity outlasted the immortal. That's Demon Slayer's ultimate message: not one hero, but all of them, across centuries, inch by inch.</p>"
+      }
+    ]
+  },
+  {
+    id: "aot-timeline",
+    franchise: "Attack on Titan",
+    title: "Attack on Titan: The Complete Timeline",
+    desc: "From Ymir's origin to the final chapter — every event in chronological order with context.",
+    readTime: "13 min read",
+    wordCount: "~2,600 words",
+    tldr: "Attack on Titan spans roughly 2,000 years. Ymir Fritz gained Titan powers ~2,000 years before the main story. The Eldian Empire dominated for 1,700 years using Titans. King Fritz retreated to Paradis Island 107 years before the story. The main story covers ~7 years (845-854). Everything from the walls to the final battle is a consequence of Ymir's original bondage and humanity's cycle of violence.",
+    sections: [
+      {
+        title: "The Origin Era (~2,000 Years Before Main Story)",
+        content: "<p><span class='gold-term'>Ymir Fritz</span> was a slave in the Eldian tribe, which was at war with the Marleyans. Released into the woods as a 'hunt,' she fell into a great tree and made contact with a parasitic organism — the <span class='gold-term'>Source of All Living Matter</span> (the 'spine creature'). This granted her the power of the Titans, making her the Founding Titan.</p><p>King Fritz used Ymir as a <span class='gold-term'>weapon of conquest</span>. She built roads, bridges, cultivated lands — and crushed Marley and every other nation under Titan power. Fritz 'rewarded' her by making her his concubine. She bore three daughters: Maria, Rose, and Sheena (the future Wall names). Even with god-like power, Ymir remained psychologically enslaved — bound by her love for Fritz despite his cruelty.</p><p>When an assassin threw a spear at Fritz, Ymir stepped in front of it and <span class='gold-term'>chose to die</span> — not because the spear could kill her, but because she wanted to die. Fritz, enraged at losing his weapon, forced their daughters to eat Ymir's corpse to inherit her power. This cannibalistic inheritance became the <span class='gold-term'>Paths system</span> — Ymir's consciousness trapped in an eternal dimension, building Titan bodies for all future inheritors, forever serving even in death.</p>"
+      },
+      {
+        title: "The Eldian Empire (1,700 Years of Domination)",
+        content: "<p>Ymir's power split into <span class='gold-term'>Nine Titans</span> after her death, distributed among Eldian families. For 1,700 years, the Eldian Empire used these Titans to dominate the world. The Fritz/Reiss family held the Founding Titan (which could control all other Titans and alter Eldian memories). The eight other Titans were wielded by noble houses in constant internal power struggles.</p><p>The empire's tools of war: <span class='gold-term'>The Colossal Titan</span> (mass destruction), <span class='gold-term'>The Armored Titan</span> (siege breaking), <span class='gold-term'>The Female Titan</span> (versatility and attraction of Pure Titans), <span class='gold-term'>The Beast Titan</span> (ranged bombardment), <span class='gold-term'>The Jaw Titan</span> (speed and penetration), <span class='gold-term'>The Cart Titan</span> (endurance and logistics), <span class='gold-term'>The War Hammer Titan</span> (weapon creation), <span class='gold-term'>The Attack Titan</span> (the one that always fights for freedom — and can see future inheritors' memories).</p><p>This era saw the Eldians commit countless atrocities against other races — or so Marleyan history claims. The truth is ambiguous: Eldian history says they brought civilization. Marleyan history says they brought genocide. Both are probably partially true. Isayama deliberately leaves this era murky to mirror real-world debates about imperial legacy.</p>"
+      },
+      {
+        title: "The Great Titan War & The Walls (107 Years Before Main Story)",
+        content: "<p>The 145th <span class='gold-term'>King Fritz</span> (Karl Fritz) grew disgusted with Eldian violence. Rather than reform the empire, he made a deal with the Marleyans: he would retreat to Paradis Island, taking many Eldians with him, and leave the continent to Marley. In exchange, he would not use the Founding Titan against them.</p><p>On Paradis, Karl Fritz used the Founding Titan to create the <span class='gold-term'>Three Walls</span> (Maria, Rose, Sheena) — made of millions of Colossal Titans hardened into wall form. He then wiped the memories of all wall-dwelling Eldians, making them forget the outside world entirely. His vow: if the world ever attacks, he will NOT fight back. He would accept destruction as penance for Eldian sins.</p><p>This <span class='gold-term'>Vow of Renouncing War</span> was bound to the Founding Titan through Paths, meaning no future Reiss family inheritor could use its full power offensively. The people within the walls lived in artificial ignorance for over a century — believing they were the last humans alive, that Titans were a mysterious threat, and that the walls had always protected them.</p><p>Meanwhile, on the continent, <span class='gold-term'>Marley</span> seized seven of the Nine Titans and used them as weapons of their own — turning Eldians in internment zones into Titan weapons. The oppressed became oppressors became oppressed again. The cycle continued.</p>"
+      },
+      {
+        title: "The Main Story: Year 845-854",
+        content: "<p><span class='gold-term'>Year 845</span>: Marley sends the Warriors (child soldiers: Reiner, Bertolt, Annie, Marcel) to recover the Founding Titan from Paradis. Bertolt kicks through Wall Maria as the Colossal Titan. Grisha Yeager (who knew the truth, having come from the continent) steals the Founding Titan from the Reiss family and passes it + his Attack Titan to 9-year-old Eren. 250,000 people die in the fall of Wall Maria.</p><p><span class='gold-term'>Years 845-850</span>: Eren, Mikasa, and Armin join the military. Training arc. Discovery of Eren's Titan power. Annie revealed as Female Titan. Reiner and Bertolt revealed as Armored and Colossal.</p><p><span class='gold-term'>Year 850-851</span>: The Reiss family truth is exposed. Eren touches a royal-blooded Titan (Historia) and briefly accesses the Founding Titan's power, discovering his father's memories and the truth about the world. The Survey Corps retakes Wall Maria and reaches the basement — learning the full truth about the outside world.</p><p><span class='gold-term'>Year 852-854</span>: Contact with Marley. The Liberio attack. Zeke's euthanization plan vs. Eren's mysterious alternative. Eren activates the <span class='gold-term'>Rumbling</span> — unleashing millions of Wall Titans to flatten the entire world outside Paradis. The alliance (former enemies united) fights to stop him. Eren is killed by Mikasa's kiss/beheading, freeing Ymir from her 2,000-year bondage and ending the Titan curse.</p>"
+      },
+      {
+        title: "The Ending: Themes Over Plot",
+        content: "<p>The ending reveals Eren's true plan: he <span class='gold-term'>knew he would lose</span> and orchestrated events so that Mikasa's specific choice (loving him AND killing him) would show Ymir Fritz that it's possible to love someone and still let go — the thing Ymir could never do with King Fritz. By seeing Mikasa's act, Ymir finally released her attachment, ending the Paths and Titan powers forever.</p><p>Eren also ensured that by killing 80% of the world's population, Paradis would have enough time and military superiority for a peaceful period — while making his friends the 'heroes who stopped the Rumbling,' giving them political standing to negotiate. It's monstrous and calculated: a genocide committed to buy time for peace.</p><p>The epilogue shows <span class='gold-term'>peace didn't last</span>. Eventually, Paradis is bombed to ruins. The cycle of violence continues. But new life grows from the rubble, and a child finds the same tree that Ymir found — implying the power may return. Isayama's final statement: there is no permanent solution to human conflict. Peace is temporary, violence is cyclical, but individuals within the cycle can choose love over hatred, even if the world won't.</p><p>Whether this ending works is the fandom's eternal debate. But its <span class='gold-term'>thematic consistency</span> is undeniable: Attack on Titan was never about 'winning.' It was about whether the cycle can be broken. The answer is: only momentarily, only personally, and only at tremendous cost. That's either profound or nihilistic, depending on your worldview.</p>"
+      }
+    ]
+  },
+  {
+    id: "dark-souls-elden-ring-connected",
+    franchise: "FromSoftware",
+    title: "Dark Souls / Elden Ring Connected Universe Theory",
+    desc: "Are FromSoft's worlds the same universe in different eras? The evidence is more compelling than you think.",
+    readTime: "9 min read",
+    wordCount: "~1,800 words",
+    tldr: "While not officially connected in narrative canon, Dark Souls, Bloodborne, and Elden Ring share a consistent cosmological framework: outer cosmic entities imposing order on a chaotic world, cycles of light/dark being maintained by sacrificial vessels, and the recurring question of whether perpetuating a dying system or embracing the unknown is the correct choice. The connections are thematic DNA, not literal sequel bait.",
+    sections: [
+      {
+        title: "The Shared Cosmological Template",
+        content: "<p>Every FromSoftware world since Demon's Souls follows the same <span class='gold-term'>cosmological pattern</span>: a world exists in primordial chaos/darkness. An external or emergent force of 'order' arrives and imposes structure. That structure decays over time. A chosen vessel must decide whether to renew the dying order or let it collapse into something new.</p><p>In <span class='gold-term'>Dark Souls</span>: the First Flame brought disparity (light/dark, life/death) to a grey world of everlasting dragons. Lords emerged, built a civilization, and now the Flame is dying. Link it or let it die? In <span class='gold-term'>Bloodborne</span>: the Great Ones (cosmic entities) made contact with humanity, granting insight that drove civilization mad. Break free or ascend to their level? In <span class='gold-term'>Elden Ring</span>: the Greater Will sent the Elden Ring to impose Golden Order on a wild world. The Order fractures. Restore it, replace it, or destroy it?</p><p>The template is consistent enough that some theorize these are the <span class='gold-term'>same world in different cosmic cycles</span> — the Age of Dark ending Dark Souls leads to the grey fog of Demon's Souls, which leads to the primordial world before the Elden Ring arrives. Not literally, but thematically: FromSoft is telling the same story from different angles.</p>"
+      },
+      {
+        title: "Evidence For: Recurring Symbols and Mechanics",
+        content: "<p><span class='gold-term'>The Erdtree and the First Flame</span>: Both are golden sources of life that are parasitic upon closer inspection. The First Flame consumes Lords of Cinder as fuel. The Erdtree consumes souls through its roots (the Greattree it replaced). Both are maintained artificially by a sacrificial figure (the Chosen Undead linking the Flame / Marika serving as the Ring's vessel). Both mask a darker truth beneath their golden light.</p><p><span class='gold-term'>The Outer Gods and the Great Ones</span>: Elden Ring's Outer Gods (Greater Will, Formless Mother, Scarlet Rot god, Frenzied Flame) function identically to Bloodborne's Great Ones — incomprehensible cosmic entities that interact with the mortal world through proxies and corruption. Even their behavior is similar: they don't attack directly but influence through visions, madness, and chosen vessels.</p><p><span class='gold-term'>The Painted Worlds</span>: Dark Souls 3's Ashes of Ariandel DLC introduces the concept of painting new worlds as an escape from a decaying one. This is functionally identical to what FromSoft does between games — each new title could be a 'painting' created from the rot of the previous world. Elden Ring's opening — a shattered world where old rules are broken and new ones must be forged — mirrors painting a new world on the canvas of the old.</p>"
+      },
+      {
+        title: "Evidence Against: Why They're Probably Not Connected",
+        content: "<p>The strongest counterargument is <span class='gold-term'>Miyazaki himself</span>, who has stated the games are not in the same universe. From a creative standpoint, this makes sense — connecting them would constrain future storytelling and invite the kind of continuity-obsession that limits creative freedom.</p><p>Mechanical differences also argue against connection: <span class='gold-term'>magic systems</span> are fundamentally different (Souls sorcery uses intelligence/souls, Elden Ring uses FP and specific incantation traditions, Bloodborne uses insight/quicksilver bullets). If these were the same world in different eras, some throughline in how supernatural forces operate should persist.</p><p><span class='gold-term'>Cosmological specifics</span> contradict each other: Dark Souls has Hollowing (undead curse tied to the Darksign). Elden Ring has no equivalent — death works completely differently. Bloodborne's healing mechanics (blood vials, rally system) imply a fundamentally different physical reality than either Souls game. These aren't different eras of the same physics — they're different physics entirely.</p><p>Additionally, the worlds have <span class='gold-term'>different creation myths</span> that are mutually exclusive. Dark Souls begins with grey fog and everlasting dragons. Elden Ring's world predates the Greater Will's influence with Crucible life and dragon lords that bear no resemblance to Dark Souls' arch-dragons. They're parallel concepts, not the same entities.</p>"
+      },
+      {
+        title: "The Resolution: Thematic DNA, Not Narrative Canon",
+        content: "<p>The correct framework isn't 'are they connected?' but rather: FromSoftware builds every world from the same <span class='gold-term'>philosophical blueprint</span>. Miyazaki is asking the same questions in every game: Is order worth the cost of maintaining it? Can cycles be broken, or only redirected? Is the unknown (Age of Dark, Insight, Frenzied Flame) more terrifying than a dying certainty?</p><p>This is <span class='gold-term'>auteur theory</span> applied to game design. Just as every Kubrick film explores dehumanization, every Miyazaki game explores the decay of imposed order. The 'connected universe' is his creative consciousness — the same mind building different expressions of the same obsession.</p><p>The beauty of this interpretation: it preserves the <span class='gold-term'>mystery</span> that makes FromSoft games special. If they were literally connected, every new game would carry the baggage of continuity. By being thematically connected but narratively independent, each game can be mysterious and self-contained while rewarding players who recognize the patterns.</p><p>Think of it like mythology: Greek, Norse, and Japanese myth share structural patterns (creation from chaos, gods warring, cycles of destruction/rebirth) not because they're 'connected' but because humans ask the same questions everywhere. FromSoft games are Miyazaki's personal mythology — consistent in philosophy, varied in expression.</p>"
+      },
+      {
+        title: "The Fan Theory That Almost Works",
+        content: "<p>The most compelling fan theory that bridges the games: the <span class='gold-term'>Dark Souls Age of Dark ending</span> creates a world without the First Flame's disparity — a world of grey fog and stillness. This state resembles the <span class='gold-term'>pre-Elden Ring Lands Between</span> before the Greater Will's star arrives. In this reading, the Age of Dark eventually produces a new world that exists in primordial balance until the next cosmic force (Greater Will instead of First Flame) imposes its order.</p><p>Supporting this: the <span class='gold-term'>Elden Ring opening cinematic</span> shows a star crashing into an already-existing world, suggesting the Lands Between existed before the Golden Order — potentially as the 'dark world' that resulted from a previous game's ending. The Crucible (primordial life soup) could be the Age of Dark's chaotic potential finally manifesting into new life forms.</p><p>Why it 'almost' works: it requires ignoring specific details (different fundamental mechanics, contradicting creation myths) in favor of broad structural parallels. It's <span class='gold-term'>poetic truth rather than literal truth</span>. As headcanon that enriches your experience of both games? Excellent. As provable fact? Not quite. And maybe that ambiguity is exactly where FromSoft wants us to be — forever theorizing, never certain, always reaching into the dark.</p>"
+      }
+    ]
+  }
+];
+
+function renderHub() {
+  var grid = document.getElementById('hubGrid');
+  var html = '';
+  deepDives.forEach(function(dive) {
+    html += '<div class="hub-card" onclick="openDeepDive(\'' + dive.id + '\')">';
+    html += '<p class="hub-card-franchise">' + dive.franchise + '</p>';
+    html += '<h3 class="hub-card-title">' + dive.title + '</h3>';
+    html += '<p class="hub-card-desc">' + dive.desc + '</p>';
+    html += '<div class="hub-card-meta"><span>📖 ' + dive.readTime + '</span><span>📝 ' + dive.wordCount + '</span></div>';
+    html += '</div>';
+  });
+  grid.innerHTML = html;
+}
+
+function openDeepDive(id) {
+  var dive = deepDives.find(function(d) { return d.id === id; });
+  if (!dive) return;
+
+  document.getElementById('hubSection').style.display = 'none';
+  var view = document.getElementById('deepDiveView');
+  view.classList.add('active');
+
+  // Build TOC
+  var tocHtml = '<p class="toc-title">Table of Contents</p><ul class="toc-list">';
+  dive.sections.forEach(function(section, i) {
+    tocHtml += '<li class="toc-item" data-index="' + i + '" onclick="scrollToSection(' + i + ')">' + section.title + '</li>';
+  });
+  tocHtml += '</ul>';
+  document.getElementById('tocSidebar').innerHTML = tocHtml;
+
+  // Build Content
+  var contentHtml = '';
+  contentHtml += '<button class="deep-dive-back" onclick="backToHub()">← Back to Archive</button>';
+  contentHtml += '<div class="dd-header">';
+  contentHtml += '<h1 class="dd-title">' + dive.title + '</h1>';
+  contentHtml += '<div class="dd-meta"><span>📖 ' + dive.readTime + '</span><span>📝 ' + dive.wordCount + '</span><span>🏷️ ' + dive.franchise + '</span></div>';
+  contentHtml += '</div>';
+
+  contentHtml += '<div class="tldr-box"><p class="tldr-label">TL;DR</p><p class="tldr-text">' + dive.tldr + '</p></div>';
+
+  dive.sections.forEach(function(section, i) {
+    contentHtml += '<div class="dd-section" id="section-' + i + '">';
+    contentHtml += '<div class="dd-section-header" onclick="toggleSection(' + i + ')">';
+    contentHtml += '<span class="dd-section-title">' + section.title + '</span>';
+    contentHtml += '<span class="dd-section-toggle">+</span>';
+    contentHtml += '</div>';
+    contentHtml += '<div class="dd-section-body"><div class="dd-section-content">' + section.content + '</div></div>';
+    contentHtml += '</div>';
+  });
+
+  document.getElementById('deepDiveContent').innerHTML = contentHtml;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // Auto-open first section
+  setTimeout(function() { toggleSection(0); }, 300);
+}
+
+function backToHub() {
+  document.getElementById('hubSection').style.display = 'block';
+  document.getElementById('deepDiveView').classList.remove('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function toggleSection(index) {
+  var section = document.getElementById('section-' + index);
+  if (!section) return;
+
+  var wasOpen = section.classList.contains('open');
+  section.classList.toggle('open');
+
+  // Update TOC active state
+  document.querySelectorAll('.toc-item').forEach(function(item) { item.classList.remove('active'); });
+  if (!wasOpen) {
+    var tocItem = document.querySelector('.toc-item[data-index="' + index + '"]');
+    if (tocItem) tocItem.classList.add('active');
+  }
+}
+
+function scrollToSection(index) {
+  var section = document.getElementById('section-' + index);
+  if (!section) return;
+
+  if (!section.classList.contains('open')) {
+    toggleSection(index);
+  }
+
+  section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  document.querySelectorAll('.toc-item').forEach(function(item) { item.classList.remove('active'); });
+  var tocItem = document.querySelector('.toc-item[data-index="' + index + '"]');
+  if (tocItem) tocItem.classList.add('active');
+}
+
+// Initialize
+renderHub();
+</script>
+</body>
+</html>
