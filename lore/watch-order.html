@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Watch Order Generator — Heezo</title>
+<title>Watch Order Generator â Heezo</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -89,7 +89,7 @@ body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;point
 .entry-checkbox{flex-shrink:0;width:22px;height:22px;border-radius:5px;border:2px solid var(--glass-border);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all var(--transition);margin-top:1px}
 .entry-checkbox:hover{border-color:var(--gold)}
 .entry-checkbox.checked{background:var(--gold);border-color:var(--gold);box-shadow:0 2px 8px rgba(212,175,55,0.3)}
-.entry-checkbox.checked::after{content:'✓';color:var(--bg);font-size:12px;font-weight:800}
+.entry-checkbox.checked::after{content:'â';color:var(--bg);font-size:12px;font-weight:800}
 .entry-content{flex:1;min-width:0}
 .entry-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:5px}
 .entry-number{font-size:0.72rem;font-weight:700;color:var(--gold);min-width:26px;opacity:0.8}
@@ -137,7 +137,7 @@ body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;point
 <canvas id="particles"></canvas>
 <div id="app">
 <nav class="nav">
-<a href="heezo_lore_hub.html" class="nav-brand">← Lore Hub</a>
+<a href="/lore" class="nav-brand">â Lore Hub</a>
 <button class="nav-back" id="backBtn" onclick="window._goHome()">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
 Back to Franchises
@@ -174,8 +174,8 @@ Back to Franchises
 </div>
 <div class="timeline" id="timeline"></div>
 <div class="actions">
-<button class="btn btn-gold" onclick="window._shareProgress()">📋 Share Progress</button>
-<button class="btn btn-outline" onclick="window._resetProgress()">↺ Reset Progress</button>
+<button class="btn btn-gold" onclick="window._shareProgress()">ð Share Progress</button>
+<button class="btn btn-outline" onclick="window._resetProgress()">âº Reset Progress</button>
 </div>
 </div>
 </div>
@@ -270,7 +270,7 @@ chronological:{label:"Chronological Order",items:[
 {t:"Ant-Man and the Wasp: Quantumania",y:"2023",d:"2h 5m",tag:"optional",note:"Kang intro"},
 {t:"Guardians of the Galaxy Vol. 3",y:"2023",d:"2h 30m",tag:"essential",note:"Perfect ending"},
 {t:"The Marvels",y:"2023",d:"1h 25m",tag:"skippable",note:"Captain Marvel sequel"},
-{t:"Deadpool & Wolverine",y:"2024–2025",d:"2h 8m",tag:"essential",note:"R-rated MCU debut"},
+{t:"Deadpool & Wolverine",y:"2024â2025",d:"2h 8m",tag:"essential",note:"R-rated MCU debut"},
 {t:"Captain America: Brave New World",y:"2025",d:"1h 58m",tag:"optional",note:"Sam as Cap"},
 {t:"Thunderbolts*",y:"2025",d:"2h 7m",tag:"essential",note:"Anti-hero team"}
 ]},
@@ -366,17 +366,17 @@ orders:{
 chronological:{label:"Chronological Order",items:[
 {t:"Episode I: The Phantom Menace",y:"1999",d:"2h 16m",tag:"essential",note:"Young Anakin"},
 {t:"Episode II: Attack of the Clones",y:"2002",d:"2h 21m",tag:"essential",note:"Clone Wars begin"},
-{t:"The Clone Wars (Series)",y:"2008–2020",d:"~56h",tag:"essential",note:"7 seasons, fills the gap"},
+{t:"The Clone Wars (Series)",y:"2008â2020",d:"~56h",tag:"essential",note:"7 seasons, fills the gap"},
 {t:"Episode III: Revenge of the Sith",y:"2005",d:"2h 20m",tag:"essential",note:"Fall of Anakin"},
-{t:"The Bad Batch (Series)",y:"2021–2024",d:"~24h",tag:"optional",note:"3 seasons, clone squad"},
+{t:"The Bad Batch (Series)",y:"2021â2024",d:"~24h",tag:"optional",note:"3 seasons, clone squad"},
 {t:"Solo: A Star Wars Story",y:"2018",d:"2h 15m",tag:"optional",note:"Han's origin"},
 {t:"Andor (Series)",y:"2022",d:"~12h",tag:"essential",note:"Best Star Wars show"},
-{t:"Rebels (Series)",y:"2014–2018",d:"~36h",tag:"essential",note:"4 seasons, bridges eras"},
+{t:"Rebels (Series)",y:"2014â2018",d:"~36h",tag:"essential",note:"4 seasons, bridges eras"},
 {t:"Rogue One: A Star Wars Story",y:"2016",d:"2h 13m",tag:"essential",note:"Leads into Episode IV"},
 {t:"Episode IV: A New Hope",y:"1977",d:"2h 1m",tag:"essential",note:"Where it all began"},
 {t:"Episode V: The Empire Strikes Back",y:"1980",d:"2h 4m",tag:"essential",note:"Greatest sequel ever"},
 {t:"Episode VI: Return of the Jedi",y:"1983",d:"2h 11m",tag:"essential",note:"Vader redeemed"},
-{t:"The Mandalorian (Series)",y:"2019–2023",d:"~16h",tag:"essential",note:"3 seasons, this is the way"},
+{t:"The Mandalorian (Series)",y:"2019â2023",d:"~16h",tag:"essential",note:"3 seasons, this is the way"},
 {t:"Ahsoka (Series)",y:"2023",d:"~6h",tag:"optional",note:"Rebels continuation"},
 {t:"Episode VII: The Force Awakens",y:"2015",d:"2h 18m",tag:"essential",note:"New generation"},
 {t:"Episode VIII: The Last Jedi",y:"2017",d:"2h 32m",tag:"essential",note:"Subverts expectations"},
@@ -389,15 +389,15 @@ release:{label:"Release Order",items:[
 {t:"Episode I: The Phantom Menace",y:"1999",d:"2h 16m",tag:"essential",note:"Prequel era begins"},
 {t:"Episode II: Attack of the Clones",y:"2002",d:"2h 22m",tag:"essential",note:"Forbidden romance"},
 {t:"Episode III: Revenge of the Sith",y:"2005",d:"2h 20m",tag:"essential",note:"Tragedy complete"},
-{t:"The Clone Wars (Series)",y:"2008–2020",d:"~56h",tag:"essential",note:"Enriches the prequels"},
-{t:"Rebels (Series)",y:"2014–2018",d:"~36h",tag:"essential",note:"Empire era"},
+{t:"The Clone Wars (Series)",y:"2008â2020",d:"~56h",tag:"essential",note:"Enriches the prequels"},
+{t:"Rebels (Series)",y:"2014â2018",d:"~36h",tag:"essential",note:"Empire era"},
 {t:"Episode VII: The Force Awakens",y:"2015",d:"2h 18m",tag:"essential",note:"Sequel trilogy starts"},
 {t:"Rogue One",y:"2016",d:"2h 13m",tag:"essential",note:"War movie vibes"},
 {t:"Episode VIII: The Last Jedi",y:"2017",d:"2h 32m",tag:"essential",note:"Bold choices"},
 {t:"Solo: A Star Wars Story",y:"2018",d:"2h 15m",tag:"optional",note:"Fun adventure"},
 {t:"Episode IX: The Rise of Skywalker",y:"2019",d:"2h 22m",tag:"optional",note:"Saga ends"},
-{t:"The Mandalorian (Series)",y:"2019–2023",d:"~16h",tag:"essential",note:"This is the way"},
-{t:"The Bad Batch (Series)",y:"2021–2024",d:"~24h",tag:"optional",note:"Clone focused"},
+{t:"The Mandalorian (Series)",y:"2019â2023",d:"~16h",tag:"essential",note:"This is the way"},
+{t:"The Bad Batch (Series)",y:"2021â2024",d:"~24h",tag:"optional",note:"Clone focused"},
 {t:"Andor (Series)",y:"2022",d:"~12h",tag:"essential",note:"Grounded & brilliant"},
 {t:"Ahsoka (Series)",y:"2023",d:"~6h",tag:"optional",note:"Heir to the Empire vibes"}
 ]}
@@ -409,19 +409,19 @@ card:"Dragon Ball",
 count:"5 series + canon films",
 orders:{
 complete:{label:"Complete Canon Order",items:[
-{t:"Dragon Ball",y:"1986–1989",d:"~65h",tag:"essential",note:"153 episodes, Goku's childhood"},
-{t:"Dragon Ball Z (or Kai)",y:"1989–1996",d:"~100h (Kai: ~60h)",tag:"essential",note:"291 eps / Kai: 167 eps"},
+{t:"Dragon Ball",y:"1986â1989",d:"~65h",tag:"essential",note:"153 episodes, Goku's childhood"},
+{t:"Dragon Ball Z (or Kai)",y:"1989â1996",d:"~100h (Kai: ~60h)",tag:"essential",note:"291 eps / Kai: 167 eps"},
 {t:"Dragon Ball Z: Battle of Gods",y:"2013",d:"1h 45m",tag:"essential",note:"Canon film, introduces Beerus (1h 45m extended cut)"},
 {t:"Dragon Ball Z: Resurrection 'F'",y:"2015",d:"1h 34m",tag:"essential",note:"Canon film, Frieza returns"},
-{t:"Dragon Ball Super",y:"2015–2018",d:"~57h",tag:"essential",note:"131 episodes, Tournament of Power"},
+{t:"Dragon Ball Super",y:"2015â2018",d:"~57h",tag:"essential",note:"131 episodes, Tournament of Power"},
 {t:"Dragon Ball Super: Broly",y:"2018",d:"1h 40m",tag:"essential",note:"Canon Broly, stunning animation"},
 {t:"Dragon Ball Super: Super Hero",y:"2022",d:"1h 40m",tag:"essential",note:"Gohan & Piccolo spotlight"},
 {t:"Dragon Ball Daima",y:"2024",d:"~8h",tag:"essential",note:"New series by Toriyama"}
 ]},
 speedrun:{label:"Speedrun / Essential Only",items:[
-{t:"Dragon Ball (Key Arcs)",y:"1986–1989",d:"~20h",tag:"essential",note:"Skip filler: eps 1-28, 84-153"},
-{t:"Dragon Ball Z Kai",y:"2009–2015",d:"~60h",tag:"essential",note:"Filler cut, better pacing"},
-{t:"Dragon Ball Super (Skip eps 1-27)",y:"2015–2018",d:"~45h",tag:"essential",note:"Start at ep 28, films cover 1-27"},
+{t:"Dragon Ball (Key Arcs)",y:"1986â1989",d:"~20h",tag:"essential",note:"Skip filler: eps 1-28, 84-153"},
+{t:"Dragon Ball Z Kai",y:"2009â2015",d:"~60h",tag:"essential",note:"Filler cut, better pacing"},
+{t:"Dragon Ball Super (Skip eps 1-27)",y:"2015â2018",d:"~45h",tag:"essential",note:"Start at ep 28, films cover 1-27"},
 {t:"Dragon Ball Super: Broly",y:"2018",d:"1h 40m",tag:"essential",note:"Must-watch film"},
 {t:"Dragon Ball Super: Super Hero",y:"2022",d:"1h 40m",tag:"optional",note:"Gohan focused"}
 ]}
@@ -474,22 +474,22 @@ anime:{label:"Anime Watch Order",items:[
 {t:"Part 1: Phantom Blood",y:"2012",d:"~4h",tag:"essential",note:"9 episodes, Jonathan Joestar"},
 {t:"Part 2: Battle Tendency",y:"2012",d:"~7.5h",tag:"essential",note:"17 episodes, Joseph Joestar"},
 {t:"Part 3: Stardust Crusaders",y:"2014",d:"~12h",tag:"essential",note:"24 episodes, Stands introduced"},
-{t:"Part 3: Stardust Crusaders – Egypt Arc",y:"2015",d:"~12h",tag:"essential",note:"24 episodes, DIO finale"},
+{t:"Part 3: Stardust Crusaders â Egypt Arc",y:"2015",d:"~12h",tag:"essential",note:"24 episodes, DIO finale"},
 {t:"Part 4: Diamond is Unbreakable",y:"2016",d:"~19h",tag:"essential",note:"39 episodes, Morioh town"},
-{t:"Part 5: Golden Wind",y:"2018–2019",d:"~19h",tag:"essential",note:"39 episodes, Italian mafia"},
-{t:"Part 6: Stone Ocean",y:"2021–2023",d:"~19h",tag:"essential",note:"38 episodes, Jolyne Cujoh"},
-{t:"Thus Spoke Kishibe Rohan (OVA)",y:"2017–2021",d:"~3h",tag:"optional",note:"Spin-off episodes"}
+{t:"Part 5: Golden Wind",y:"2018â2019",d:"~19h",tag:"essential",note:"39 episodes, Italian mafia"},
+{t:"Part 6: Stone Ocean",y:"2021â2023",d:"~19h",tag:"essential",note:"38 episodes, Jolyne Cujoh"},
+{t:"Thus Spoke Kishibe Rohan (OVA)",y:"2017â2021",d:"~3h",tag:"optional",note:"Spin-off episodes"}
 ]},
 manga:{label:"Manga Reading Order",items:[
 {t:"Part 1: Phantom Blood",y:"1987",d:"5 volumes",tag:"essential",note:"Victorian England"},
-{t:"Part 2: Battle Tendency",y:"1987–1989",d:"7 volumes",tag:"essential",note:"Hamon mastery"},
-{t:"Part 3: Stardust Crusaders",y:"1989–1992",d:"16 volumes",tag:"essential",note:"Stand battles begin"},
-{t:"Part 4: Diamond is Unbreakable",y:"1992–1995",d:"18 volumes",tag:"essential",note:"Slice-of-life + mystery"},
-{t:"Part 5: Golden Wind / Vento Aureo",y:"1995–1999",d:"17 volumes",tag:"essential",note:"Gangstar dreams"},
-{t:"Part 6: Stone Ocean",y:"1999–2003",d:"17 volumes",tag:"essential",note:"Universe resets"},
-{t:"Part 7: Steel Ball Run",y:"2004–2011",d:"24 volumes",tag:"essential",note:"Masterpiece, new universe"},
-{t:"Part 8: JoJolion",y:"2011–2021",d:"27 volumes",tag:"essential",note:"Mystery in Morioh"},
-{t:"Part 9: The JOJOLands",y:"2023–ongoing",d:"Ongoing",tag:"optional",note:"Latest part"}
+{t:"Part 2: Battle Tendency",y:"1987â1989",d:"7 volumes",tag:"essential",note:"Hamon mastery"},
+{t:"Part 3: Stardust Crusaders",y:"1989â1992",d:"16 volumes",tag:"essential",note:"Stand battles begin"},
+{t:"Part 4: Diamond is Unbreakable",y:"1992â1995",d:"18 volumes",tag:"essential",note:"Slice-of-life + mystery"},
+{t:"Part 5: Golden Wind / Vento Aureo",y:"1995â1999",d:"17 volumes",tag:"essential",note:"Gangstar dreams"},
+{t:"Part 6: Stone Ocean",y:"1999â2003",d:"17 volumes",tag:"essential",note:"Universe resets"},
+{t:"Part 7: Steel Ball Run",y:"2004â2011",d:"24 volumes",tag:"essential",note:"Masterpiece, new universe"},
+{t:"Part 8: JoJolion",y:"2011â2021",d:"27 volumes",tag:"essential",note:"Mystery in Morioh"},
+{t:"Part 9: The JOJOLands",y:"2023âongoing",d:"Ongoing",tag:"optional",note:"Latest part"}
 ]}
 }
 },
