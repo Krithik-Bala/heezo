@@ -1,20 +1,11 @@
 {
   "rewrites": [
-    {
-      "source": "/lore",
-      "destination": "/lore/index.html"
-    },
-    {
-      "source": "/lore/watch-order",
-      "destination": "/lore/watch-order.html"
-    },
-    {
-      "source": "/lore/articles",
-      "destination": "/lore/articles/index.html"
-    },
-    {
-      "source": "/lore/articles/:slug",
-      "destination": "/lore/articles/:slug.html"
-    }
+    { "source": "/lore", "destination": "/lore/index.html" },
+    { "source": "/lore/watch-order", "destination": "/lore/watch-order.html" },
+    { "source": "/lore/articles", "destination": "/lore/articles/index.html" },
+    { "source": "/lore/articles/:slug", "destination": "/lore/articles/:slug.html" },
+    { "source": "/lore/universe-explorer", "destination": "/lore/universe-explorer.html" },
+    { "source": "/lore/power-scaling", "destination": "/lore/power-scaling.html" },
+    { "source": "/lore/easter-eggs", "destination": "/lore/easter-eggs.html" }
   ]
 }
