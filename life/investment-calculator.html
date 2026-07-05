@@ -1,0 +1,1546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investment Calculator — HEEZO LIFE</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --navy: #0a1628;
+            --navy-light: #0f1f3a;
+            --navy-mid: #142444;
+            --cyan: #00d4ff;
+            --cyan-glow: rgba(0, 212, 255, 0.15);
+            --cyan-dim: rgba(0, 212, 255, 0.6);
+            --white: #f0f4f8;
+            --white-dim: rgba(240, 244, 248, 0.7);
+            --glass-bg: rgba(15, 31, 58, 0.6);
+            --glass-border: rgba(0, 212, 255, 0.12);
+            --gain-color: #00e88f;
+            --invested-color: #6366f1;
+            --radius: 16px;
+            --radius-sm: 10px;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: var(--navy);
+            color: var(--white);
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Film Grain Overlay */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+        }
+
+        /* Ambient background glow */
+        .bg-glow {
+            position: fixed;
+            top: -20%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(0, 212, 255, 0.06) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bg-glow-2 {
+            position: fixed;
+            bottom: -20%;
+            left: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.04) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Navigation */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 2rem;
+            background: rgba(10, 22, 40, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .nav-logo {
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            color: var(--cyan);
+            text-decoration: none;
+            text-transform: uppercase;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--white-dim);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--cyan);
+        }
+
+        /* Main Content */
+        main {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 4rem;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--cyan-dim);
+            text-decoration: none;
+            font-size: 0.85rem;
+            margin-bottom: 1.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: var(--cyan);
+        }
+
+        .page-header {
+            margin-bottom: 2.5rem;
+        }
+
+        .page-header h1 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 700;
+            letter-spacing: -1px;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--white) 0%, var(--cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-header p {
+            color: var(--white-dim);
+            font-size: 1.05rem;
+            max-width: 600px;
+        }
+
+        /* Tab Navigation */
+        .tab-nav {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            padding: 0.35rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            width: fit-content;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: 50px;
+            background: transparent;
+            color: var(--white-dim);
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover {
+            color: var(--white);
+            background: rgba(0, 212, 255, 0.08);
+        }
+
+        .tab-btn.active {
+            background: var(--cyan);
+            color: var(--navy);
+            font-weight: 600;
+            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.3);
+        }
+
+        /* Calculator Panels */
+        .calc-panel {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .calc-panel.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .calc-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        /* Glass Card */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            padding: 2rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .glass-card:hover {
+            border-color: rgba(0, 212, 255, 0.25);
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-title .icon {
+            color: var(--cyan);
+        }
+
+        /* Slider Controls */
+        .slider-group {
+            margin-bottom: 1.8rem;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.7rem;
+        }
+
+        .slider-label span {
+            font-size: 0.85rem;
+            color: var(--white-dim);
+        }
+
+        .slider-value {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--cyan);
+            background: rgba(0, 212, 255, 0.1);
+            padding: 0.2rem 0.7rem;
+            border-radius: 20px;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        /* Custom Range Slider */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--navy-mid);
+            outline: none;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--cyan);
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.4), 0 2px 6px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+            box-shadow: 0 0 25px rgba(0, 212, 255, 0.6), 0 2px 8px rgba(0, 0, 0, 0.4);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--cyan);
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.4), 0 2px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Results Display */
+        .results-card {
+            text-align: center;
+        }
+
+        .result-big {
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 0.3rem;
+            letter-spacing: -0.5px;
+        }
+
+        .result-label {
+            font-size: 0.8rem;
+            color: var(--white-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1.5rem;
+        }
+
+        .result-row {
+            display: flex;
+            justify-content: space-around;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .result-item {
+            text-align: center;
+        }
+
+        .result-item .value {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+        }
+
+        .result-item .value.invested {
+            color: var(--invested-color);
+        }
+
+        .result-item .value.gained {
+            color: var(--gain-color);
+        }
+
+        .result-item .label {
+            font-size: 0.75rem;
+            color: var(--white-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Charts */
+        .chart-container {
+            margin-top: 1.5rem;
+            position: relative;
+        }
+
+        .chart-container canvas {
+            width: 100%;
+            border-radius: var(--radius-sm);
+        }
+
+        .donut-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 1.5rem 0;
+        }
+
+        .chart-legend {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.8rem;
+            color: var(--white-dim);
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        /* Compare Mode */
+        .compare-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .compare-card {
+            position: relative;
+        }
+
+        .compare-card .badge {
+            position: absolute;
+            top: -10px;
+            left: 1.5rem;
+            background: var(--cyan);
+            color: var(--navy);
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .compare-card .badge.b {
+            background: var(--gain-color);
+        }
+
+        .compare-results {
+            margin-top: 2rem;
+        }
+
+        .compare-bar {
+            margin-bottom: 1rem;
+        }
+
+        .compare-bar-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            margin-bottom: 0.4rem;
+            color: var(--white-dim);
+        }
+
+        .compare-bar-track {
+            height: 8px;
+            background: var(--navy-mid);
+            border-radius: 4px;
+            overflow: hidden;
+            display: flex;
+        }
+
+        .compare-bar-fill-a {
+            height: 100%;
+            background: var(--cyan);
+            transition: width 0.5s ease;
+            border-radius: 4px 0 0 4px;
+        }
+
+        .compare-bar-fill-b {
+            height: 100%;
+            background: var(--gain-color);
+            transition: width 0.5s ease;
+            border-radius: 0 4px 4px 0;
+        }
+
+        /* Goal Planner */
+        .goal-result-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .goal-card {
+            background: rgba(0, 212, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .goal-card .goal-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--cyan);
+            margin-bottom: 0.3rem;
+        }
+
+        .goal-card .goal-label {
+            font-size: 0.8rem;
+            color: var(--white-dim);
+        }
+
+        /* Affiliate Section */
+        .affiliate-section {
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .affiliate-section h3 {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--white-dim);
+            margin-bottom: 1rem;
+        }
+
+        .broker-cards {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .broker-card {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.8rem 1.2rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+            text-decoration: none;
+            color: var(--white-dim);
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .broker-card:hover {
+            border-color: var(--cyan);
+            color: var(--white);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.1);
+        }
+
+        .broker-card .broker-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.75rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .calc-grid {
+                grid-template-columns: 1fr;
+            }
+            .compare-grid {
+                grid-template-columns: 1fr;
+            }
+            .goal-result-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            nav {
+                padding: 0.8rem 1rem;
+            }
+            .nav-links {
+                gap: 1rem;
+            }
+            .nav-links a {
+                font-size: 0.8rem;
+            }
+            main {
+                padding: 1.5rem 1rem 3rem;
+            }
+            .tab-nav {
+                width: 100%;
+                justify-content: center;
+            }
+            .tab-btn {
+                padding: 0.6rem 1rem;
+                font-size: 0.8rem;
+            }
+            .glass-card {
+                padding: 1.5rem;
+            }
+            .result-row {
+                flex-direction: column;
+                align-items: center;
+            }
+            .broker-cards {
+                flex-direction: column;
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--navy);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--navy-mid);
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--cyan-dim);
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-glow"></div>
+    <div class="bg-glow-2"></div>
+
+    <!-- Navigation -->
+    <nav>
+        <a href="/" class="nav-logo">HEEZO</a>
+        <ul class="nav-links">
+            <li><a href="/">Home</a></li>
+            <li><a href="/life" class="active">Life</a></li>
+            <li><a href="/lore">Lore</a></li>
+            <li><a href="/about">About</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <a href="/life" class="back-link">← Back to Life</a>
+
+        <div class="page-header">
+            <h1>Investment Calculator</h1>
+            <p>See your money grow. Plan your SIP, calculate lump sum returns, or reverse-engineer your financial goals.</p>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="tab-nav">
+            <button class="tab-btn active" onclick="switchTab('sip')">SIP</button>
+            <button class="tab-btn" onclick="switchTab('lumpsum')">Lump Sum</button>
+            <button class="tab-btn" onclick="switchTab('goal')">Goal Planner</button>
+            <button class="tab-btn" onclick="switchTab('compare')">Compare</button>
+        </div>
+
+        <!-- SIP Calculator -->
+        <div class="calc-panel active" id="panel-sip">
+            <div class="calc-grid">
+                <div class="glass-card">
+                    <div class="card-title"><span class="icon">⟡</span> SIP Parameters</div>
+                    <div class="slider-group">
+                        <div class="slider-label">
+                            <span>Monthly Investment</span>
+                            <span class="slider-value" id="sip-amount-val">₹5,000</span>
+                        </div>
+                        <input type="range" id="sip-amount" min="500" max="100000" step="500" value="5000" oninput="calculateSIP()">
+                    </div>
+                    <div class="slider-group">
+                        <div class="slider-label">
+                            <span>Expected Return (p.a.)</span>
+                            <span class="slider-value" id="sip-rate-val">12%</span>
+                        </div>
+                        <input type="range" id="sip-rate" min="1" max="30" step="0.5" value="12" oninput="calculateSIP()">
+                    </div>
+                    <div class="slider-group">
+                        <div class="slider-label">
+                            <span>Time Period</span>
+                            <span class="slider-value" id="sip-years-val">10 yrs</span>
+                        </div>
+                        <input type="range" id="sip-years" min="1" max="40" step="1" value="10" oninput="calculateSIP()">
+                    </div>
+                </div>
+                <div class="glass-card results-card">
+                    <div class="result-big" id="sip-fv">₹11,61,695</div>
+                    <div class="result-label">Future Value</div>
+                    <div class="result-row">
+                        <div class="result-item">
+                            <div class="value invested" id="sip-invested">₹6,00,000</div>
+                            <div class="label">Total Invested</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="value gained" id="sip-gains">₹5,61,695</div>
+                            <div class="label">Wealth Gained</div>
+                        </div>
+                    </div>
+                    <div class="donut-container">
+                        <canvas id="sip-donut" width="180" height="180"></canvas>
+                    </div>
+                    <div class="chart-legend">
+                        <div class="legend-item"><div class="legend-dot" style="background:var(--invested-color)"></div> Invested</div>
+                        <div class="legend-item"><div class="legend-dot" style="background:var(--gain-color)"></div> Gains</div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="sip-growth" width="500" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lump Sum Calculator -->
+        <div class="calc-panel" id="panel-lumpsum">
+            <div class="calc-grid">
+                <div class="glass-card">
+                    <div class="card-title"><span class="icon">⟡</span> Lump Sum Parameters</div>
+                    <div class="slider-group">
+                        <div class="slider-label">
+                            <span>Investment Amount</span>
+                            <span class="slider-value" id="ls-amount-val">₹1,00,000</span>
+                        </div>
+                        <input type="range" id="ls-amount" min="1000" max="10000000" step="1000" value="100000" oninput="calculateLumpSum()">
+                    </div>
+                    <div class="slider-group">
+                        <div class="slider-label">
+                            <span>Expected Return (p.a.)</span>
+                            <span class="slider-value" id="ls-rate-val">12%</span>
+                        </div>
+                        <input type="range" id="ls-rate" min="1" max="30" step="0.5" value="12" oninput="calculateLumpSum()">
+                    </div>
+                    <div class="slider-group">
+                        <div class="slider-label">
+                            <span>Time Period</span>
+                            <span class="slider-value" id="ls-years-val">10 yrs</span>
+                        </div>
+                        <input type="range" id="ls-years" min="1" max="40" step="1" value="10" oninput="calculateLumpSum()">
+                    </div>
+                </div>
+                <div class="glass-card results-card">
+                    <div class="result-big" id="ls-fv">₹3,10,585</div>
+                    <div class="result-label">Future Value</div>
+                    <div class="result-row">
+                        <div class="result-item">
+                            <div class="value invested" id="ls-invested">₹1,00,000</div>
+                            <div class="label">Total Invested</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="value gained" id="ls-gains">₹2,10,585</div>
+                            <div class="label">Wealth Gained</div>
+                        </div>
+                    </div>
+                    <div class="donut-container">
+                        <canvas id="ls-donut" width="180" height="180"></canvas>
+                    </div>
+                    <div class="chart-legend">
+                        <div class="legend-item"><div class="legend-dot" style="background:var(--invested-color)"></div> Invested</div>
+                        <div class="legend-item"><div class="legend-dot" style="background:var(--gain-color)"></div> Gains</div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="ls-growth" width="500" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Goal Planner -->
+        <div class="calc-panel" id="panel-goal">
+            <div class="calc-grid">
+                <div class="glass-card">
+                    <div class="card-title"><span class="icon">⟡</span> Define Your Goal</div>
+                    <div class="slider-group">
+                        <div class="slider-label">
+                            <span>Target Amount</span>
+                            <span class="slider-value" id="goal-target-val">₹50,00,000</span>
+                        </div>
+                        <input type="range" id="goal-target" min="100000" max="100000000" step="100000" value="5000000" oninput="calculateGoal()">
+                    </div>
+                    <div class="slider-group">
+                        <div class="slider-label">
+                            <span>Expected Return (p.a.)</span>
+                            <span class="slider-value" id="goal-rate-val">12%</span>
+                        </div>
+                        <input type="range" id="goal-rate" min="1" max="30" step="0.5" value="12" oninput="calculateGoal()">
+                    </div>
+                    <div class="slider-group">
+                        <div class="slider-label">
+                            <span>Time Horizon</span>
+                            <span class="slider-value" id="goal-years-val">15 yrs</span>
+                        </div>
+                        <input type="range" id="goal-years" min="1" max="40" step="1" value="15" oninput="calculateGoal()">
+                    </div>
+                </div>
+                <div class="glass-card results-card">
+                    <div class="card-title" style="justify-content:center;"><span class="icon">⟡</span> You Need</div>
+                    <div class="goal-result-cards">
+                        <div class="goal-card">
+                            <div class="goal-value" id="goal-sip">₹10,001</div>
+                            <div class="goal-label">Monthly SIP</div>
+                        </div>
+                        <div class="goal-card">
+                            <div class="goal-value" id="goal-lumpsum">₹9,12,671</div>
+                            <div class="goal-label">One-time Lump Sum</div>
+                        </div>
+                    </div>
+                    <div class="chart-container" style="margin-top:2rem;">
+                        <canvas id="goal-growth" width="500" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Compare Mode -->
+        <div class="calc-panel" id="panel-compare">
+            <div class="compare-grid">
+                <div class="glass-card compare-card">
+                    <div class="badge">Plan A</div>
+                    <div class="card-title" style="margin-top:0.5rem;"><span class="icon">⟡</span> Scenario A</div>
+                    <div class="slider-group">
+                        <div class="slider-label">
+                            <span>Monthly SIP</span>
+                            <span class="slider-value" id="cmp-a-amount-val">₹5,000</span>
+                        </div>
+                        <input type="range" id="cmp-a-amount" min="500" max="100000" step="500" value="5000" oninput="calculateCompare()">
+                    </div>
+                    <div class="slider-group">
+                        <div class="slider-label">
+                            <span>Return (p.a.)</span>
+                            <span class="slider-value" id="cmp-a-rate-val">12%</span>
+                        </div>
+                        <input type="range" id="cmp-a-rate" min="1" max="30" step="0.5" value="12" oninput="calculateCompare()">
+                    </div>
+                    <div class="slider-group">
+                        <div class="slider-label">
+                            <span>Period</span>
+                            <span class="slider-value" id="cmp-a-years-val">10 yrs</span>
+                        </div>
+                        <input type="range" id="cmp-a-years" min="1" max="40" step="1" value="10" oninput="calculateCompare()">
+                    </div>
+                    <div style="text-align:center; margin-top:1rem;">
+                        <div class="result-big" id="cmp-a-fv" style="font-size:1.6rem;">₹11,61,695</div>
+                        <div class="result-label">Future Value</div>
+                    </div>
+                </div>
+                <div class="glass-card compare-card">
+                    <div class="badge b">Plan B</div>
+                    <div class="card-title" style="margin-top:0.5rem;"><span class="icon">⟡</span> Scenario B</div>
+                    <div class="slider-group">
+                        <div class="slider-label">
+                            <span>Monthly SIP</span>
+                            <span class="slider-value" id="cmp-b-amount-val">₹10,000</span>
+                        </div>
+                        <input type="range" id="cmp-b-amount" min="500" max="100000" step="500" value="10000" oninput="calculateCompare()">
+                    </div>
+                    <div class="slider-group">
+                        <div class="slider-label">
+                            <span>Return (p.a.)</span>
+                            <span class="slider-value" id="cmp-b-rate-val">15%</span>
+                        </div>
+                        <input type="range" id="cmp-b-rate" min="1" max="30" step="0.5" value="15" oninput="calculateCompare()">
+                    </div>
+                    <div class="slider-group">
+                        <div class="slider-label">
+                            <span>Period</span>
+                            <span class="slider-value" id="cmp-b-years-val">10 yrs</span>
+                        </div>
+                        <input type="range" id="cmp-b-years" min="1" max="40" step="1" value="10" oninput="calculateCompare()">
+                    </div>
+                    <div style="text-align:center; margin-top:1rem;">
+                        <div class="result-big" id="cmp-b-fv" style="font-size:1.6rem; color:var(--gain-color);">₹27,86,573</div>
+                        <div class="result-label">Future Value</div>
+                    </div>
+                </div>
+            </div>
+            <div class="glass-card compare-results" style="margin-top:2rem;">
+                <div class="card-title"><span class="icon">⟡</span> Comparison</div>
+                <div class="compare-bar">
+                    <div class="compare-bar-label">
+                        <span>Plan A: <span id="cmp-a-bar-val">₹11,61,695</span></span>
+                        <span>Plan B: <span id="cmp-b-bar-val">₹27,86,573</span></span>
+                    </div>
+                    <div class="compare-bar-track">
+                        <div class="compare-bar-fill-a" id="cmp-bar-a" style="width:40%"></div>
+                        <div class="compare-bar-fill-b" id="cmp-bar-b" style="width:60%"></div>
+                    </div>
+                </div>
+                <div style="text-align:center; margin-top:1rem;">
+                    <p style="color:var(--white-dim); font-size:0.9rem;" id="cmp-verdict">Plan B grows <strong style="color:var(--gain-color)">₹16,24,878</strong> more than Plan A</p>
+                </div>
+                <div class="chart-container">
+                    <canvas id="cmp-growth" width="500" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Affiliate Section -->
+        <div class="affiliate-section">
+            <h3>Ready to start investing? We recommend:</h3>
+            <div class="broker-cards">
+                <a href="#" class="broker-card">
+                    <div class="broker-icon" style="background:linear-gradient(135deg,#5d35e3,#00d09c); color:#fff;">G</div>
+                    Groww
+                </a>
+                <a href="#" class="broker-card">
+                    <div class="broker-icon" style="background:linear-gradient(135deg,#387ed1,#2962ff); color:#fff;">Z</div>
+                    Zerodha
+                </a>
+                <a href="#" class="broker-card">
+                    <div class="broker-icon" style="background:linear-gradient(135deg,#f5a623,#f76b1c); color:#fff;">A</div>
+                    Angel One
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // ==================== UTILITY FUNCTIONS ====================
+
+        function formatIndianCurrency(num) {
+            num = Math.round(num);
+            var isNegative = num < 0;
+            num = Math.abs(num);
+            var str = num.toString();
+            var lastThree = str.substring(str.length - 3);
+            var otherNumbers = str.substring(0, str.length - 3);
+            if (otherNumbers !== '') {
+                lastThree = ',' + lastThree;
+            }
+            var formatted = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ',') + lastThree;
+            return (isNegative ? '-' : '') + '₹' + formatted;
+        }
+
+        function updateSliderFill(slider) {
+            var min = parseFloat(slider.min);
+            var max = parseFloat(slider.max);
+            var val = parseFloat(slider.value);
+            var percent = ((val - min) / (max - min)) * 100;
+            slider.style.background = 'linear-gradient(to right, #00d4ff 0%, #00d4ff ' + percent + '%, #142444 ' + percent + '%, #142444 100%)';
+        }
+
+        function initAllSliders() {
+            var sliders = document.querySelectorAll('input[type="range"]');
+            sliders.forEach(function(s) {
+                updateSliderFill(s);
+                s.addEventListener('input', function() {
+                    updateSliderFill(s);
+                });
+            });
+        }
+
+        // ==================== SIP CALCULATOR ====================
+
+        function calculateSIP() {
+            var P = parseFloat(document.getElementById('sip-amount').value);
+            var annualRate = parseFloat(document.getElementById('sip-rate').value);
+            var years = parseInt(document.getElementById('sip-years').value);
+
+            // Update display values
+            document.getElementById('sip-amount-val').textContent = formatIndianCurrency(P);
+            document.getElementById('sip-rate-val').textContent = annualRate + '%';
+            document.getElementById('sip-years-val').textContent = years + ' yrs';
+
+            // SIP FV = P × [((1+r)^n - 1) / r] × (1+r)
+            var r = annualRate / 12 / 100;
+            var n = years * 12;
+            var fv = P * (((Math.pow(1 + r, n) - 1) / r) * (1 + r));
+            var totalInvested = P * n;
+            var gains = fv - totalInvested;
+
+            document.getElementById('sip-fv').textContent = formatIndianCurrency(fv);
+            document.getElementById('sip-invested').textContent = formatIndianCurrency(totalInvested);
+            document.getElementById('sip-gains').textContent = formatIndianCurrency(gains);
+
+            drawDonut('sip-donut', totalInvested, gains);
+            drawGrowthChart('sip-growth', years, function(y) {
+                var nm = y * 12;
+                return P * (((Math.pow(1 + r, nm) - 1) / r) * (1 + r));
+            }, function(y) {
+                return P * y * 12;
+            });
+
+            saveValues();
+        }
+
+        // ==================== LUMP SUM CALCULATOR ====================
+
+        function calculateLumpSum() {
+            var P = parseFloat(document.getElementById('ls-amount').value);
+            var rate = parseFloat(document.getElementById('ls-rate').value);
+            var years = parseInt(document.getElementById('ls-years').value);
+
+            document.getElementById('ls-amount-val').textContent = formatIndianCurrency(P);
+            document.getElementById('ls-rate-val').textContent = rate + '%';
+            document.getElementById('ls-years-val').textContent = years + ' yrs';
+
+            // Lump FV = P × (1 + r/100)^years
+            var fv = P * Math.pow(1 + rate / 100, years);
+            var gains = fv - P;
+
+            document.getElementById('ls-fv').textContent = formatIndianCurrency(fv);
+            document.getElementById('ls-invested').textContent = formatIndianCurrency(P);
+            document.getElementById('ls-gains').textContent = formatIndianCurrency(gains);
+
+            drawDonut('ls-donut', P, gains);
+            drawGrowthChart('ls-growth', years, function(y) {
+                return P * Math.pow(1 + rate / 100, y);
+            }, function(y) {
+                return P;
+            });
+
+            saveValues();
+        }
+
+        // ==================== GOAL PLANNER ====================
+
+        function calculateGoal() {
+            var target = parseFloat(document.getElementById('goal-target').value);
+            var rate = parseFloat(document.getElementById('goal-rate').value);
+            var years = parseInt(document.getElementById('goal-years').value);
+
+            document.getElementById('goal-target-val').textContent = formatIndianCurrency(target);
+            document.getElementById('goal-rate-val').textContent = rate + '%';
+            document.getElementById('goal-years-val').textContent = years + ' yrs';
+
+            // Lump sum needed: target / (1 + r/100)^years
+            var lumpNeeded = target / Math.pow(1 + rate / 100, years);
+
+            // SIP needed: FV × r / [((1+r)^n - 1) × (1+r)]
+            var r = rate / 12 / 100;
+            var n = years * 12;
+            var sipNeeded = target * r / (((Math.pow(1 + r, n) - 1)) * (1 + r));
+
+            document.getElementById('goal-sip').textContent = formatIndianCurrency(sipNeeded);
+            document.getElementById('goal-lumpsum').textContent = formatIndianCurrency(lumpNeeded);
+
+            // Draw growth toward goal
+            drawGrowthChart('goal-growth', years, function(y) {
+                var nm = y * 12;
+                return sipNeeded * (((Math.pow(1 + r, nm) - 1) / r) * (1 + r));
+            }, function(y) {
+                return sipNeeded * y * 12;
+            }, target);
+
+            saveValues();
+        }
+
+        // ==================== COMPARE MODE ====================
+
+        function calculateCompare() {
+            var aP = parseFloat(document.getElementById('cmp-a-amount').value);
+            var aR = parseFloat(document.getElementById('cmp-a-rate').value);
+            var aY = parseInt(document.getElementById('cmp-a-years').value);
+
+            var bP = parseFloat(document.getElementById('cmp-b-amount').value);
+            var bR = parseFloat(document.getElementById('cmp-b-rate').value);
+            var bY = parseInt(document.getElementById('cmp-b-years').value);
+
+            document.getElementById('cmp-a-amount-val').textContent = formatIndianCurrency(aP);
+            document.getElementById('cmp-a-rate-val').textContent = aR + '%';
+            document.getElementById('cmp-a-years-val').textContent = aY + ' yrs';
+
+            document.getElementById('cmp-b-amount-val').textContent = formatIndianCurrency(bP);
+            document.getElementById('cmp-b-rate-val').textContent = bR + '%';
+            document.getElementById('cmp-b-years-val').textContent = bY + ' yrs';
+
+            var rA = aR / 12 / 100;
+            var nA = aY * 12;
+            var fvA = aP * (((Math.pow(1 + rA, nA) - 1) / rA) * (1 + rA));
+
+            var rB = bR / 12 / 100;
+            var nB = bY * 12;
+            var fvB = bP * (((Math.pow(1 + rB, nB) - 1) / rB) * (1 + rB));
+
+            document.getElementById('cmp-a-fv').textContent = formatIndianCurrency(fvA);
+            document.getElementById('cmp-b-fv').textContent = formatIndianCurrency(fvB);
+
+            document.getElementById('cmp-a-bar-val').textContent = formatIndianCurrency(fvA);
+            document.getElementById('cmp-b-bar-val').textContent = formatIndianCurrency(fvB);
+
+            var total = fvA + fvB;
+            var pctA = (fvA / total) * 100;
+            var pctB = (fvB / total) * 100;
+            document.getElementById('cmp-bar-a').style.width = pctA + '%';
+            document.getElementById('cmp-bar-b').style.width = pctB + '%';
+
+            var diff = Math.abs(fvB - fvA);
+            var winner = fvB >= fvA ? 'B' : 'A';
+            document.getElementById('cmp-verdict').innerHTML = 'Plan ' + winner + ' grows <strong style="color:var(--gain-color)">' + formatIndianCurrency(diff) + '</strong> more than Plan ' + (winner === 'A' ? 'B' : 'A');
+
+            // Draw comparison growth chart
+            var maxYears = Math.max(aY, bY);
+            drawCompareChart('cmp-growth', maxYears, rA, aP, aY, rB, bP, bY);
+
+            saveValues();
+        }
+
+        // ==================== CHART DRAWING ====================
+
+        function drawDonut(canvasId, invested, gains) {
+            var canvas = document.getElementById(canvasId);
+            var ctx = canvas.getContext('2d');
+            var dpr = window.devicePixelRatio || 1;
+            var size = 180;
+            canvas.width = size * dpr;
+            canvas.height = size * dpr;
+            canvas.style.width = size + 'px';
+            canvas.style.height = size + 'px';
+            ctx.scale(dpr, dpr);
+
+            var cx = size / 2;
+            var cy = size / 2;
+            var radius = 70;
+            var lineWidth = 22;
+            var total = invested + gains;
+            var investedAngle = (invested / total) * Math.PI * 2;
+            var gainsAngle = (gains / total) * Math.PI * 2;
+
+            ctx.clearRect(0, 0, size, size);
+
+            // Invested arc
+            ctx.beginPath();
+            ctx.arc(cx, cy, radius, -Math.PI / 2, -Math.PI / 2 + investedAngle);
+            ctx.strokeStyle = '#6366f1';
+            ctx.lineWidth = lineWidth;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+
+            // Gains arc
+            ctx.beginPath();
+            ctx.arc(cx, cy, radius, -Math.PI / 2 + investedAngle, -Math.PI / 2 + investedAngle + gainsAngle);
+            ctx.strokeStyle = '#00e88f';
+            ctx.lineWidth = lineWidth;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+
+            // Center text
+            var pct = Math.round((gains / total) * 100);
+            ctx.fillStyle = '#f0f4f8';
+            ctx.font = '600 1.3rem Space Grotesk, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(pct + '%', cx, cy - 8);
+            ctx.fillStyle = 'rgba(240,244,248,0.6)';
+            ctx.font = '400 0.65rem Space Grotesk, sans-serif';
+            ctx.fillText('returns', cx, cy + 12);
+        }
+
+        function drawGrowthChart(canvasId, years, fvFunc, investedFunc, targetLine) {
+            var canvas = document.getElementById(canvasId);
+            var ctx = canvas.getContext('2d');
+            var dpr = window.devicePixelRatio || 1;
+            var w = canvas.parentElement.offsetWidth || 500;
+            var h = 200;
+            canvas.width = w * dpr;
+            canvas.height = h * dpr;
+            canvas.style.width = w + 'px';
+            canvas.style.height = h + 'px';
+            ctx.scale(dpr, dpr);
+            ctx.clearRect(0, 0, w, h);
+
+            var padLeft = 10;
+            var padRight = 10;
+            var padTop = 20;
+            var padBottom = 30;
+            var chartW = w - padLeft - padRight;
+            var chartH = h - padTop - padBottom;
+
+            // Calculate data points
+            var points = [];
+            var investedPoints = [];
+            var maxVal = 0;
+            for (var i = 0; i <= years; i++) {
+                var val = fvFunc(i);
+                var inv = investedFunc(i);
+                points.push(val);
+                investedPoints.push(inv);
+                if (val > maxVal) maxVal = val;
+                if (inv > maxVal) maxVal = inv;
+            }
+            if (targetLine && targetLine > maxVal) maxVal = targetLine;
+            maxVal *= 1.1;
+
+            // Draw grid lines
+            ctx.strokeStyle = 'rgba(0,212,255,0.06)';
+            ctx.lineWidth = 1;
+            for (var g = 0; g < 4; g++) {
+                var gy = padTop + (chartH / 3) * g;
+                ctx.beginPath();
+                ctx.moveTo(padLeft, gy);
+                ctx.lineTo(padLeft + chartW, gy);
+                ctx.stroke();
+            }
+
+            // Draw invested area
+            ctx.beginPath();
+            for (var i = 0; i <= years; i++) {
+                var x = padLeft + (i / years) * chartW;
+                var y = padTop + chartH - (investedPoints[i] / maxVal) * chartH;
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.lineTo(padLeft + chartW, padTop + chartH);
+            ctx.lineTo(padLeft, padTop + chartH);
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(99, 102, 241, 0.15)';
+            ctx.fill();
+
+            // Draw FV area
+            ctx.beginPath();
+            for (var i = 0; i <= years; i++) {
+                var x = padLeft + (i / years) * chartW;
+                var y = padTop + chartH - (points[i] / maxVal) * chartH;
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.lineTo(padLeft + chartW, padTop + chartH);
+            ctx.lineTo(padLeft, padTop + chartH);
+            ctx.closePath();
+            var grad = ctx.createLinearGradient(0, padTop, 0, padTop + chartH);
+            grad.addColorStop(0, 'rgba(0, 232, 143, 0.2)');
+            grad.addColorStop(1, 'rgba(0, 232, 143, 0.02)');
+            ctx.fillStyle = grad;
+            ctx.fill();
+
+            // Draw FV line
+            ctx.beginPath();
+            for (var i = 0; i <= years; i++) {
+                var x = padLeft + (i / years) * chartW;
+                var y = padTop + chartH - (points[i] / maxVal) * chartH;
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.strokeStyle = '#00e88f';
+            ctx.lineWidth = 2.5;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.stroke();
+
+            // Draw invested line
+            ctx.beginPath();
+            for (var i = 0; i <= years; i++) {
+                var x = padLeft + (i / years) * chartW;
+                var y = padTop + chartH - (investedPoints[i] / maxVal) * chartH;
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.strokeStyle = '#6366f1';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([4, 4]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Draw target line if present
+            if (targetLine) {
+                var targetY = padTop + chartH - (targetLine / maxVal) * chartH;
+                ctx.beginPath();
+                ctx.moveTo(padLeft, targetY);
+                ctx.lineTo(padLeft + chartW, targetY);
+                ctx.strokeStyle = 'rgba(0,212,255,0.5)';
+                ctx.lineWidth = 1.5;
+                ctx.setLineDash([6, 4]);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                ctx.fillStyle = 'rgba(0,212,255,0.8)';
+                ctx.font = '500 0.65rem Space Grotesk, sans-serif';
+                ctx.textAlign = 'right';
+                ctx.fillText('Target', padLeft + chartW - 5, targetY - 6);
+            }
+
+            // Year labels
+            ctx.fillStyle = 'rgba(240,244,248,0.4)';
+            ctx.font = '400 0.65rem Space Grotesk, sans-serif';
+            ctx.textAlign = 'center';
+            var labelStep = years <= 10 ? 2 : years <= 20 ? 5 : 10;
+            for (var i = 0; i <= years; i += labelStep) {
+                var x = padLeft + (i / years) * chartW;
+                ctx.fillText(i + 'y', x, h - 8);
+            }
+            // Always draw last year
+            if (years % labelStep !== 0) {
+                var x = padLeft + chartW;
+                ctx.fillText(years + 'y', x, h - 8);
+            }
+
+            // End dot
+            var endX = padLeft + chartW;
+            var endY = padTop + chartH - (points[years] / maxVal) * chartH;
+            ctx.beginPath();
+            ctx.arc(endX, endY, 5, 0, Math.PI * 2);
+            ctx.fillStyle = '#00e88f';
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(endX, endY, 8, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(0, 232, 143, 0.3)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+
+        function drawCompareChart(canvasId, maxYears, rA, pA, yearsA, rB, pB, yearsB) {
+            var canvas = document.getElementById(canvasId);
+            var ctx = canvas.getContext('2d');
+            var dpr = window.devicePixelRatio || 1;
+            var w = canvas.parentElement.offsetWidth || 500;
+            var h = 200;
+            canvas.width = w * dpr;
+            canvas.height = h * dpr;
+            canvas.style.width = w + 'px';
+            canvas.style.height = h + 'px';
+            ctx.scale(dpr, dpr);
+            ctx.clearRect(0, 0, w, h);
+
+            var padLeft = 10;
+            var padRight = 10;
+            var padTop = 20;
+            var padBottom = 30;
+            var chartW = w - padLeft - padRight;
+            var chartH = h - padTop - padBottom;
+
+            // Compute data
+            var pointsA = [];
+            var pointsB = [];
+            var maxVal = 0;
+            for (var i = 0; i <= maxYears; i++) {
+                var nA = Math.min(i, yearsA) * 12;
+                var valA = pA * (((Math.pow(1 + rA, nA) - 1) / rA) * (1 + rA));
+                if (i > yearsA) valA = pA * (((Math.pow(1 + rA, yearsA * 12) - 1) / rA) * (1 + rA));
+
+                var nB = Math.min(i, yearsB) * 12;
+                var valB = pB * (((Math.pow(1 + rB, nB) - 1) / rB) * (1 + rB));
+                if (i > yearsB) valB = pB * (((Math.pow(1 + rB, yearsB * 12) - 1) / rB) * (1 + rB));
+
+                pointsA.push(valA);
+                pointsB.push(valB);
+                if (valA > maxVal) maxVal = valA;
+                if (valB > maxVal) maxVal = valB;
+            }
+            maxVal *= 1.1;
+
+            // Grid
+            ctx.strokeStyle = 'rgba(0,212,255,0.06)';
+            ctx.lineWidth = 1;
+            for (var g = 0; g < 4; g++) {
+                var gy = padTop + (chartH / 3) * g;
+                ctx.beginPath();
+                ctx.moveTo(padLeft, gy);
+                ctx.lineTo(padLeft + chartW, gy);
+                ctx.stroke();
+            }
+
+            // Plan A line
+            ctx.beginPath();
+            for (var i = 0; i <= maxYears; i++) {
+                var x = padLeft + (i / maxYears) * chartW;
+                var y = padTop + chartH - (pointsA[i] / maxVal) * chartH;
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.strokeStyle = '#00d4ff';
+            ctx.lineWidth = 2.5;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+
+            // Plan B line
+            ctx.beginPath();
+            for (var i = 0; i <= maxYears; i++) {
+                var x = padLeft + (i / maxYears) * chartW;
+                var y = padTop + chartH - (pointsB[i] / maxVal) * chartH;
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.strokeStyle = '#00e88f';
+            ctx.lineWidth = 2.5;
+            ctx.stroke();
+
+            // Labels
+            ctx.fillStyle = 'rgba(240,244,248,0.4)';
+            ctx.font = '400 0.65rem Space Grotesk, sans-serif';
+            ctx.textAlign = 'center';
+            var labelStep = maxYears <= 10 ? 2 : maxYears <= 20 ? 5 : 10;
+            for (var i = 0; i <= maxYears; i += labelStep) {
+                var x = padLeft + (i / maxYears) * chartW;
+                ctx.fillText(i + 'y', x, h - 8);
+            }
+            if (maxYears % labelStep !== 0) {
+                ctx.fillText(maxYears + 'y', padLeft + chartW, h - 8);
+            }
+
+            // End dots
+            var endAy = padTop + chartH - (pointsA[maxYears] / maxVal) * chartH;
+            ctx.beginPath();
+            ctx.arc(padLeft + chartW, endAy, 5, 0, Math.PI * 2);
+            ctx.fillStyle = '#00d4ff';
+            ctx.fill();
+
+            var endBy = padTop + chartH - (pointsB[maxYears] / maxVal) * chartH;
+            ctx.beginPath();
+            ctx.arc(padLeft + chartW, endBy, 5, 0, Math.PI * 2);
+            ctx.fillStyle = '#00e88f';
+            ctx.fill();
+
+            // Legend
+            ctx.font = '500 0.7rem Space Grotesk, sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillStyle = '#00d4ff';
+            ctx.fillText('● Plan A', padLeft + 5, padTop - 5);
+            ctx.fillStyle = '#00e88f';
+            ctx.fillText('● Plan B', padLeft + 75, padTop - 5);
+        }
+
+        // ==================== TAB SWITCHING ====================
+
+        function switchTab(tab) {
+            // Update buttons
+            var btns = document.querySelectorAll('.tab-btn');
+            btns.forEach(function(btn) { btn.classList.remove('active'); });
+            event.target.classList.add('active');
+
+            // Update panels
+            var panels = document.querySelectorAll('.calc-panel');
+            panels.forEach(function(p) { p.classList.remove('active'); });
+            document.getElementById('panel-' + tab).classList.add('active');
+
+            // Recalculate for the active tab (charts need correct width)
+            setTimeout(function() {
+                if (tab === 'sip') calculateSIP();
+                else if (tab === 'lumpsum') calculateLumpSum();
+                else if (tab === 'goal') calculateGoal();
+                else if (tab === 'compare') calculateCompare();
+            }, 50);
+        }
+
+        // ==================== LOCAL STORAGE ====================
+
+        function saveValues() {
+            try {
+                var data = {
+                    sip: {
+                        amount: document.getElementById('sip-amount').value,
+                        rate: document.getElementById('sip-rate').value,
+                        years: document.getElementById('sip-years').value
+                    },
+                    ls: {
+                        amount: document.getElementById('ls-amount').value,
+                        rate: document.getElementById('ls-rate').value,
+                        years: document.getElementById('ls-years').value
+                    },
+                    goal: {
+                        target: document.getElementById('goal-target').value,
+                        rate: document.getElementById('goal-rate').value,
+                        years: document.getElementById('goal-years').value
+                    },
+                    cmpA: {
+                        amount: document.getElementById('cmp-a-amount').value,
+                        rate: document.getElementById('cmp-a-rate').value,
+                        years: document.getElementById('cmp-a-years').value
+                    },
+                    cmpB: {
+                        amount: document.getElementById('cmp-b-amount').value,
+                        rate: document.getElementById('cmp-b-rate').value,
+                        years: document.getElementById('cmp-b-years').value
+                    }
+                };
+                localStorage.setItem('heezo-calc-values', JSON.stringify(data));
+            } catch (e) {
+                // localStorage not available
+            }
+        }
+
+        function loadValues() {
+            try {
+                var raw = localStorage.getItem('heezo-calc-values');
+                if (!raw) return;
+                var data = JSON.parse(raw);
+
+                if (data.sip) {
+                    document.getElementById('sip-amount').value = data.sip.amount;
+                    document.getElementById('sip-rate').value = data.sip.rate;
+                    document.getElementById('sip-years').value = data.sip.years;
+                }
+                if (data.ls) {
+                    document.getElementById('ls-amount').value = data.ls.amount;
+                    document.getElementById('ls-rate').value = data.ls.rate;
+                    document.getElementById('ls-years').value = data.ls.years;
+                }
+                if (data.goal) {
+                    document.getElementById('goal-target').value = data.goal.target;
+                    document.getElementById('goal-rate').value = data.goal.rate;
+                    document.getElementById('goal-years').value = data.goal.years;
+                }
+                if (data.cmpA) {
+                    document.getElementById('cmp-a-amount').value = data.cmpA.amount;
+                    document.getElementById('cmp-a-rate').value = data.cmpA.rate;
+                    document.getElementById('cmp-a-years').value = data.cmpA.years;
+                }
+                if (data.cmpB) {
+                    document.getElementById('cmp-b-amount').value = data.cmpB.amount;
+                    document.getElementById('cmp-b-rate').value = data.cmpB.rate;
+                    document.getElementById('cmp-b-years').value = data.cmpB.years;
+                }
+            } catch (e) {
+                // localStorage not available or corrupt
+            }
+        }
+
+        // ==================== INITIALIZATION ====================
+
+        function init() {
+            loadValues();
+            initAllSliders();
+            calculateSIP();
+            calculateLumpSum();
+            calculateGoal();
+            calculateCompare();
+        }
+
+        // Handle resize for charts
+        var resizeTimer;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(function() {
+                var activePanel = document.querySelector('.calc-panel.active');
+                if (activePanel) {
+                    var id = activePanel.id.replace('panel-', '');
+                    if (id === 'sip') calculateSIP();
+                    else if (id === 'lumpsum') calculateLumpSum();
+                    else if (id === 'goal') calculateGoal();
+                    else if (id === 'compare') calculateCompare();
+                }
+            }, 200);
+        });
+
+        // Run on load
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
