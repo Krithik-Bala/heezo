@@ -443,7 +443,7 @@ body::before {
   </div>
 
   <div class="cards-grid">
-    <a href="heezo_watch_order.html" class="card reveal">
+    <a href="/lore/watch-order" class="card reveal">
       <div class="card-icon">🎬</div>
       <h3 class="card-title">Watch Order Generator</h3>
       <p class="card-desc">Perfect watch orders for 7 major franchises. Chronological, release, or best experience — you choose. Track your progress as you go.</p>
@@ -609,6 +609,29 @@ const counterObserver = new IntersectionObserver((entries) => {
 }, { threshold: 0.5 });
 
 statNumbers.forEach(el => counterObserver.observe(el));
+</script>
+
+<script>
+// Make EXPLORE scroll indicator clickable
+document.addEventListener('DOMContentLoaded', function() {
+  var explore = document.querySelector('.scroll-indicator') || document.querySelector('[class*="explore"]');
+  if (explore) {
+    explore.style.cursor = 'pointer';
+    explore.addEventListener('click', function() {
+      var tools = document.getElementById('tools') || document.querySelector('.tools-grid') || document.querySelector('[class*="tools"]');
+      if (tools) tools.scrollIntoView({ behavior: 'smooth' });
+    });
+  }
+  // Also make the Watch Order card clickable
+  var cards = document.querySelectorAll('.tool-card, [class*="tool"]');
+  cards.forEach(function(card) {
+    var title = card.textContent || '';
+    if (title.includes('Watch Order')) {
+      card.style.cursor = 'pointer';
+      card.addEventListener('click', function() { window.location.href = '/lore/watch-order'; });
+    }
+  });
+});
 </script>
 </body>
 </html>
