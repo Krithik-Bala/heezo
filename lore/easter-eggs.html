@@ -994,7 +994,7 @@ footer a { color: var(--gold); text-decoration: none; }
 <!-- MODAL -->
 <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
   <div class="modal-content" id="modalContent">
-    <button class="modal-close" onclick="closeModalDirect()">×</button>
+    <button class="modal-close" id="modalCloseBtn" onclick="event.stopPropagation(); closeModalDirect();">✕</button>
     <div id="modalBody"></div>
   </div>
 </div>
@@ -1273,7 +1273,7 @@ function openModal(egg) {
     ${relatedEggs.length > 0 ? `
       <div class="related-eggs">
         <h4>Related Easter Eggs</h4>
-        ${relatedEggs.map(r => `<span class="related-tag" onclick="openModal(eggs.find(e=>e.id===${r.id}))">${r.title}</span>`).join('')}
+        ${relatedEggs.map(r => `<span class="related-tag" onclick="event.stopPropagation(); closeModalDirect(); setTimeout(()=>openModal(eggs.find(e=>e.id===${r.id})), 100)">${r.title}</span>`).join('')}
       </div>
     ` : ''}
     <div class="modal-actions">
@@ -1364,6 +1364,21 @@ document.addEventListener('keydown', (e) => {
 
 // ===================== START =====================
 init();
+
+// Backup event listeners for close button
+document.addEventListener('click', function(e) {
+  if (e.target && (e.target.id === 'modalCloseBtn' || e.target.classList.contains('modal-close'))) {
+    closeModalDirect();
+  }
+});
+
+// Also close on Escape key
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    closeModalDirect();
+  }
+});
+
 } catch(e) { console.warn('Heezo:', e.message); }
 })();
 </script>

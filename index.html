@@ -660,7 +660,7 @@
     <section class="portals-section" id="portals">
         <div class="section-header">
             <h2 class="reveal">Two Worlds. One Universe.</h2>
-            <p class="reveal stagger-1">Choose your path \u2014 dive into stories or optimize your reality.</p>
+            <p class="reveal stagger-1">Choose your path — dive into stories or optimize your reality.</p>
         </div>
 
         <div class="portals-grid">
@@ -689,7 +689,7 @@
                         <div class="feature-item"><span class="dot"></span>Theory Hub</div>
                         <div class="feature-item"><span class="dot"></span>Timeline Explorer</div>
                     </div>
-                    <button class="portal-cta">
+                    <button class="portal-cta" onclick="window.location.href='/lore'">
                         Enter the Vault
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                     </button>
@@ -721,7 +721,7 @@
                         <div class="feature-item"><span class="dot"></span>Health Metrics</div>
                         <div class="feature-item"><span class="dot"></span>Workflow Guides</div>
                     </div>
-                    <button class="portal-cta">
+                    <button class="portal-cta" onclick="window.location.href='/life'">
                         Launch Dashboard
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                     </button>
@@ -769,7 +769,7 @@
             <a href="/lore">Lore</a>
             <a href="/life">Life</a>
             <a href="/about">About</a>
-            <a href="mailto:heezoverse@gmail.com">Contact</a>
+            <a href="/contact">Contact</a>
         </div>
     </footer>
 
@@ -1005,16 +1005,6 @@
         animatePortals();
         animateCounters();
     }, 1500);
-    </script>
-
-    <script>
-    // Portal navigation
-    document.querySelectorAll('.portal-cta').forEach((btn, i) => {
-        btn.style.cursor = 'pointer';
-        btn.addEventListener('click', () => {
-            window.location.href = i === 0 ? '/lore' : '/life';
-        });
-    });
     </script>
 </body>
 </html>

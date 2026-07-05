@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — Heezo</title>
+<meta name="description" content="Entertainment Intelligence. Life Optimization. Built by obsessives, for the curious.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --obsidian: #0a0a0f;
+  --gold: #d4af37;
+  --gold-glow: rgba(212,175,55,0.15);
+  --text: #e8e6e3;
+  --text-secondary: #9a9a9a;
+  --text-muted: #6a6a6a;
+  --surface: #12121a;
+  --border: rgba(212,175,55,0.1);
+}
+
+body {
+  background: var(--obsidian);
+  color: var(--text);
+  font-family: 'Space Grotesk', sans-serif;
+  min-height: 100vh;
+  line-height: 1.7;
+}
+
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(10,10,15,0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--gold);
+  text-decoration: none;
+}
+
+.nav-links {
+  display: flex;
+  gap: 20px;
+}
+
+.nav-links a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover { color: var(--gold); }
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 80px 24px;
+}
+
+h1 {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 700;
+  color: var(--gold);
+  margin-bottom: 16px;
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  margin-bottom: 48px;
+  line-height: 1.6;
+}
+
+.section {
+  margin-bottom: 48px;
+}
+
+.section h2 {
+  font-size: 1.3rem;
+  color: var(--gold);
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.section p {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.8;
+  margin-bottom: 12px;
+}
+
+.pillars {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin: 32px 0;
+}
+
+.pillar {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  transition: border-color 0.3s;
+}
+
+.pillar:hover { border-color: var(--gold); }
+
+.pillar-icon { font-size: 2rem; margin-bottom: 12px; }
+
+.pillar h3 {
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+.pillar p {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.pillar a {
+  display: inline-block;
+  margin-top: 12px;
+  color: var(--gold);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.pillar a:hover { text-decoration: underline; }
+
+.ai-note {
+  background: linear-gradient(135deg, rgba(212,175,55,0.05), rgba(212,175,55,0.02));
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  margin-top: 32px;
+}
+
+.ai-note h3 {
+  font-size: 0.9rem;
+  color: var(--gold);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.ai-note p {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+footer {
+  text-align: center;
+  padding: 32px;
+  border-top: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+footer a { color: var(--gold); text-decoration: none; }
+
+@media (max-width: 600px) {
+  .pillars { grid-template-columns: 1fr; }
+  .container { padding: 48px 20px; }
+}
+</style>
+</head>
+<body>
+<nav>
+  <a href="/" class="logo">HEEZO</a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/lore">Lore</a>
+    <a href="/life">Life</a>
+    <a href="/contact">Contact</a>
+  </div>
+</nav>
+
+<div class="container">
+  <h1>About Heezo</h1>
+  <p class="subtitle">Entertainment Intelligence. Life Optimization. Built by obsessives, for the curious.</p>
+
+  <div class="section">
+    <h2>What is this?</h2>
+    <p>Heezo is a premium intelligence platform split into two halves — one for the stories you love, one for the life you're building.</p>
+    <p>We don't do surface-level listicles or generic "top 10" posts. Every tool, every article, every database is built to be genuinely useful — the kind of thing you bookmark, share with friends, and come back to.</p>
+  </div>
+
+  <div class="pillars">
+    <div class="pillar">
+      <div class="pillar-icon">🏛️</div>
+      <h3>The Lore Vault</h3>
+      <p>Interactive tools for entertainment obsessives. Watch orders, universe maps, power scaling charts, Easter egg databases — everything you need to master your favorite franchises.</p>
+      <a href="/lore">Explore Lore →</a>
+    </div>
+    <div class="pillar">
+      <div class="pillar-icon">⚡</div>
+      <h3>LifeStack</h3>
+      <p>Tools for optimizing the real world. Investment calculators, AI tool comparisons, habit trackers, supplement checkers — practical intelligence for everyday decisions.</p>
+      <a href="/life">Explore Life →</a>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>The Philosophy</h2>
+    <p>We believe in tools over articles, databases over opinions, and quality over quantity. If we can't make something genuinely best-in-class, we don't publish it.</p>
+    <p>Everything here is designed to make you feel smarter after using it. Not entertained for 30 seconds — actually smarter. That's the bar.</p>
+  </div>
+
+  <div class="ai-note">
+    <h3>⚡ Built with AI</h3>
+    <p>Heezo is powered by AI — from content research to tool development. But every piece is curated, fact-checked, and refined for quality. AI does the heavy lifting; human obsession sets the standard. We're transparent about this because we think it's the future, not a shortcut.</p>
+  </div>
+</div>
+
+<footer>
+  <p>© 2025 Heezo. <a href="/">Home</a> · <a href="/lore">Lore</a> · <a href="/life">Life</a> · <a href="/contact">Contact</a></p>
+</footer>
+</body>
+</html>

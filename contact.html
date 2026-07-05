@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact — Heezo</title>
+<meta name="description" content="Get in touch with Heezo. Feedback, collaborations, or just say hi.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="[REDACTED_CONN_STRING]://300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --obsidian: #0a0a0f;
+  --gold: #d4af37;
+  --gold-glow: rgba(212,175,55,0.15);
+  --text: #e8e6e3;
+  --text-secondary: #9a9a9a;
+  --text-muted: #6a6a6a;
+  --surface: #12121a;
+  --border: rgba(212,175,55,0.1);
+}
+
+body {
+  background: var(--obsidian);
+  color: var(--text);
+  font-family: 'Space Grotesk', sans-serif;
+  min-height: 100vh;
+  line-height: 1.7;
+}
+
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(10,10,15,0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--gold);
+  text-decoration: none;
+}
+
+.nav-links {
+  display: flex;
+  gap: 20px;
+}
+
+.nav-links a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover { color: var(--gold); }
+
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 80px 24px;
+  text-align: center;
+}
+
+h1 {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 700;
+  color: var(--gold);
+  margin-bottom: 16px;
+}
+
+.subtitle {
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  margin-bottom: 48px;
+}
+
+.contact-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 40px 32px;
+  margin-bottom: 32px;
+  text-align: left;
+}
+
+.contact-item {
+  margin-bottom: 28px;
+}
+
+.contact-item:last-child { margin-bottom: 0; }
+
+.contact-label {
+  font-size: 0.75rem;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.contact-value {
+  font-size: 1.1rem;
+  color: var(--text);
+}
+
+.contact-value a {
+  color: var(--text);
+  text-decoration: none;
+  border-bottom: 1px solid var(--border);
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.contact-value a:hover {
+  color: var(--gold);
+  border-color: var(--gold);
+}
+
+.contact-note {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.social-links {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin-top: 32px;
+}
+
+.social-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 20px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.88rem;
+  transition: all 0.2s;
+}
+
+.social-link:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+  transform: translateY(-2px);
+}
+
+.social-link .icon { font-size: 1.2rem; }
+
+.cta-note {
+  margin-top: 48px;
+  padding: 24px;
+  background: linear-gradient(135deg, rgba(212,175,55,0.05), rgba(212,175,55,0.02));
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+footer {
+  text-align: center;
+  padding: 32px;
+  border-top: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+footer a { color: var(--gold); text-decoration: none; }
+
+@media (max-width: 600px) {
+  .container { padding: 48px 20px; }
+  .social-links { flex-direction: column; align-items: stretch; }
+}
+</style>
+</head>
+<body>
+<nav>
+  <a href="/" class="logo">HEEZO</a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/lore">Lore</a>
+    <a href="/life">Life</a>
+    <a href="/about">About</a>
+  </div>
+</nav>
+
+<div class="container">
+  <h1>Get in Touch</h1>
+  <p class="subtitle">Got feedback? Want to collaborate? Spotted a bug? We're all ears.</p>
+
+  <div class="contact-card">
+    <div class="contact-item">
+      <div class="contact-label">Email</div>
+      <div class="contact-value">heezoverse@gmail.com</div>
+      <div class="contact-note">We read everything. Response time: usually within 24 hours.</div>
+    </div>
+    <div class="contact-item">
+      <div class="contact-label">Best for</div>
+      <div class="contact-value">Collaborations, sponsorships, bug reports, feature requests</div>
+    </div>
+    <div class="contact-item">
+      <div class="contact-label">Quick chat</div>
+      <div class="contact-value">DM us on Instagram — fastest way to reach us</div>
+    </div>
+  </div>
+
+  <div class="social-links">
+    <a href="https://www.instagram.com/me_krithik" target="_blank" class="social-link">
+      <span class="icon">📸</span>
+      <span>Instagram</span>
+    </a>
+    <a href="#" class="social-link" style="opacity: 0.5; pointer-events: none;">
+      <span class="icon">🐦</span>
+      <span>Twitter — soon</span>
+    </a>
+    <a href="#" class="social-link" style="opacity: 0.5; pointer-events: none;">
+      <span class="icon">💬</span>
+      <span>Discord — soon</span>
+    </a>
+  </div>
+
+  <div class="cta-note">
+    <strong>Want to write for Heezo?</strong> We're always looking for passionate entertainment nerds and life-optimization geeks. Drop us an email with your best piece and we'll talk.
+  </div>
+</div>
+
+<footer>
+  <p>© 2025 Heezo. <a href="/">Home</a> · <a href="/lore">Lore</a> · <a href="/life">Life</a> · <a href="/about">About</a></p>
+</footer>
+</body>
+</html>

@@ -706,12 +706,12 @@ var k=currentFranchise+'|'+currentOrder+'|'+idx;
 if(watchedMap[k])done++;
 });
 var pct=items.length>0?Math.round(done/items.length*100):0;
-var text='\uD83C\uDFAC '+f.name+' \u2014 '+f.orders[currentOrder].label+'\n'+
+var text='\uD83C\uDFAC '+f.name+' — '+f.orders[currentOrder].label+'\n'+
 'Progress: '+done+'/'+items.length+' ('+pct+'%)\n'+
 'Tracked with Heezo Watch Order Generator';
 try{
-navigator.clipboard.writeText(text).then(function(){showToast('Copied to clipboard!')}).catch(function(){showToast('Could not copy \u2014 try manually')});
-}catch(e){showToast('Could not copy \u2014 try manually')}
+navigator.clipboard.writeText(text).then(function(){showToast('Copied to clipboard!')}).catch(function(){showToast('Could not copy — try manually')});
+}catch(e){showToast('Could not copy — try manually')}
 };
 
 /* ===== RESET ===== */
