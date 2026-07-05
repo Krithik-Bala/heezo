@@ -1,0 +1,1371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HEEZO Easter Egg Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0f;
+  --bg-card: #12121a;
+  --bg-card-hover: #1a1a25;
+  --gold: #d4af37;
+  --gold-dim: #b8962e;
+  --gold-glow: rgba(212,175,55,0.3);
+  --text: #e8e6e3;
+  --text-secondary: #a09c97;
+  --text-muted: #6b6660;
+  --border: #2a2a35;
+  --surface: #16161f;
+  --easy: #4ade80;
+  --medium: #f59e0b;
+  --hard: #ef4444;
+  --insane: #a855f7;
+  --marvel: #e23636;
+  --starwars: #ffe81f;
+  --gaming: #22d3ee;
+  --anime: #f472b6;
+  --dc: #0077b6;
+  --glass: rgba(18,18,26,0.85);
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Space Grotesk', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 4px; }
+
+/* NAV */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: rgba(10,10,15,0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.logo {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--gold);
+  text-decoration: none;
+  letter-spacing: -0.5px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 16px;
+}
+
+.nav-links a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover { color: var(--gold); }
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.spoiler-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.toggle-switch {
+  width: 36px;
+  height: 20px;
+  background: var(--border);
+  border-radius: 10px;
+  position: relative;
+  transition: background 0.3s;
+  cursor: pointer;
+}
+
+.toggle-switch.active { background: var(--gold); }
+
+.toggle-switch::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.3s;
+}
+
+.toggle-switch.active::after { transform: translateX(16px); }
+
+/* HERO / FEATURED */
+.hero {
+  padding: 40px 24px 30px;
+  text-align: center;
+}
+
+.hero h1 {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 700;
+  color: var(--gold);
+  margin-bottom: 8px;
+  text-shadow: 0 0 40px var(--gold-glow);
+}
+
+.hero p {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* FEATURED EGG */
+.featured-section {
+  padding: 0 24px 30px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.featured-card {
+  background: linear-gradient(135deg, rgba(212,175,55,0.1), rgba(212,175,55,0.03));
+  border: 1px solid var(--gold);
+  border-radius: var(--radius);
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.featured-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px var(--gold-glow);
+}
+
+.featured-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent 40%, rgba(212,175,55,0.08) 50%, transparent 60%);
+  animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%) rotate(45deg); }
+  100% { transform: translateX(100%) rotate(45deg); }
+}
+
+.featured-badge {
+  display: inline-block;
+  background: var(--gold);
+  color: var(--bg);
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.featured-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  position: relative;
+}
+
+.featured-desc {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  position: relative;
+}
+
+/* STATS */
+.stats-bar {
+  display: flex;
+  gap: 16px;
+  padding: 0 24px 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 16px 20px;
+  min-width: 140px;
+  text-align: center;
+  flex: 1;
+  max-width: 200px;
+}
+
+.stat-value {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--gold);
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* PROGRESS BAR */
+.progress-section {
+  padding: 0 24px 24px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.progress-bar-container {
+  background: var(--surface);
+  border-radius: 20px;
+  height: 28px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold-dim), var(--gold));
+  border-radius: 20px;
+  transition: width 0.6s ease;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 12px;
+  min-width: 40px;
+}
+
+.progress-text {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--bg);
+}
+
+.progress-label {
+  text-align: center;
+  margin-top: 8px;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+/* SEARCH & FILTERS */
+.controls {
+  padding: 0 24px 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  transition: border-color 0.2s;
+}
+
+.search-bar:focus-within { border-color: var(--gold); }
+
+.search-bar input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.95rem;
+  margin-left: 10px;
+}
+
+.search-bar input::placeholder { color: var(--text-muted); }
+
+.search-icon { color: var(--text-muted); font-size: 1.1rem; }
+
+.filter-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.filter-group {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-family: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.filter-btn:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.filter-btn.active {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--bg);
+}
+
+.filter-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-right: 4px;
+  align-self: center;
+}
+
+/* GRID */
+.grid-container {
+  padding: 0 24px 40px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.egg-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+/* CARDS */
+.egg-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.egg-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--gold-dim);
+  background: var(--bg-card-hover);
+}
+
+.egg-card.found {
+  border-color: var(--gold);
+}
+
+.egg-card.found::after {
+  content: '✓';
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 24px;
+  height: 24px;
+  background: var(--gold);
+  color: var(--bg);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.egg-card.difficulty-easy { box-shadow: 0 0 0 0 var(--easy); }
+.egg-card.difficulty-easy:hover { box-shadow: 0 4px 20px rgba(74,222,128,0.15); }
+.egg-card.difficulty-medium { box-shadow: 0 0 0 0 var(--medium); }
+.egg-card.difficulty-medium:hover { box-shadow: 0 4px 20px rgba(245,158,11,0.15); }
+.egg-card.difficulty-hard { box-shadow: 0 0 0 0 var(--hard); }
+.egg-card.difficulty-hard:hover { box-shadow: 0 4px 20px rgba(239,68,68,0.15); }
+.egg-card.difficulty-insane { box-shadow: 0 0 0 0 var(--insane); }
+.egg-card.difficulty-insane:hover { box-shadow: 0 4px 20px rgba(168,85,247,0.15); }
+
+.card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.card-franchise {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.franchise-marvel { background: rgba(226,54,54,0.15); color: var(--marvel); }
+.franchise-starwars { background: rgba(255,232,31,0.12); color: var(--starwars); }
+.franchise-gaming { background: rgba(34,211,238,0.12); color: var(--gaming); }
+.franchise-anime { background: rgba(244,114,182,0.12); color: var(--anime); }
+.franchise-dc { background: rgba(0,119,182,0.15); color: var(--dc); }
+
+.card-difficulty {
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.card-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+  line-height: 1.3;
+}
+
+.card-source {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+.card-teaser {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.card-type {
+  display: inline-block;
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-top: 10px;
+  text-transform: uppercase;
+}
+
+.spoiler-cover {
+  position: relative;
+}
+
+.spoiler-cover .card-teaser {
+  filter: blur(5px);
+  user-select: none;
+  transition: filter 0.3s;
+}
+
+.spoiler-cover.revealed .card-teaser {
+  filter: none;
+  user-select: auto;
+}
+
+.reveal-btn {
+  display: block;
+  margin-top: 10px;
+  background: none;
+  border: 1px solid var(--gold-dim);
+  color: var(--gold);
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.reveal-btn:hover {
+  background: var(--gold);
+  color: var(--bg);
+}
+
+/* EXPANDED MODAL */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(8px);
+  z-index: 2000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.modal-overlay.active {
+  display: flex;
+  opacity: 1;
+}
+
+.modal-content {
+  background: var(--glass);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  max-width: 650px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  padding: 32px;
+  position: relative;
+  animation: modalIn 0.3s ease;
+}
+
+@keyframes modalIn {
+  from { transform: scale(0.95) translateY(20px); opacity: 0; }
+  to { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.modal-close:hover { color: var(--gold); }
+
+.modal-franchise {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.modal-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.modal-meta {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.modal-meta span {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.modal-description {
+  font-size: 0.92rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+
+.modal-reference {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.modal-reference h4 {
+  font-size: 0.8rem;
+  color: var(--gold);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.modal-reference p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.btn-found {
+  background: var(--gold);
+  color: var(--bg);
+  border: none;
+  padding: 10px 20px;
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-found:hover { transform: scale(1.03); box-shadow: 0 4px 15px var(--gold-glow); }
+.btn-found.marked { background: var(--surface); color: var(--gold); border: 1px solid var(--gold); }
+
+.related-eggs {
+  margin-top: 20px;
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+}
+
+.related-eggs h4 {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.related-tag {
+  display: inline-block;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  margin: 3px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.related-tag:hover { border-color: var(--gold); color: var(--gold); }
+
+/* SUBMIT FORM */
+.submit-section {
+  padding: 40px 24px;
+  max-width: 600px;
+  margin: 0 auto;
+  border-top: 1px solid var(--border);
+}
+
+.submit-section h2 {
+  font-size: 1.3rem;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+
+.submit-section p {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 14px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.88rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--gold);
+}
+
+.form-group textarea { resize: vertical; min-height: 80px; }
+
+.submit-btn {
+  background: var(--gold);
+  color: var(--bg);
+  border: none;
+  padding: 12px 28px;
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.submit-btn:hover { transform: scale(1.02); box-shadow: 0 4px 15px var(--gold-glow); }
+
+/* CONFETTI */
+.confetti-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.confetti-piece {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  top: -10px;
+  animation: confettiFall 3s ease-in forwards;
+}
+
+@keyframes confettiFall {
+  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+
+/* FOOTER */
+footer {
+  text-align: center;
+  padding: 30px 24px;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  border-top: 1px solid var(--border);
+}
+
+footer a { color: var(--gold); text-decoration: none; }
+
+/* HIDING */
+.egg-card.hidden-card {
+  display: none;
+}
+
+/* NO RESULTS */
+.no-results {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-muted);
+}
+
+.no-results span { font-size: 3rem; display: block; margin-bottom: 12px; }
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .egg-grid { grid-template-columns: 1fr; }
+  .stats-bar { gap: 8px; }
+  .stat-card { min-width: 100px; padding: 12px; }
+  .stat-value { font-size: 1.3rem; }
+  .nav-links { display: none; }
+  .filter-row { gap: 6px; }
+  .modal-content { padding: 20px; }
+}
+
+@media (max-width: 480px) {
+  .stats-bar { flex-direction: column; align-items: stretch; }
+  .stat-card { max-width: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-left">
+    <a href="/" class="logo">HEEZO</a>
+    <div class="nav-links">
+      <a href="/">Home</a>
+      <a href="/lore">← Lore Hub</a>
+      <a href="/tools">Tools</a>
+    </div>
+  </div>
+  <div class="nav-right">
+    <div class="spoiler-toggle" onclick="toggleGlobalSpoilers()">
+      <span>Show Spoilers</span>
+      <div class="toggle-switch" id="spoilerToggle"></div>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>🥚 Easter Egg Tracker</h1>
+  <p>Uncover hidden details, secret references, and mind-blowing callbacks from your favorite franchises.</p>
+</div>
+
+<!-- FEATURED -->
+<div class="featured-section">
+  <div class="featured-card" id="featuredCard" onclick="openFeaturedEgg()">
+    <div class="featured-badge">⭐ Did You Catch This?</div>
+    <div class="featured-title" id="featuredTitle"></div>
+    <div class="featured-desc" id="featuredDesc"></div>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat-card">
+    <div class="stat-value" id="statTotal">0</div>
+    <div class="stat-label">Total Eggs</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value" id="statFound">0</div>
+    <div class="stat-label">You Found</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value" id="statMarvel">0</div>
+    <div class="stat-label">Marvel</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value" id="statStarWars">0</div>
+    <div class="stat-label">Star Wars</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value" id="statGaming">0</div>
+    <div class="stat-label">Gaming</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value" id="statAnime">0</div>
+    <div class="stat-label">Anime</div>
+  </div>
+</div>
+
+<!-- PROGRESS -->
+<div class="progress-section">
+  <div class="progress-bar-container">
+    <div class="progress-bar-fill" id="progressFill" style="width: 0%">
+      <span class="progress-text" id="progressText">0%</span>
+    </div>
+  </div>
+  <div class="progress-label">Your Discovery Progress</div>
+</div>
+
+<!-- CONTROLS -->
+<div class="controls">
+  <div class="search-bar">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="searchInput" placeholder="Search Easter eggs..." oninput="filterCards()">
+  </div>
+  <div class="filter-row">
+    <span class="filter-label">Franchise:</span>
+    <div class="filter-group" id="franchiseFilters">
+      <button class="filter-btn active" data-franchise="all" onclick="setFranchise('all', this)">All</button>
+      <button class="filter-btn" data-franchise="marvel" onclick="setFranchise('marvel', this)">Marvel</button>
+      <button class="filter-btn" data-franchise="starwars" onclick="setFranchise('starwars', this)">Star Wars</button>
+      <button class="filter-btn" data-franchise="gaming" onclick="setFranchise('gaming', this)">Gaming</button>
+      <button class="filter-btn" data-franchise="anime" onclick="setFranchise('anime', this)">Anime</button>
+      <button class="filter-btn" data-franchise="dc" onclick="setFranchise('dc', this)">DC</button>
+    </div>
+  </div>
+  <div class="filter-row" style="margin-top: 10px;">
+    <span class="filter-label">Difficulty:</span>
+    <div class="filter-group" id="difficultyFilters">
+      <button class="filter-btn active" data-diff="all" onclick="setDifficulty('all', this)">All</button>
+      <button class="filter-btn" data-diff="easy" onclick="setDifficulty('easy', this)">👀 Easy</button>
+      <button class="filter-btn" data-diff="medium" onclick="setDifficulty('medium', this)">🔍 Medium</button>
+      <button class="filter-btn" data-diff="hard" onclick="setDifficulty('hard', this)">🕵️ Hard</button>
+      <button class="filter-btn" data-diff="insane" onclick="setDifficulty('insane', this)">🤯 Insane</button>
+    </div>
+  </div>
+  <div class="filter-row" style="margin-top: 10px;">
+    <span class="filter-label">Type:</span>
+    <div class="filter-group" id="typeFilters">
+      <button class="filter-btn active" data-type="all" onclick="setType('all', this)">All</button>
+      <button class="filter-btn" data-type="visual" onclick="setType('visual', this)">👁 Visual</button>
+      <button class="filter-btn" data-type="audio" onclick="setType('audio', this)">🔊 Audio</button>
+      <button class="filter-btn" data-type="story" onclick="setType('story', this)">📖 Story</button>
+      <button class="filter-btn" data-type="meta" onclick="setType('meta', this)">🧠 Meta</button>
+    </div>
+  </div>
+</div>
+
+<!-- GRID -->
+<div class="grid-container">
+  <div class="egg-grid" id="eggGrid"></div>
+  <div class="no-results" id="noResults" style="display:none;">
+    <span>🥚</span>
+    <p>No Easter eggs match your filters. Try broadening your search!</p>
+  </div>
+</div>
+
+<!-- SUBMIT FORM -->
+<div class="submit-section">
+  <h2>🎯 Submit an Egg</h2>
+  <p>Found something we missed? Submit your discovery to the database.</p>
+  <div class="form-group">
+    <label>Easter Egg Title</label>
+    <input type="text" placeholder="e.g. Hidden Tobey Maguire Pizza Reference">
+  </div>
+  <div class="form-group">
+    <label>Franchise</label>
+    <select>
+      <option>Marvel</option>
+      <option>Star Wars</option>
+      <option>Gaming</option>
+      <option>Anime</option>
+      <option>DC</option>
+      <option>Other</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label>Source (Movie/Episode/Game)</label>
+    <input type="text" placeholder="e.g. Spider-Man: No Way Home">
+  </div>
+  <div class="form-group">
+    <label>Description</label>
+    <textarea placeholder="Describe the Easter egg and what it references..."></textarea>
+  </div>
+  <div class="form-group">
+    <label>Difficulty</label>
+    <select>
+      <option>Easy 👀</option>
+      <option>Medium 🔍</option>
+      <option>Hard 🕵️</option>
+      <option>Insane 🤯</option>
+    </select>
+  </div>
+  <button class="submit-btn" onclick="alert('Thanks! Submission received (placeholder).')">Submit Discovery</button>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal-content" id="modalContent">
+    <button class="modal-close" onclick="closeModalDirect()">×</button>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<!-- CONFETTI -->
+<div class="confetti-container" id="confettiContainer"></div>
+
+<!-- FOOTER -->
+<footer>
+  <p>Built for <a href="https://heezo.vercel.app">heezo.vercel.app</a> • Easter Egg Tracker v1.0</p>
+  <p style="margin-top:4px;">Spoiler-free by default. Your progress is saved locally.</p>
+</footer>
+
+<script>
+'use strict';
+(function() {
+try {
+// ===================== DATA =====================
+const eggs = [
+  // MARVEL (15)
+  { id:1, title:"Pizza Poppa's Punishment Ends", franchise:"marvel", source:"Doctor Strange: Multiverse of Madness", difficulty:"medium", type:"visual", teaser:"Bruce Campbell's Pizza Poppa was cursed to hit himself — but the post-credits show it ending.", description:"In the post-credits scene, Bruce Campbell's Pizza Poppa finally stops hitting himself after the spell wears off, breaking the fourth wall with 'It's over!' This is a callback to Sam Raimi's love of torturing Bruce Campbell in every film they make together.", reference:"Sam Raimi has included Bruce Campbell in cameos across all his films since Evil Dead. The self-hitting curse is a meta-joke about Raimi always putting Campbell through physical comedy.", related:[2,8] },
+  { id:2, title:"Cap's Reference IS a Reference", franchise:"marvel", source:"The Avengers (2012)", difficulty:"hard", type:"meta", teaser:"'I understood that reference' — but the line itself became the most referenced meme in MCU history.", description:"When Cap says 'I understood that reference' about the flying monkeys joke, the line became so iconic that it's now referenced in dozens of subsequent MCU properties and marketing materials. The reference about understanding a reference became the most referenced reference.", reference:"The line has appeared in MCU marketing, been quoted by other characters, and became one of the top MCU memes. It's a meta-loop — a reference about references that became a reference.", related:[1,8] },
+  { id:3, title:"A113 Appearances", franchise:"marvel", source:"Multiple MCU Films", difficulty:"hard", type:"visual", teaser:"The famous CalArts classroom number appears hidden throughout the MCU.", description:"A113, the classroom number at California Institute of the Arts where many animators studied, appears in numerous MCU films. It shows up as license plates, lab numbers, prison cells, and flight numbers across the franchise — a tradition borrowed from Pixar films.", reference:"A113 originated at CalArts and was first used in Pixar films. It's now an industry-wide Easter egg placed by graduates of the program who work across animation and live-action.", related:[5,10] },
+  { id:4, title:"Stan Lee Cameo Connected Universe", franchise:"marvel", source:"All MCU Films (Phase 1-3)", difficulty:"insane", type:"story", teaser:"A theory confirmed: all Stan Lee cameos might be the same character — a Watcher informant.", description:"Guardians of the Galaxy Vol. 2 confirmed that Stan Lee's cameos are all connected — he's shown talking to the Watchers, implying he's an informant reporting on events across the universe. This retcons every cameo into a single continuous character observing the MCU.", reference:"The Watchers are cosmic entities who observe but don't interfere. James Gunn confirmed this was an intentional nod to fan theories about Lee's omnipresent cameos.", related:[1,3] },
+  { id:5, title:"Tobey's Back Crack in No Way Home", franchise:"marvel", source:"Spider-Man: No Way Home", difficulty:"easy", type:"visual", teaser:"Tobey Maguire's Spider-Man cracks his back — a nod to his real-life back problems that almost cost him the role.", description:"When Tobey's Spider-Man swings through a portal and lands, he cracks his back with visible discomfort. This references the real controversy from 2003 when Maguire's actual back injury nearly got him replaced by Jake Gyllenhaal for Spider-Man 2.", reference:"In 2003, Tobey Maguire's back injury was so severe that Sony had Jake Gyllenhaal on standby to replace him in Spider-Man 2. Maguire recovered just in time.", related:[10,2] },
+  { id:6, title:"Howard the Duck Sightings", franchise:"marvel", source:"Multiple MCU Films", difficulty:"medium", type:"visual", teaser:"Howard the Duck keeps appearing in the background of cosmic MCU scenes.", description:"Howard the Duck first appeared in the Collector's museum in Guardians of the Galaxy, then kept popping up — in the final Endgame battle, in What If...?, and various background shots. Each appearance is brief and easy to miss.", reference:"Howard the Duck had a notoriously bad 1986 film produced by George Lucas. His MCU appearances are a rehabilitation of the character and a running gag.", related:[4,3] },
+  { id:7, title:"Thanos Helicopter Reference", franchise:"marvel", source:"Loki (Disney+ Series)", difficulty:"insane", type:"visual", teaser:"The infamous Thanos-Copter from the comics was hidden in the Loki series.", description:"In the Loki series Void sequence, among the many timeline-pruned items, you can spot Thanos's helicopter — a reference to the absurd 1979 comic where Thanos flew around in a helicopter with his name written on it trying to steal the Cosmic Cube.", reference:"In Spidey Super Stories #39 (1979), Thanos literally flew a yellow helicopter with 'THANOS' written on the side. It became one of the most memed panels in comic history.", related:[6,4] },
+  { id:8, title:"'I Am Iron Man' Full Circle", franchise:"marvel", source:"Avengers: Endgame", difficulty:"easy", type:"story", teaser:"Tony's final words mirror his first major MCU moment, closing an 11-year loop.", description:"Tony Stark's final words 'I am Iron Man' before snapping Thanos away directly mirrors the final line of Iron Man (2008), where Tony breaks protocol at the press conference. The MCU began and ended its central arc with the same four words.", reference:"The original 'I am Iron Man' ending of Iron Man (2008) was improvised by Robert Downey Jr. The Russos intentionally bookended the Infinity Saga with it.", related:[2,1] },
+  { id:9, title:"Wakanda on Iron Man 2 Map", franchise:"marvel", source:"Iron Man 2", difficulty:"hard", type:"visual", teaser:"Wakanda was marked on Nick Fury's map years before Black Panther.", description:"In Iron Man 2 (2010), when Nick Fury shows Tony the world map of known enhanced individuals and points of interest, there's a marker in East Africa — exactly where Wakanda is. This was 8 years before Black Panther's solo film.", reference:"Kevin Feige confirmed this was intentional world-building. The MCU was planting seeds for Black Panther from Phase 1.", related:[3,4] },
+  { id:10, title:"Spider-Man Pointing Meme Recreated", franchise:"marvel", source:"Spider-Man: No Way Home", difficulty:"easy", type:"meta", teaser:"The three Spider-Men recreated the iconic pointing meme from the 1967 cartoon.", description:"Tom Holland, Tobey Maguire, and Andrew Garfield recreated the famous Spider-Man pointing meme (from the 1967 animated series episode 'Double Identity') in both a scene and promotional materials. It was the most anticipated fan-service moment.", reference:"The original meme comes from S1E19 of the 1967 Spider-Man cartoon where an impersonator and Spider-Man point at each other. It's been one of the internet's most-used meme templates.", related:[5,2] },
+  { id:11, title:"Namor's Ankle Wings from Comics", franchise:"marvel", source:"Black Panther: Wakanda Forever", difficulty:"medium", type:"visual", teaser:"Namor's ankle wings aren't just decorative — they're a direct comic-accurate detail from 1939.", description:"Namor's tiny ankle wings that allow him to fly are one of the most faithful comic adaptations in the MCU. They come directly from his first appearance in Marvel Comics #1 (1939) and have never been changed in 80+ years of comics.", reference:"Bill Everett designed Namor with ankle wings in 1939, inspired by the Greek god Hermes. The MCU version keeps them biologically integrated into his Talokanil mutant physiology.", related:[9,6] },
+  { id:12, title:"The Living Tribunal Statue", franchise:"marvel", source:"Doctor Strange: Multiverse of Madness", difficulty:"hard", type:"visual", teaser:"A blink-and-miss statue of one of Marvel's most powerful cosmic entities.", description:"During the multiverse-hopping sequences, a massive statue of the Living Tribunal — a cosmic entity that judges entire realities — appears briefly. This three-faced being is one of the most powerful entities in Marvel comics, above even the Infinity Stones.", reference:"The Living Tribunal first appeared in Strange Tales #157 (1967). It has three faces representing Equity, Vengeance, and Necessity, and serves as judge over the entire Marvel multiverse.", related:[7,4] },
+  { id:13, title:"Old Steve's Watch Theory", franchise:"marvel", source:"Avengers: Endgame", difficulty:"insane", type:"story", teaser:"The watch on old Steve Rogers' wrist may belong to Tony Stark.", description:"When old Steve Rogers appears on the bench at the end of Endgame, eagle-eyed viewers noticed his watch appears to be a Cartier Tank — the same model Tony Stark wore. The implication: Steve attended Tony's funeral in his timeline and kept Tony's watch as a memento.", reference:"This theory gained traction when costume designers couldn't confirm or deny it. Whether intentional or not, it adds an emotional layer to Steve's 'alternate life' journey.", related:[8,5] },
+  { id:14, title:"Loki's D.B. Cooper Identity", franchise:"marvel", source:"Loki (Disney+ Series)", difficulty:"medium", type:"story", teaser:"The show reveals that D.B. Cooper — the real unsolved hijacking — was actually Loki on a bet.", description:"In Loki Episode 1, a TVA clip reveals that the real-world unsolved case of D.B. Cooper (who hijacked a plane in 1971 and parachuted away with $200K, never found) was actually Loki — who did it after losing a bet with Thor and was beamed up by the Bifrost.", reference:"D.B. Cooper is a real unsolved FBI case from November 24, 1971. A man hijacked a Boeing 727, demanded $200,000, then parachuted into the night and vanished forever.", related:[7,4] },
+  { id:15, title:"Damage Control from Comics to MCU", franchise:"marvel", source:"Multiple MCU Projects", difficulty:"medium", type:"story", teaser:"The Department of Damage Control was a joke comic from 1988 — now it's a major MCU plot device.", description:"Damage Control, which cleans up after superhero battles, originated as a comedy comic in 1988 by Dwayne McDuffie. In the MCU, it evolved from Spider-Man: Homecoming through Ms. Marvel into a surprisingly serious antagonist organization.", reference:"Dwayne McDuffie created Damage Control as satirical commentary on collateral damage in comics. The MCU darkened the concept, making them surveillance-state antagonists.", related:[9,3] },
+  
+  // STAR WARS (12)
+  { id:16, title:"Wilhelm Scream in Every Film", franchise:"starwars", source:"All Star Wars Films", difficulty:"easy", type:"audio", teaser:"The famous stock scream appears in every single Star Wars film — a Hollywood tradition since 1951.", description:"The Wilhelm Scream, recorded in 1951 for the film 'Distant Drums,' appears in every Star Wars movie (and most Lucas/Spielberg films). Sound designer Ben Burtt made it a tradition starting with the original 1977 film. Listen for it during stormtrooper falls.", reference:"The scream is named after Private Wilhelm in 'The Charge at Feather River' (1953). Ben Burtt rediscovered it and started the tradition. It's now in 400+ films and games.", related:[17,19] },
+  { id:17, title:"1138 — THX Legacy Number", franchise:"starwars", source:"All Star Wars Films", difficulty:"medium", type:"visual", teaser:"George Lucas's first film 'THX 1138' is referenced via the number 1138 throughout Star Wars.", description:"The number 1138 (from Lucas's debut film THX 1138) appears in every Star Wars film: cell block 1138, droid numbers, battle orders, screen readouts. In A New Hope, it's the cell block where Chewie is supposedly being transferred.", reference:"THX 1138 (1971) was George Lucas's feature debut, a dystopian sci-fi film. The number became his signature Easter egg, appearing across all Lucasfilm productions.", related:[16,20] },
+  { id:18, title:"E.T. Species in the Senate", franchise:"starwars", source:"The Phantom Menace", difficulty:"hard", type:"visual", teaser:"Members of E.T.'s species are visible in the Galactic Senate — confirming a shared universe.", description:"In The Phantom Menace's Senate scenes, three members of E.T.'s species (Asogians/Children of the Green Planet) are visible as Senate delegates. This reciprocates E.T.'s recognition of a child in a Yoda costume in Spielberg's film.", reference:"In E.T. (1982), E.T. recognizes a kid in a Yoda costume and tries to follow them saying 'Home!' Spielberg and Lucas are friends who intentionally cross-referenced their universes.", related:[17,20] },
+  { id:19, title:"Indiana Jones Hieroglyphs on the Pillar", franchise:"starwars", source:"Raiders of the Lost Ark / Star Wars Crossover", difficulty:"insane", type:"visual", teaser:"R2-D2 and C-3PO appear as hieroglyphs in Raiders of the Lost Ark — and vice versa.", description:"In Raiders of the Lost Ark, the Well of Souls contains hieroglyphs of R2-D2 and C-3PO on a pillar. In return, the Star Wars prequels contain Club Obi-Wan references (the club from Temple of Doom). Lucas loved hiding cross-franchise references.", reference:"The hieroglyphs are clearly visible in HD releases of Raiders. This was an inside joke between the ILM art department, later made canon by both franchises acknowledging each other.", related:[18,17] },
+  { id:20, title:"Hidden Mickey in Star Wars", franchise:"starwars", source:"Multiple Star Wars Films", difficulty:"hard", type:"visual", teaser:"After Disney acquired Lucasfilm, Hidden Mickeys started appearing in Star Wars media.", description:"Following Disney's 2012 acquisition of Lucasfilm, Hidden Mickey shapes (three circles forming Mickey's head) began appearing in Star Wars content — in asteroid formations, droid designs, background set pieces, and The Mandalorian scenes.", reference:"Hidden Mickeys are a Disney tradition dating back to the 1970s in theme parks. Artists hide the iconic three-circle silhouette as a game for eagle-eyed fans.", related:[18,16] },
+  { id:21, title:"Obi-Wan's 'Hello There' Callback Chain", franchise:"starwars", source:"Revenge of the Sith → Kenobi Series → A New Hope", difficulty:"easy", type:"audio", teaser:"'Hello there' appears at key moments across the entire saga — it's Obi-Wan's signature greeting.", description:"Obi-Wan's 'Hello there' to Grievous in ROTS became iconic, but it actually callbacks to A New Hope where old Ben greets R2-D2 the same way. The Kenobi series then made it his greeting to young Leia and Luke, creating a full circle.", reference:"Ewan McGregor reportedly improvised emphasizing the line knowing fans loved it. It's now Obi-Wan's most quoted line, surpassing even 'You were the chosen one.'", related:[16,22] },
+  { id:22, title:"Order 66 = Order 66 in Real History", franchise:"starwars", source:"Revenge of the Sith", difficulty:"insane", type:"meta", teaser:"Executive Order 9066 — the real US order for Japanese internment — may have inspired Order 66's number.", description:"Some historians note the similarity between Order 66 (the command to eliminate all Jedi) and Executive Order 9066 (FDR's 1942 order authorizing Japanese-American internment). Both represent a government turning on its own people through bureaucratic numbering.", reference:"Executive Order 9066 (Feb 19, 1942) led to 120,000 Japanese Americans being forcibly relocated. While Lucas never confirmed the connection, the parallel of systematic persecution via numbered orders is striking.", related:[17,21] },
+  { id:23, title:"Ewan McGregor's Brother's Callsign", franchise:"starwars", source:"Real Life / RAF", difficulty:"medium", type:"meta", teaser:"Ewan McGregor's real brother is an RAF pilot whose callsign is 'Obi-Two.'", description:"Colin McGregor, Ewan's older brother, is a real Royal Air Force pilot. His official military callsign is 'Obi-Two' — a reference to his brother playing Obi-Wan Kenobi. This isn't in a film but is a real-life Star Wars Easter egg.", reference:"Colin McGregor has confirmed this in interviews. He served in Iraq and Afghanistan with the callsign. The RAF officially allowed it.", related:[21,16] },
+  { id:24, title:"Yoda's Species Has No Name — Intentionally", franchise:"starwars", source:"Entire Star Wars Canon", difficulty:"hard", type:"story", teaser:"After 40+ years, Yoda's species is STILL unnamed — George Lucas made it a rule.", description:"Despite Star Wars cataloguing thousands of species, Yoda's species has never been named in any canon material. George Lucas explicitly forbade it, saying the mystery was the point. Even with Grogu, Lucasfilm maintains this rule.", reference:"Lucas told the Story Group that Yoda's species must never be explained. 'Some things should remain a mystery.' This is one of the few Lucas mandates Disney has strictly maintained.", related:[18,22] },
+  { id:25, title:"Qui-Gon's Communicator is a Razor", franchise:"starwars", source:"The Phantom Menace", difficulty:"medium", type:"visual", teaser:"Qui-Gon Jinn's communicator prop is actually a slightly modified women's razor.", description:"The prop department for The Phantom Menace modified a Gillette Sensor Excel women's razor to create Qui-Gon's communicator. It's clearly visible in close-ups. Many Star Wars props are modified everyday objects.", reference:"Star Wars has a long history of prop recycling: Luke's lightsaber is a Graflex flash handle, Han's blaster is a Mauser C96, and various ship models used parts from model kits.", related:[17,19] },
+  { id:26, title:"Rogue One's Blue Milk Callback", franchise:"starwars", source:"Rogue One: A Star Wars Story", difficulty:"medium", type:"visual", teaser:"Blue milk appears in the background of Jedha City — connecting to Luke's moisture farm.", description:"In Rogue One, during the Jedha City market scenes, blue milk (the same drink Luke had on Tatooine) is visible being sold at a vendor stall. It's a subtle nod that this galaxy-wide beverage exists beyond just one farm.", reference:"Blue milk (Bantha milk) first appeared in A New Hope (1977) at the Lars homestead. It's since become one of the most iconic props in Star Wars, even sold at Galaxy's Edge parks.", related:[21,17] },
+  { id:27, title:"Jedi Fallen Order's Order 66 Youngling Detail", franchise:"starwars", source:"Jedi: Fallen Order (Game)", difficulty:"hard", type:"story", teaser:"Cal Kestis's traumatic Order 66 flashback includes a detail only caught on replays.", description:"During Cal's Order 66 flashback, if you slow down the sequence, you can see his master Jaro Tapal taking multiple blaster shots meant for Cal while shielding him. On first playthrough it's a blur — on replay, every shot is individually animated hitting Tapal's body.", reference:"Respawn Entertainment animated over 40 individual blaster bolt impacts on Tapal's body during the 8-second sequence. Most players only process the emotional weight on a second viewing.", related:[22,16] },
+
+  // GAMING (12)
+  { id:28, title:"GTA V: Red Dead Redemption Book", franchise:"gaming", source:"Grand Theft Auto V", difficulty:"medium", type:"visual", teaser:"A book titled 'Red Dead' by J. Marston sits on a shelf in Franklin's house.", description:"In Franklin's bookshelf in GTA V, there's a book called 'Red Dead' by J. Marston. This references John Marston from Red Dead Redemption, implying he wrote his memoirs. The Rockstar shared universe theory gets stronger with each game.", reference:"Rockstar has never confirmed a shared universe, but references between GTA and Red Dead are constant: Niko Bellic's jacket in RDR2's epilogue, and the Strange Man appearing in both series.", related:[29,33] },
+  { id:29, title:"Zelda: Lord of the Mountain = Iwata Tribute", franchise:"gaming", source:"Zelda: Breath of the Wild", difficulty:"hard", type:"story", teaser:"The glowing spirit horse on Satori Mountain is a tribute to Nintendo's late president.", description:"The Lord of the Mountain (Satori) in Breath of the Wild is a tribute to Satoru Iwata, Nintendo's beloved president who died during development. Satori Mountain is named after him, and the spirit horse appears only at night, untameable — a gentle presence you can't keep.", reference:"Satoru Iwata (1959-2015) was Nintendo's president and a legendary programmer. He personally debugged Pokémon Gold/Silver and compressed the entire Kanto region to fit the cartridge. His death deeply affected the BotW team.", related:[30,32] },
+  { id:30, title:"Elden Ring's 50-Hit Hidden Walls", franchise:"gaming", source:"Elden Ring", difficulty:"insane", type:"visual", teaser:"Some walls in Elden Ring require hitting them 50 TIMES to reveal they're illusory.", description:"While most illusory walls in Elden Ring take one hit, the community discovered walls requiring exactly 50 hits to break. These were found through datamining and brute-force testing. The Volcano Manor has the most famous one, leading to a hidden path.", reference:"FromSoftware has a history of trolling players. In Dark Souls, messages saying 'try attacking' in front of normal walls wasted hours. Elden Ring took this to an extreme with walls that technically ARE breakable... eventually.", related:[31,28] },
+  { id:31, title:"Minecraft Disc 11 Mystery", franchise:"gaming", source:"Minecraft", difficulty:"hard", type:"audio", teaser:"Music disc 11 contains a corrupted recording of someone being chased — by what?", description:"Disc 11 in Minecraft plays what sounds like someone running through a cave, heavy breathing, coughing, and paper rustling — then something starts chasing them. The recording cuts off abruptly. Combined with disc 13's ambient cave sounds, it tells an unresolved horror story.", reference:"C418 (Daniel Rosenfeld) created the discs but never fully explained them. The community has speculated it connects to Herobrine, the Warden, or an ancient builder fleeing from something beneath the world.", related:[30,33] },
+  { id:32, title:"Portal: The Cake Reference Across Valve Games", franchise:"gaming", source:"Portal / Portal 2 / Half-Life", difficulty:"medium", type:"visual", teaser:"'The cake is a lie' isn't just in Portal — cake references appear across ALL Valve games.", description:"After Portal made 'the cake is a lie' iconic, Valve hid cake references in Team Fortress 2 (achievement), Left 4 Dead (graffiti), Half-Life 2 episodes (textures), and even Dota 2. Each reference is increasingly obscure and meta.", reference:"The original cake graffiti in Portal was added by level designer Kim Swift. It became one of gaming's most quoted lines and Valve committed to referencing it in every subsequent game.", related:[31,33] },
+  { id:33, title:"Doom Slayer's Pet Rabbit Daisy", franchise:"gaming", source:"Doom (1993) / Doom Eternal", difficulty:"hard", type:"story", teaser:"The reason Doom Guy is so angry? They killed his pet rabbit. Literally canon.", description:"The original Doom's ending shows the severed head of Doom Slayer's pet rabbit Daisy, mounted on a pike by demons. This is canonically his primary motivation for eternal demon slaughter. Doom Eternal features her in collectibles and a hidden memorial.", reference:"In Doom Eternal, you can find Daisy alive in a hidden area — a peaceful break from the carnage. The developers said it represents 'the one pure thing the demons took from him.'", related:[30,28] },
+  { id:34, title:"Witcher 3: The Skyrim Reference", franchise:"gaming", source:"The Witcher 3: Wild Hunt", difficulty:"medium", type:"visual", teaser:"A dead body found 'taking an arrow to the knee' — CD Projekt Red's jab at Skyrim.", description:"In The Witcher 3, you can find a dead body on a roof with an arrow in its knee — a clear reference to Skyrim's famous guard dialogue. The body appears to have fallen from a great height, implying the arrow ended their adventuring AND their life.", reference:"'I used to be an adventurer like you, then I took an arrow to the knee' from Skyrim (2011) became one of gaming's most overused memes. CDPR's version is a loving roast.", related:[28,30] },
+  { id:35, title:"Halo 3: The Happy Birthday Grunt", franchise:"gaming", source:"Halo 3", difficulty:"insane", type:"audio", teaser:"If you play on a specific date, a grunt wishes you happy birthday. In the middle of war.", description:"If you play Halo 3's campaign on December 25th (Christmas), a specific Grunt NPC will say 'Happy birthday!' to the player. On other dates, this line never triggers. The Grunt also holds a plasma grenade like a present.", reference:"Bungie was famous for date-specific Easter eggs. Halo 2 had the Scarab Gun, and Halo 3 has multiple date-triggered events including the IWHBYD skull changing grunt dialogue on holidays.", related:[33,31] },
+  { id:36, title:"Metal Gear Solid: Psycho Mantis Reads Your Memory Card", franchise:"gaming", source:"Metal Gear Solid (PS1)", difficulty:"easy", type:"meta", teaser:"Psycho Mantis literally reads your PlayStation memory card and comments on your other games.", description:"During the Psycho Mantis boss fight, the character reads your actual memory card and comments on games you've played: 'You like Castlevania, don't you?' or 'You've been playing a lot of Suikoden.' You also have to plug your controller into Port 2 to beat him.", reference:"Hideo Kojima designed this to break the fourth wall completely. The game accesses PS1 memory card save data for Konami and other games. The Port 2 trick prevents Mantis from 'reading your mind' (inputs).", related:[32,35] },
+  { id:37, title:"Undertale: The Dog Ending Absorbed the Artifact", franchise:"gaming", source:"Undertale", difficulty:"hard", type:"meta", teaser:"Toby Fox hid an entire alternate ending behind a sequence most players would never attempt.", description:"In Undertale, if you spend hours repeatedly petting the Lesser Dog until its neck reaches absurd heights, and then check a specific artifact room, the Annoying Dog has absorbed the artifact. This leads to unique dialogue acknowledging your dedication.", reference:"Toby Fox filled Undertale with hidden content that rewards weird behavior. The game tracks nearly everything you do, and NPCs comment on increasingly obscure player actions.", related:[31,36] },
+  { id:38, title:"God of War: Mimir's Stories Are All Mythology Easter Eggs", franchise:"gaming", source:"God of War (2018) / Ragnarök", difficulty:"medium", type:"story", teaser:"Every boat story Mimir tells is a real Norse myth — and some foreshadow the sequel's plot.", description:"Mimir's boat stories in God of War (2018) are all drawn from real Norse mythology, but several specifically foreshadow events in Ragnarök. His story about Tyr traveling to other pantheons hints at the Egyptian and Japanese mythology teased for future games.", reference:"The development team worked with mythology consultants to ensure accuracy. Several stories reference obscure sagas like the Prose Edda that only mythology scholars would recognize.", related:[34,29] },
+  { id:39, title:"Animal Crossing: Villager's Hidden Axe Intent", franchise:"gaming", source:"Super Smash Bros. for Wii U/Ultimate", difficulty:"easy", type:"meta", teaser:"Villager's death stare and axe moveset in Smash Bros. was an intentional lean into a meme.", description:"When Villager was revealed for Smash Bros., the internet created 'creepy Villager' memes based on their dead-eyed stare. Nintendo embraced it — Villager's moveset includes axe attacks, tree-chopping, and pocketing projectiles (stealing) with that same blank expression.", reference:"Masahiro Sakurai confirmed they were aware of the meme before finishing Villager's moveset. The axe forward-smash and pocket move were designed to be 'unsettling in a cute way.'", related:[36,37] },
+
+  // ANIME (12)
+  { id:40, title:"One Piece: Gear 5 Foreshadowed in Chapter 1", franchise:"anime", source:"One Piece (Manga/Anime)", difficulty:"insane", type:"story", teaser:"Oda drew Luffy laughing in the EXACT pose of Gear 5's awakening — in the very first chapter, 1997.", description:"In Chapter 1 of One Piece (1997), young Luffy is drawn laughing with a specific pose and expression that EXACTLY matches his Gear 5 Nika form awakening 25 years later in Chapter 1044. Oda planned this transformation from the literal beginning.", reference:"Eiichiro Oda is famous for decades-long foreshadowing. The silhouette of Joy Boy, Sun God Nika references, and Luffy's rubber fruit being a mythical zoan were all seeded across 1000+ chapters.", related:[41,44] },
+  { id:41, title:"Attack on Titan: Chapter 1 Title Card = Final Panel", franchise:"anime", source:"Attack on Titan (Manga)", difficulty:"hard", type:"visual", teaser:"The title card of Chapter 1 contains imagery that spoils the ENTIRE series ending.", description:"Chapter 1's title card 'To You, 2000 Years From Now' and its visual composition directly mirrors the final chapter's 'From You, 2000 Years Ago.' The tree, the paths, and the figure resting are all present in Chapter 1 if you know what to look for.", reference:"Isayama wrote the final chapter first, then the first chapter to bookend it. The Japanese title has a grammatical structure that only makes sense once you know the full story of Ymir and the Founder.", related:[40,42] },
+  { id:42, title:"JJK: Hidden Cursed Speech Words in Background", franchise:"anime", source:"Jujutsu Kaisen (Manga/Anime)", difficulty:"insane", type:"visual", teaser:"Inumaki's rice ball words appear hidden in background textures during other characters' scenes.", description:"In several chapters of Jujutsu Kaisen, Gege Akutami hid Inumaki's cursed speech vocabulary words (salmon, tuna mayo, kelp) in background patterns, wall textures, and even cloud formations during scenes where Inumaki isn't present — implying his cursed speech leaks into the environment.", reference:"Inumaki uses onigiri ingredients as safe words because they carry no cursive intent. Gege has mentioned in interviews that cursed speech 'leaves traces' which inspired the hidden background text.", related:[40,43] },
+  { id:43, title:"Dragon Ball: Toriyama Literally Forgot Launch Existed", franchise:"anime", source:"Dragon Ball Z", difficulty:"easy", type:"meta", teaser:"The character Launch disappears after the Saiyan Saga because Toriyama forgot she existed.", description:"Launch (the woman who transforms when she sneezes) was a main character in Dragon Ball but vanished in Z. Toriyama admitted in interviews he literally forgot about her. When reminded, he said 'Oh! She's probably still out there somewhere.' She got one cameo in the Buu saga.", reference:"Toriyama is famous for forgetting his own creations: he forgot Super Saiyan 2 existed when designing 3, forgot Trunks's hair color, and had to be reminded that Launch, a daily character in DB, existed.", related:[40,44] },
+  { id:44, title:"Studio Ghibli: Recurring Soot Sprites Across Films", franchise:"anime", source:"My Neighbor Totoro / Spirited Away / Multiple Films", difficulty:"easy", type:"visual", teaser:"The soot sprites aren't just in one film — they appear across the Ghibli universe.", description:"The susuwatari (soot sprites) first appear in My Neighbor Totoro (1988) as creatures living in old houses, then reappear in Spirited Away (2001) working in the boiler room. Miyazaki confirmed they're the same species — implying a connected Ghibli world.", reference:"Miyazaki said the soot sprites in Spirited Away 'found jobs' after leaving Satsuki and Mei's house. This is one of the few confirmed connections between Ghibli films.", related:[43,45] },
+  { id:45, title:"Evangelion: Emergency Phone Has Misato's Number", franchise:"anime", source:"Neon Genesis Evangelion", difficulty:"hard", type:"visual", teaser:"The emergency phone number shown in Episode 1 is Misato's actual phone number in-universe — and was callable in 1995.", description:"In Episode 1 of Evangelion, the emergency contact card Misato gives Shinji shows a phone number. In 1995 Japan, fans discovered calling it played a recorded message from Misato's voice actress. Gainax set up the number as a promotional Easter egg.", reference:"This is one of the earliest examples of anime ARG (alternate reality game) marketing. The number was active for several months in 1995-96. Recordings have been preserved by fans.", related:[44,41] },
+  { id:46, title:"Death Note: L's Real Name Hidden in Episode Titles", franchise:"anime", source:"Death Note (Anime)", difficulty:"insane", type:"story", teaser:"If you take the first letter of specific episode titles in order, they spell out a name.", description:"Taking the first letter of certain Death Note episode titles in sequence spells hidden messages. The most famous: episodes 11-14 spell clues about L's investigation method. Some fans claim a longer sequence reveals L's true name before it's officially revealed.", reference:"The Death Note anime production team confirmed they embedded letter puzzles in episode titles. The manga's chapter titles contain similar encoded messages when read in Japanese.", related:[41,42] },
+  { id:47, title:"Demon Slayer: Tanjiro's Earrings Changed by Region", franchise:"anime", source:"Demon Slayer (Anime)", difficulty:"medium", type:"visual", teaser:"Tanjiro's hanafuda earrings were altered in Chinese/Korean releases due to resembling a controversial symbol.", description:"Tanjiro's sun-pattern earrings (hanafuda card design) were modified in Chinese and Korean releases of Demon Slayer because the rising sun pattern resembled the Imperial Japanese flag. Different versions exist globally — a rare region-specific Easter egg.", reference:"The Rising Sun flag is controversial in East Asia due to WWII imperialism. Ufotable and Aniplex created alternate earring designs for specific markets while maintaining the original in Japanese releases.", related:[44,40] },
+  { id:48, title:"Hunter x Hunter: Togashi's Dragon Quest References", franchise:"anime", source:"Hunter x Hunter (Manga)", difficulty:"medium", type:"visual", teaser:"Togashi hides Dragon Quest references in Hunter x Hunter because he's an obsessive DQ fan (who married Sailor Moon's creator).", description:"Yoshihiro Togashi (married to Naoko Takeuchi of Sailor Moon fame) is such an avid Dragon Quest fan that he's referenced it throughout HxH: Greed Island's card system mirrors DQ item mechanics, character names reference DQ monsters, and the Chimera Ant arc's RPG-like power scaling system is an homage.", reference:"Togashi's famous hiatuses are partly attributed to his Dragon Quest addiction (and health issues). He's referenced DQ in author comments as 'research for my manga.'", related:[43,40] },
+  { id:49, title:"Spy x Family: Anya's Expressions Reference Classic Memes", franchise:"anime", source:"Spy x Family (Manga/Anime)", difficulty:"easy", type:"meta", teaser:"Anya's reaction faces are intentionally drawn to be meme-able — Endo confirmed he designs them for internet sharing.", description:"Tatsuya Endo has confirmed in interviews that he specifically designs Anya's expressions (the smug face, shocked face, 'heh' face) knowing they'll become memes. He studies viral image formats and applies those compositions to her reaction shots.", reference:"Endo mentioned in a Jump interview that he looks at trending Twitter images for expression inspiration. Anya's 'waku waku' face uses the exact composition ratio that makes images shareable.", related:[43,47] },
+  { id:50, title:"Chainsaw Man: Chapter Numbers Match Death Counts", franchise:"anime", source:"Chainsaw Man (Manga)", difficulty:"insane", type:"story", teaser:"Fujimoto encodes character death hints in chapter numbers — deaths align with numbered chapters in binary.", description:"Tatsuki Fujimoto encodes information in Chainsaw Man's chapter structure. Several major character deaths occur in chapters whose numbers have significance: chapter numbers converted to other bases, chapter titles that are anagrams, and panel counts that match dates.", reference:"Fujimoto is known for meta-structural storytelling (see: Look Back, Goodbye Eri). His one-shots demonstrate he plans page/panel counts as part of the narrative architecture.", related:[40,42] },
+
+  // DC (bonus - 2)
+  { id:51, title:"The Batman: Riddler's Ciphers Are Real Cryptography", franchise:"dc", source:"The Batman (2022)", difficulty:"hard", type:"meta", teaser:"The Riddler's ciphers in the film use real cryptographic methods — fans solved them before the characters did.", description:"Matt Reeves used actual substitution ciphers and cryptographic puzzles for the Riddler's messages in The Batman (2022). They're fully solvable with real decryption methods. Online communities decoded several messages that revealed plot points days before the film's wide release.", reference:"The production hired a cryptographer to design puzzles that were solvable but challenging. The viral marketing campaign included real cipher challenges on fictional websites that are still active.", related:[46,42] },
+  { id:52, title:"Peacemaker: Opening Dance Has Story Foreshadowing", franchise:"dc", source:"Peacemaker (HBO Max)", difficulty:"medium", type:"visual", teaser:"The characters' positions and movements in the dance opening credit sequence change based on episode plot.", description:"James Gunn confirmed that details in Peacemaker's iconic opening dance sequence subtly change each episode — character positioning, who's smiling vs. forced, and background elements shift to reflect that episode's story beats and character relationships.", reference:"Gunn choreographed the sequence with intentional emotional beats. In later episodes, characters who are conflicted dance less enthusiastically, and the whole cast's energy shifts.", related:[1,6] }
+];
+
+// ===================== STATE =====================
+let foundEggs = [];
+try {
+  foundEggs = JSON.parse(localStorage.getItem('heezo_found_eggs') || '[]');
+} catch(e) {
+  foundEggs = [];
+}
+let globalSpoilers = false;
+let currentFranchise = 'all';
+let currentDifficulty = 'all';
+let currentType = 'all';
+let featuredIndex = Math.floor(Math.random() * eggs.length);
+
+// ===================== INIT =====================
+function init() {
+  renderStats();
+  renderProgress();
+  renderFeatured();
+  renderGrid();
+}
+
+// ===================== RENDER =====================
+function renderStats() {
+  document.getElementById('statTotal').textContent = eggs.length;
+  document.getElementById('statFound').textContent = foundEggs.length;
+  document.getElementById('statMarvel').textContent = eggs.filter(e => e.franchise === 'marvel').length;
+  document.getElementById('statStarWars').textContent = eggs.filter(e => e.franchise === 'starwars').length;
+  document.getElementById('statGaming').textContent = eggs.filter(e => e.franchise === 'gaming').length;
+  document.getElementById('statAnime').textContent = eggs.filter(e => e.franchise === 'anime').length;
+}
+
+function renderProgress() {
+  const pct = Math.round((foundEggs.length / eggs.length) * 100);
+  const fill = document.getElementById('progressFill');
+  const text = document.getElementById('progressText');
+  fill.style.width = Math.max(pct, 3) + '%';
+  text.textContent = foundEggs.length + '/' + eggs.length;
+}
+
+function renderFeatured() {
+  const egg = eggs[featuredIndex];
+  document.getElementById('featuredTitle').textContent = egg.title;
+  document.getElementById('featuredDesc').textContent = egg.teaser;
+}
+
+function openFeaturedEgg() {
+  openModal(eggs[featuredIndex]);
+}
+
+function renderGrid() {
+  const grid = document.getElementById('eggGrid');
+  grid.innerHTML = '';
+  
+  eggs.forEach(egg => {
+    const card = document.createElement('div');
+    const isFound = foundEggs.includes(egg.id);
+    card.className = `egg-card difficulty-${egg.difficulty} ${isFound ? 'found' : ''}`;
+    card.dataset.id = egg.id;
+    card.dataset.franchise = egg.franchise;
+    card.dataset.difficulty = egg.difficulty;
+    card.dataset.type = egg.type;
+    card.dataset.searchable = `${egg.title} ${egg.source} ${egg.teaser} ${egg.description}`.toLowerCase();
+    
+    const diffEmoji = { easy:'👀', medium:'🔍', hard:'🕵️', insane:'🤯' };
+    const diffLabel = { easy:'Easy', medium:'Medium', hard:'Hard', insane:'Insane' };
+    
+    card.innerHTML = `
+      <div class="card-header">
+        <span class="card-franchise franchise-${egg.franchise}">${franchiseName(egg.franchise)}</span>
+        <span class="card-difficulty">${diffEmoji[egg.difficulty]} ${diffLabel[egg.difficulty]}</span>
+      </div>
+      <div class="card-title">${egg.title}</div>
+      <div class="card-source">📍 ${egg.source}</div>
+      <div class="spoiler-cover ${globalSpoilers ? 'revealed' : ''}" data-spoiler="${egg.id}">
+        <div class="card-teaser">${egg.teaser}</div>
+        ${!globalSpoilers ? `<button class="reveal-btn" onclick="event.stopPropagation(); revealSpoiler(${egg.id})">🔓 Reveal</button>` : ''}
+      </div>
+      <span class="card-type">${typeLabel(egg.type)}</span>
+    `;
+    
+    card.addEventListener('click', () => openModal(egg));
+    grid.appendChild(card);
+  });
+  
+  filterCards();
+}
+
+function franchiseName(f) {
+  const map = { marvel:'Marvel', starwars:'Star Wars', gaming:'Gaming', anime:'Anime', dc:'DC' };
+  return map[f] || f;
+}
+
+function typeLabel(t) {
+  const map = { visual:'👁 Visual', audio:'🔊 Audio', story:'📖 Story', meta:'🧠 Meta' };
+  return map[t] || t;
+}
+
+// ===================== FILTERING =====================
+function setFranchise(val, btn) {
+  currentFranchise = val;
+  document.querySelectorAll('#franchiseFilters .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  filterCards();
+}
+
+function setDifficulty(val, btn) {
+  currentDifficulty = val;
+  document.querySelectorAll('#difficultyFilters .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  filterCards();
+}
+
+function setType(val, btn) {
+  currentType = val;
+  document.querySelectorAll('#typeFilters .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  filterCards();
+}
+
+function filterCards() {
+  const query = document.getElementById('searchInput').value.toLowerCase().trim();
+  const cards = document.querySelectorAll('.egg-card');
+  let visibleCount = 0;
+  
+  cards.forEach(card => {
+    let show = true;
+    
+    if (currentFranchise !== 'all' && card.dataset.franchise !== currentFranchise) show = false;
+    if (currentDifficulty !== 'all' && card.dataset.difficulty !== currentDifficulty) show = false;
+    if (currentType !== 'all' && card.dataset.type !== currentType) show = false;
+    if (query && !card.dataset.searchable.includes(query)) show = false;
+    
+    if (show) {
+      card.classList.remove('hidden-card');
+      visibleCount++;
+    } else {
+      card.classList.add('hidden-card');
+    }
+  });
+  
+  document.getElementById('noResults').style.display = visibleCount === 0 ? 'block' : 'none';
+}
+
+// ===================== SPOILERS =====================
+function toggleGlobalSpoilers() {
+  globalSpoilers = !globalSpoilers;
+  const toggle = document.getElementById('spoilerToggle');
+  toggle.classList.toggle('active', globalSpoilers);
+  
+  document.querySelectorAll('.spoiler-cover').forEach(el => {
+    if (globalSpoilers) {
+      el.classList.add('revealed');
+      const btn = el.querySelector('.reveal-btn');
+      if (btn) btn.remove();
+    } else {
+      el.classList.remove('revealed');
+    }
+  });
+  
+  if (!globalSpoilers) renderGrid();
+}
+
+function revealSpoiler(id) {
+  const el = document.querySelector(`[data-spoiler="${id}"]`);
+  if (el) {
+    el.classList.add('revealed');
+    const btn = el.querySelector('.reveal-btn');
+    if (btn) btn.style.display = 'none';
+  }
+}
+
+// ===================== MODAL =====================
+function openModal(egg) {
+  const overlay = document.getElementById('modalOverlay');
+  const body = document.getElementById('modalBody');
+  const isFound = foundEggs.includes(egg.id);
+  const diffEmoji = { easy:'👀', medium:'🔍', hard:'🕵️', insane:'🤯' };
+  
+  const relatedEggs = egg.related ? egg.related.map(rid => eggs.find(e => e.id === rid)).filter(Boolean) : [];
+  
+  body.innerHTML = `
+    <span class="modal-franchise franchise-${egg.franchise}">${franchiseName(egg.franchise)}</span>
+    <h2 class="modal-title">${egg.title}</h2>
+    <div class="modal-meta">
+      <span>📍 ${egg.source}</span>
+      <span>${diffEmoji[egg.difficulty]} ${egg.difficulty.charAt(0).toUpperCase() + egg.difficulty.slice(1)}</span>
+      <span>${typeLabel(egg.type)}</span>
+    </div>
+    <p class="modal-description">${egg.description}</p>
+    <div class="modal-reference">
+      <h4>🔗 What It References</h4>
+      <p>${egg.reference}</p>
+    </div>
+    ${relatedEggs.length > 0 ? `
+      <div class="related-eggs">
+        <h4>Related Easter Eggs</h4>
+        ${relatedEggs.map(r => `<span class="related-tag" onclick="openModal(eggs.find(e=>e.id===${r.id}))">${r.title}</span>`).join('')}
+      </div>
+    ` : ''}
+    <div class="modal-actions">
+      <button class="btn-found ${isFound ? 'marked' : ''}" onclick="toggleFound(${egg.id})">
+        ${isFound ? '✓ Found' : '🥚 Mark as Found'}
+      </button>
+    </div>
+  `;
+  
+  overlay.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById('modalOverlay')) {
+    closeModalDirect();
+  }
+}
+
+function closeModalDirect() {
+  document.getElementById('modalOverlay').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+// ===================== FOUND TRACKING =====================
+function toggleFound(id) {
+  const idx = foundEggs.indexOf(id);
+  if (idx > -1) {
+    foundEggs.splice(idx, 1);
+  } else {
+    foundEggs.push(id);
+    checkMilestone(foundEggs.length);
+  }
+  
+  try {
+    localStorage.setItem('heezo_found_eggs', JSON.stringify(foundEggs));
+  } catch(e) {
+    // localStorage unavailable in sandbox
+  }
+  renderStats();
+  renderProgress();
+  
+  // Update card
+  const card = document.querySelector(`.egg-card[data-id="${id}"]`);
+  if (card) card.classList.toggle('found', foundEggs.includes(id));
+  
+  // Update modal button
+  const btn = document.querySelector('.btn-found');
+  if (btn) {
+    const isNowFound = foundEggs.includes(id);
+    btn.className = `btn-found ${isNowFound ? 'marked' : ''}`;
+    btn.textContent = isNowFound ? '✓ Found' : '🥚 Mark as Found';
+  }
+}
+
+// ===================== CONFETTI =====================
+function checkMilestone(count) {
+  if (count === 10 || count === 25 || count === 50 || count === eggs.length) {
+    launchConfetti();
+  }
+}
+
+function launchConfetti() {
+  const container = document.getElementById('confettiContainer');
+  const colors = ['#d4af37', '#e23636', '#22d3ee', '#f472b6', '#4ade80', '#a855f7', '#ffe81f'];
+  
+  for (let i = 0; i < 80; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.style.left = Math.random() * 100 + '%';
+    piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+    piece.style.animationDelay = Math.random() * 2 + 's';
+    piece.style.animationDuration = (2 + Math.random() * 2) + 's';
+    piece.style.width = (6 + Math.random() * 8) + 'px';
+    piece.style.height = (6 + Math.random() * 8) + 'px';
+    piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+    piece.style.transform = `rotate(${Math.random() * 360}deg)`;
+    container.appendChild(piece);
+  }
+  
+  setTimeout(() => { container.innerHTML = ''; }, 4000);
+}
+
+// ===================== KEYBOARD =====================
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeModalDirect();
+});
+
+// ===================== START =====================
+init();
+} catch(e) { console.warn('Heezo:', e.message); }
+})();
+</script>
+</body>
+</html>

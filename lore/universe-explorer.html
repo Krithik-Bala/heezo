@@ -1,0 +1,1496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Universe Explorer — HEEZO</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --obsidian: #0a0a0f;
+  --obsidian-light: #12121a;
+  --obsidian-lighter: #1a1a2e;
+  --gold: #d4af37;
+  --gold-dim: #b8962e;
+  --gold-glow: rgba(212, 175, 55, 0.3);
+  --gold-faint: rgba(212, 175, 55, 0.08);
+  --cyan: #00d4ff;
+  --cyan-glow: rgba(0, 212, 255, 0.3);
+  --red: #ff4444;
+  --red-glow: rgba(255, 68, 68, 0.3);
+  --purple: #9b59b6;
+  --purple-glow: rgba(155, 89, 182, 0.3);
+  --text-primary: #f0e6d3;
+  --text-secondary: #a89b8c;
+  --text-muted: #6b6159;
+  --glass-bg: rgba(18, 18, 26, 0.85);
+  --glass-border: rgba(212, 175, 55, 0.15);
+}
+
+body {
+  font-family: 'Space Grotesk', sans-serif;
+  background: var(--obsidian);
+  color: var(--text-primary);
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+}
+
+/* Navigation */
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 56px;
+  background: rgba(10, 10, 15, 0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--glass-border);
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  z-index: 1000;
+  gap: 24px;
+}
+
+.nav-logo {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--gold);
+  text-decoration: none;
+  letter-spacing: -0.5px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.nav-links a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  transition: color 0.2s;
+  padding: 6px 12px;
+  border-radius: 6px;
+}
+
+.nav-links a:hover { color: var(--gold); background: var(--gold-faint); }
+.nav-links a.active { color: var(--gold); }
+
+.nav-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Search */
+.search-container {
+  position: relative;
+}
+
+.search-input {
+  background: var(--obsidian-lighter);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  padding: 8px 12px 8px 36px;
+  color: var(--text-primary);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px;
+  width: 220px;
+  outline: none;
+  transition: all 0.3s;
+}
+
+.search-input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px var(--gold-faint);
+  width: 280px;
+}
+
+.search-input::placeholder { color: var(--text-muted); }
+
+.search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.search-results {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  background: var(--obsidian-light);
+  border: 1px solid var(--glass-border);
+  border-radius: 10px;
+  max-height: 300px;
+  overflow-y: auto;
+  display: none;
+  z-index: 1001;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+
+.search-results.active { display: block; }
+
+.search-result-item {
+  padding: 10px 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: background 0.15s;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+}
+
+.search-result-item:hover { background: var(--gold-faint); }
+
+.search-result-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.search-result-name { font-size: 13px; color: var(--text-primary); }
+.search-result-type { font-size: 11px; color: var(--text-muted); margin-left: auto; }
+
+/* Toolbar */
+.toolbar {
+  position: fixed;
+  top: 72px;
+  left: 24px;
+  display: flex;
+  gap: 8px;
+  z-index: 900;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 6px 14px;
+  color: var(--text-secondary);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  backdrop-filter: blur(10px);
+}
+
+.filter-btn:hover { border-color: var(--gold); color: var(--text-primary); }
+.filter-btn.active { background: var(--gold); color: var(--obsidian); border-color: var(--gold); font-weight: 600; }
+
+.filter-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+/* Franchise selector */
+.franchise-selector {
+  position: fixed;
+  top: 72px;
+  right: 24px;
+  display: flex;
+  gap: 8px;
+  z-index: 900;
+}
+
+.franchise-btn {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 10px;
+  padding: 8px 16px;
+  color: var(--text-secondary);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  backdrop-filter: blur(10px);
+}
+
+.franchise-btn:hover { border-color: var(--gold); color: var(--text-primary); transform: translateY(-1px); }
+.franchise-btn.active { background: linear-gradient(135deg, var(--gold), var(--gold-dim)); color: var(--obsidian); border-color: var(--gold); font-weight: 600; box-shadow: 0 4px 20px var(--gold-glow); }
+
+/* Canvas */
+#graphCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+}
+
+#graphCanvas:active { cursor: grabbing; }
+
+/* Detail Panel */
+.detail-panel {
+  position: fixed;
+  top: 56px;
+  right: -420px;
+  width: 400px;
+  height: calc(100vh - 56px);
+  background: var(--glass-bg);
+  backdrop-filter: blur(30px);
+  border-left: 1px solid var(--glass-border);
+  z-index: 950;
+  transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow-y: auto;
+  padding: 32px 24px;
+}
+
+.detail-panel.open { right: 0; }
+
+.detail-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+  transition: all 0.2s;
+}
+
+.detail-close:hover { background: rgba(255,68,68,0.1); color: var(--red); border-color: rgba(255,68,68,0.3); }
+
+.detail-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  margin-bottom: 16px;
+}
+
+.detail-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.detail-subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.detail-description {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  margin-bottom: 24px;
+}
+
+.detail-section-title {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--gold);
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.detail-connections {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.detail-connection {
+  padding: 10px 14px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.detail-connection:hover { background: var(--gold-faint); border-color: var(--glass-border); }
+
+.connection-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.connection-name { font-size: 13px; color: var(--text-primary); }
+.connection-rel { font-size: 11px; color: var(--text-muted); margin-left: auto; }
+
+/* Stats */
+.stats-bar {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 16px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 10px 20px;
+  z-index: 900;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.stat-value {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Zoom controls */
+.zoom-controls {
+  position: fixed;
+  bottom: 80px;
+  right: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  z-index: 900;
+}
+
+.zoom-btn {
+  width: 36px;
+  height: 36px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.zoom-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+/* Loading */
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--obsidian);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  transition: opacity 0.6s;
+}
+
+.loading-overlay.hidden { opacity: 0; pointer-events: none; }
+
+.loading-ring {
+  width: 48px;
+  height: 48px;
+  border: 2px solid var(--glass-border);
+  border-top: 2px solid var(--gold);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.loading-text {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .search-input { width: 140px; }
+  .search-input:focus { width: 180px; }
+  .detail-panel { width: 100%; right: -100%; }
+  .franchise-selector { top: 116px; right: 12px; }
+  .toolbar { top: 116px; left: 12px; }
+  .stats-bar { bottom: 12px; padding: 8px 14px; gap: 10px; }
+  .franchise-btn, .filter-btn { font-size: 11px; padding: 5px 10px; }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--gold-dim); }
+</style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-ring"></div>
+  <div class="loading-text">Initializing Universe Explorer...</div>
+</div>
+
+<nav>
+  <a href="/" class="nav-logo">HEEZO</a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/tools">Tools</a>
+    <a href="/lore" class="active">Lore Hub</a>
+    <a href="/lore">← Back</a>
+  </div>
+  <div class="nav-right">
+    <div class="search-container">
+      <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      <input type="text" class="search-input" id="searchInput" placeholder="Search nodes...">
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </div>
+</nav>
+
+<div class="toolbar" id="toolbar">
+  <button class="filter-btn active" data-filter="all">All</button>
+  <button class="filter-btn" data-filter="character"><span class="filter-dot" style="background: var(--gold)"></span>Characters</button>
+  <button class="filter-btn" data-filter="movie"><span class="filter-dot" style="background: var(--cyan)"></span>Movies/Shows</button>
+  <button class="filter-btn" data-filter="event"><span class="filter-dot" style="background: var(--red)"></span>Events</button>
+  <button class="filter-btn" data-filter="timeline"><span class="filter-dot" style="background: var(--purple)"></span>Timelines</button>
+</div>
+
+<div class="franchise-selector" id="franchiseSelector">
+  <button class="franchise-btn active" data-franchise="all">All</button>
+  <button class="franchise-btn" data-franchise="marvel">Marvel MCU</button>
+  <button class="franchise-btn" data-franchise="starwars">Star Wars</button>
+  <button class="franchise-btn" data-franchise="dragonball">Dragon Ball</button>
+</div>
+
+<canvas id="graphCanvas"></canvas>
+
+<div class="detail-panel" id="detailPanel">
+  <div class="detail-close" id="detailClose">×</div>
+  <div id="detailContent"></div>
+</div>
+
+<div class="stats-bar" id="statsBar">
+  <div class="stat-item"><span class="stat-value" id="statNodes">0</span> Nodes</div>
+  <div class="stat-item"><span class="stat-value" id="statEdges">0</span> Connections</div>
+  <div class="stat-item"><span class="stat-value" id="statFranchise">All</span> Universe</div>
+</div>
+
+<div class="zoom-controls">
+  <button class="zoom-btn" id="zoomIn">+</button>
+  <button class="zoom-btn" id="zoomOut">−</button>
+  <button class="zoom-btn" id="zoomFit">⊡</button>
+</div>
+
+<script>
+// ============================================
+// HEEZO UNIVERSE EXPLORER - Force-Directed Graph Engine
+// ============================================
+
+const UNIVERSE_DATA = {
+  marvel: {
+    name: "Marvel MCU",
+    nodes: [
+      // Characters
+      { id: "m_ironman", label: "Iron Man", type: "character", franchise: "marvel", icon: "🦾", description: "Tony Stark — genius billionaire inventor who built the first Iron Man suit in a cave. Founding Avenger and architect of Earth's defense systems.", meta: { realName: "Tony Stark", firstAppearance: "Iron Man (2008)", status: "Deceased" } },
+      { id: "m_cap", label: "Captain America", type: "character", franchise: "marvel", icon: "🛡️", description: "Steve Rogers — a WWII super soldier frozen in ice and awakened in the modern era. The moral compass of the Avengers.", meta: { realName: "Steve Rogers", firstAppearance: "Captain America: TFA (2011)", status: "Retired" } },
+      { id: "m_thor", label: "Thor", type: "character", franchise: "marvel", icon: "⚡", description: "The God of Thunder from Asgard. Wields Mjolnir and later Stormbreaker. One of the most powerful Avengers.", meta: { realName: "Thor Odinson", firstAppearance: "Thor (2011)", status: "Active" } },
+      { id: "m_hulk", label: "Hulk", type: "character", franchise: "marvel", icon: "💚", description: "Dr. Bruce Banner transforms into the incredible Hulk when stressed. Eventually merges both personas into Professor Hulk.", meta: { realName: "Bruce Banner", firstAppearance: "The Incredible Hulk (2008)", status: "Active" } },
+      { id: "m_widow", label: "Black Widow", type: "character", franchise: "marvel", icon: "🕷️", description: "Natasha Romanoff — former KGB assassin turned SHIELD agent and Avenger. Master spy and combatant.", meta: { realName: "Natasha Romanoff", firstAppearance: "Iron Man 2 (2010)", status: "Deceased" } },
+      { id: "m_thanos", label: "Thanos", type: "character", franchise: "marvel", icon: "💎", description: "The Mad Titan who sought to balance the universe by eliminating half of all life using the Infinity Stones.", meta: { realName: "Thanos", firstAppearance: "The Avengers (2012)", status: "Deceased" } },
+      { id: "m_spidey", label: "Spider-Man", type: "character", franchise: "marvel", icon: "🕸️", description: "Peter Parker — teenager bitten by a radioactive spider, mentored by Tony Stark to become a hero.", meta: { realName: "Peter Parker", firstAppearance: "Civil War (2016)", status: "Active" } },
+      { id: "m_strange", label: "Doctor Strange", type: "character", franchise: "marvel", icon: "🔮", description: "Stephen Strange — former surgeon who became the Sorcerer Supreme, master of the mystic arts and guardian of the Time Stone.", meta: { realName: "Stephen Strange", firstAppearance: "Doctor Strange (2016)", status: "Active" } },
+      { id: "m_panther", label: "Black Panther", type: "character", franchise: "marvel", icon: "🐾", description: "T'Challa — King of Wakanda and protector of his nation using vibranium-enhanced abilities.", meta: { realName: "T'Challa", firstAppearance: "Civil War (2016)", status: "Deceased" } },
+      { id: "m_wanda", label: "Scarlet Witch", type: "character", franchise: "marvel", icon: "🔴", description: "Wanda Maximoff — enhanced with chaos magic, capable of reality-warping feats of incredible power.", meta: { realName: "Wanda Maximoff", firstAppearance: "Age of Ultron (2015)", status: "Unknown" } },
+      // Movies
+      { id: "m_avengers1", label: "The Avengers", type: "movie", franchise: "marvel", icon: "🎬", description: "Earth's mightiest heroes assemble for the first time to stop Loki's alien invasion of New York.", meta: { year: 2012, phase: "Phase 1" } },
+      { id: "m_infinity", label: "Infinity War", type: "movie", franchise: "marvel", icon: "🎬", description: "Thanos collects all six Infinity Stones and snaps away half the universe. The Avengers' greatest defeat.", meta: { year: 2018, phase: "Phase 3" } },
+      { id: "m_endgame", label: "Endgame", type: "movie", franchise: "marvel", icon: "🎬", description: "The surviving Avengers use time travel to collect the Infinity Stones and undo Thanos' snap. The final battle.", meta: { year: 2019, phase: "Phase 3" } },
+      { id: "m_civilwar", label: "Civil War", type: "movie", franchise: "marvel", icon: "🎬", description: "The Avengers split when government oversight divides Tony Stark and Steve Rogers into opposing factions.", meta: { year: 2016, phase: "Phase 3" } },
+      // Events
+      { id: "m_snap", label: "The Snap", type: "event", franchise: "marvel", icon: "💥", description: "Thanos uses the completed Infinity Gauntlet to erase half of all life in the universe with a snap of his fingers.", meta: { year: 2018, impact: "Universal" } },
+      { id: "m_blip", label: "The Blip", type: "event", franchise: "marvel", icon: "💥", description: "Hulk uses Stark's nano-gauntlet to reverse the Snap, bringing everyone back 5 years later.", meta: { year: 2023, impact: "Universal" } },
+      { id: "m_battle_ny", label: "Battle of New York", type: "event", franchise: "marvel", icon: "💥", description: "The Chitauri invasion of Manhattan — the first major alien attack on Earth, repelled by the newly formed Avengers.", meta: { year: 2012, impact: "Global" } },
+      // Timelines
+      { id: "m_phase1", label: "Phase 1: Assembly", type: "timeline", franchise: "marvel", icon: "📅", description: "The origin stories. Individual heroes are introduced before assembling for the first time.", meta: { period: "2008-2012" } },
+      { id: "m_phase3", label: "Phase 3: Infinity Saga", type: "timeline", franchise: "marvel", icon: "📅", description: "The culmination of 10 years of storytelling, building to the confrontation with Thanos.", meta: { period: "2016-2019" } },
+    ],
+    edges: [
+      { source: "m_ironman", target: "m_avengers1", label: "appears in", type: "appearance" },
+      { source: "m_cap", target: "m_avengers1", label: "appears in", type: "appearance" },
+      { source: "m_thor", target: "m_avengers1", label: "appears in", type: "appearance" },
+      { source: "m_hulk", target: "m_avengers1", label: "appears in", type: "appearance" },
+      { source: "m_widow", target: "m_avengers1", label: "appears in", type: "appearance" },
+      { source: "m_ironman", target: "m_infinity", label: "appears in", type: "appearance" },
+      { source: "m_thanos", target: "m_infinity", label: "main villain", type: "antagonist" },
+      { source: "m_strange", target: "m_infinity", label: "appears in", type: "appearance" },
+      { source: "m_spidey", target: "m_infinity", label: "appears in", type: "appearance" },
+      { source: "m_ironman", target: "m_endgame", label: "sacrifices in", type: "pivotal" },
+      { source: "m_cap", target: "m_endgame", label: "leads in", type: "appearance" },
+      { source: "m_thanos", target: "m_endgame", label: "defeated in", type: "antagonist" },
+      { source: "m_ironman", target: "m_cap", label: "ally / rival", type: "relationship" },
+      { source: "m_ironman", target: "m_spidey", label: "mentors", type: "relationship" },
+      { source: "m_cap", target: "m_civilwar", label: "leads faction", type: "pivotal" },
+      { source: "m_ironman", target: "m_civilwar", label: "opposes Cap", type: "pivotal" },
+      { source: "m_panther", target: "m_civilwar", label: "first appears", type: "appearance" },
+      { source: "m_thanos", target: "m_snap", label: "causes", type: "causal" },
+      { source: "m_snap", target: "m_infinity", label: "occurs in", type: "event_in" },
+      { source: "m_blip", target: "m_endgame", label: "occurs in", type: "event_in" },
+      { source: "m_hulk", target: "m_blip", label: "performs", type: "causal" },
+      { source: "m_battle_ny", target: "m_avengers1", label: "occurs in", type: "event_in" },
+      { source: "m_avengers1", target: "m_phase1", label: "part of", type: "timeline" },
+      { source: "m_infinity", target: "m_phase3", label: "part of", type: "timeline" },
+      { source: "m_endgame", target: "m_phase3", label: "part of", type: "timeline" },
+      { source: "m_civilwar", target: "m_phase3", label: "part of", type: "timeline" },
+      { source: "m_wanda", target: "m_infinity", label: "appears in", type: "appearance" },
+      { source: "m_thor", target: "m_thanos", label: "nearly kills", type: "conflict" },
+      { source: "m_strange", target: "m_ironman", label: "allies with", type: "relationship" },
+    ]
+  },
+  starwars: {
+    name: "Star Wars",
+    nodes: [
+      // Characters
+      { id: "sw_luke", label: "Luke Skywalker", type: "character", franchise: "starwars", icon: "⚔️", description: "Farm boy from Tatooine who becomes the galaxy's last hope — a Jedi Knight who redeems his father and rebuilds the Order.", meta: { affiliation: "Rebel Alliance / Jedi", era: "Original Trilogy" } },
+      { id: "sw_vader", label: "Darth Vader", type: "character", franchise: "starwars", icon: "🖤", description: "Once Anakin Skywalker, fallen Jedi consumed by the dark side. Enforcer of the Empire and one of the most feared Sith Lords.", meta: { affiliation: "Galactic Empire / Sith", era: "Original Trilogy" } },
+      { id: "sw_leia", label: "Princess Leia", type: "character", franchise: "starwars", icon: "👑", description: "Senator, rebel leader, and Force-sensitive twin of Luke. Key architect of the Rebellion's victory over the Empire.", meta: { affiliation: "Rebel Alliance / Resistance", era: "Original Trilogy" } },
+      { id: "sw_han", label: "Han Solo", type: "character", franchise: "starwars", icon: "🚀", description: "Smuggler turned war hero. Captain of the Millennium Falcon with his co-pilot Chewbacca.", meta: { affiliation: "Rebel Alliance", era: "Original Trilogy" } },
+      { id: "sw_yoda", label: "Yoda", type: "character", franchise: "starwars", icon: "🟢", description: "Grand Master of the Jedi Order for 800 years. Trains Luke in the ways of the Force on Dagobah.", meta: { affiliation: "Jedi Order", era: "Prequel - Original" } },
+      { id: "sw_palpatine", label: "Emperor Palpatine", type: "character", franchise: "starwars", icon: "⚡", description: "Darth Sidious — Sith Lord who orchestrated the fall of the Republic and rise of the Galactic Empire.", meta: { affiliation: "Sith / Empire", era: "All Eras" } },
+      { id: "sw_mando", label: "The Mandalorian", type: "character", franchise: "starwars", icon: "🪖", description: "Din Djarin — lone bounty hunter who becomes the protector of Grogu, forging a new path for Mandalore.", meta: { affiliation: "Mandalore", era: "New Republic" } },
+      { id: "sw_ahsoka", label: "Ahsoka Tano", type: "character", franchise: "starwars", icon: "🗡️", description: "Former Padawan of Anakin Skywalker who left the Jedi Order. Becomes a key figure in the Rebellion.", meta: { affiliation: "Independent / Rebel", era: "Clone Wars - New Republic" } },
+      // Movies/Shows
+      { id: "sw_anh", label: "A New Hope", type: "movie", franchise: "starwars", icon: "🎬", description: "The original 1977 film. Luke joins the Rebellion and destroys the Death Star.", meta: { year: 1977, trilogy: "Original" } },
+      { id: "sw_esb", label: "Empire Strikes Back", type: "movie", franchise: "starwars", icon: "🎬", description: "The Empire retaliates. Luke trains with Yoda and faces the shocking truth about his father.", meta: { year: 1980, trilogy: "Original" } },
+      { id: "sw_rotj", label: "Return of the Jedi", type: "movie", franchise: "starwars", icon: "🎬", description: "Luke redeems Vader, the Emperor falls, and the Rebellion wins the Galactic Civil War.", meta: { year: 1983, trilogy: "Original" } },
+      { id: "sw_mandshow", label: "The Mandalorian", type: "movie", franchise: "starwars", icon: "📺", description: "Disney+ series following a lone bounty hunter in the outer reaches of the galaxy after the Empire's fall.", meta: { year: 2019, trilogy: "TV Series" } },
+      // Events
+      { id: "sw_deathstar", label: "Death Star Destroyed", type: "event", franchise: "starwars", icon: "💥", description: "Luke Skywalker fires the shot that destroys the Empire's planet-killing weapon, turning the tide of the war.", meta: { year: "0 BBY", impact: "Galactic" } },
+      { id: "sw_order66", label: "Order 66", type: "event", franchise: "starwars", icon: "💥", description: "Palpatine activates clone programming to exterminate all Jedi across the galaxy simultaneously.", meta: { year: "19 BBY", impact: "Galactic" } },
+      { id: "sw_redemption", label: "Vader's Redemption", type: "event", franchise: "starwars", icon: "💥", description: "Darth Vader saves Luke by throwing Emperor Palpatine down the reactor shaft, fulfilling the prophecy.", meta: { year: "4 ABY", impact: "Galactic" } },
+      // Timelines
+      { id: "sw_empire_era", label: "Imperial Era", type: "timeline", franchise: "starwars", icon: "📅", description: "The dark period where the Galactic Empire rules through fear, the Jedi are hunted, and rebellion brews.", meta: { period: "19 BBY - 4 ABY" } },
+      { id: "sw_newrepublic", label: "New Republic Era", type: "timeline", franchise: "starwars", icon: "📅", description: "After the Empire's fall — a fragile democracy rebuilds while remnants of the Empire persist.", meta: { period: "4 ABY - 34 ABY" } },
+    ],
+    edges: [
+      { source: "sw_luke", target: "sw_vader", label: "son of", type: "family" },
+      { source: "sw_leia", target: "sw_vader", label: "daughter of", type: "family" },
+      { source: "sw_luke", target: "sw_leia", label: "twin siblings", type: "family" },
+      { source: "sw_han", target: "sw_leia", label: "loves", type: "relationship" },
+      { source: "sw_yoda", target: "sw_luke", label: "trains", type: "mentorship" },
+      { source: "sw_palpatine", target: "sw_vader", label: "corrupts", type: "dark_side" },
+      { source: "sw_luke", target: "sw_anh", label: "protagonist", type: "appearance" },
+      { source: "sw_vader", target: "sw_anh", label: "antagonist", type: "appearance" },
+      { source: "sw_han", target: "sw_anh", label: "appears in", type: "appearance" },
+      { source: "sw_luke", target: "sw_esb", label: "trains / fights", type: "appearance" },
+      { source: "sw_yoda", target: "sw_esb", label: "trains Luke", type: "appearance" },
+      { source: "sw_vader", target: "sw_esb", label: "reveals truth", type: "pivotal" },
+      { source: "sw_luke", target: "sw_rotj", label: "redeems Vader", type: "pivotal" },
+      { source: "sw_vader", target: "sw_rotj", label: "redeemed in", type: "pivotal" },
+      { source: "sw_palpatine", target: "sw_rotj", label: "defeated in", type: "antagonist" },
+      { source: "sw_mando", target: "sw_mandshow", label: "protagonist", type: "appearance" },
+      { source: "sw_ahsoka", target: "sw_mandshow", label: "appears in", type: "appearance" },
+      { source: "sw_deathstar", target: "sw_anh", label: "occurs in", type: "event_in" },
+      { source: "sw_luke", target: "sw_deathstar", label: "causes", type: "causal" },
+      { source: "sw_order66", target: "sw_yoda", label: "survives", type: "impact" },
+      { source: "sw_palpatine", target: "sw_order66", label: "orders", type: "causal" },
+      { source: "sw_redemption", target: "sw_rotj", label: "occurs in", type: "event_in" },
+      { source: "sw_vader", target: "sw_redemption", label: "redeemed", type: "pivotal" },
+      { source: "sw_anh", target: "sw_empire_era", label: "set during", type: "timeline" },
+      { source: "sw_esb", target: "sw_empire_era", label: "set during", type: "timeline" },
+      { source: "sw_rotj", target: "sw_empire_era", label: "ends era", type: "timeline" },
+      { source: "sw_mandshow", target: "sw_newrepublic", label: "set during", type: "timeline" },
+      { source: "sw_ahsoka", target: "sw_order66", label: "survives", type: "impact" },
+    ]
+  },
+  dragonball: {
+    name: "Dragon Ball",
+    nodes: [
+      // Characters
+      { id: "db_goku", label: "Goku", type: "character", franchise: "dragonball", icon: "🟠", description: "Son Goku — Saiyan warrior raised on Earth. Earth's greatest defender who constantly breaks his limits.", meta: { race: "Saiyan", powerLevel: "Immeasurable", signature: "Kamehameha" } },
+      { id: "db_vegeta", label: "Vegeta", type: "character", franchise: "dragonball", icon: "👑", description: "Prince of all Saiyans. Prideful rival of Goku who evolves from villain to Earth's co-protector.", meta: { race: "Saiyan", powerLevel: "Immeasurable", signature: "Final Flash" } },
+      { id: "db_gohan", label: "Gohan", type: "character", franchise: "dragonball", icon: "📚", description: "Goku's eldest son with incredible hidden potential. Scholar who fights when the Earth needs him most.", meta: { race: "Half-Saiyan", powerLevel: "Extreme", signature: "Father-Son Kamehameha" } },
+      { id: "db_frieza", label: "Frieza", type: "character", franchise: "dragonball", icon: "🟣", description: "Galactic tyrant who destroyed Planet Vegeta. Goku's most personal nemesis across multiple sagas.", meta: { race: "Frost Demon", powerLevel: "Extreme", signature: "Death Beam" } },
+      { id: "db_cell", label: "Cell", type: "character", franchise: "dragonball", icon: "🦎", description: "Bio-android created by Dr. Gero containing cells from the greatest fighters. Achieved his Perfect Form.", meta: { race: "Bio-Android", powerLevel: "Extreme", signature: "Solar Kamehameha" } },
+      { id: "db_buu", label: "Majin Buu", type: "character", franchise: "dragonball", icon: "🩷", description: "Ancient magical being of immense destructive power. Multiple forms from childlike Fat Buu to terrifying Kid Buu.", meta: { race: "Majin", powerLevel: "Extreme", signature: "Human Extinction Attack" } },
+      { id: "db_beerus", label: "Beerus", type: "character", franchise: "dragonball", icon: "🐱", description: "God of Destruction for Universe 7. Awakened by a prophecy about a Super Saiyan God.", meta: { race: "God", powerLevel: "Divine", signature: "Hakai" } },
+      { id: "db_piccolo", label: "Piccolo", type: "character", franchise: "dragonball", icon: "🟢", description: "Namekian warrior and Gohan's mentor. Once Goku's enemy, now one of Earth's most dedicated protectors.", meta: { race: "Namekian", powerLevel: "High", signature: "Special Beam Cannon" } },
+      // Sagas
+      { id: "db_saiyan", label: "Saiyan Saga", type: "movie", franchise: "dragonball", icon: "📺", description: "Goku learns his alien origins when Raditz arrives, followed by Vegeta and Nappa's invasion of Earth.", meta: { year: "1989", series: "Dragon Ball Z" } },
+      { id: "db_namek", label: "Namek Saga", type: "movie", franchise: "dragonball", icon: "📺", description: "The Z-Fighters travel to Planet Namek to use its Dragon Balls, clashing with Frieza's forces.", meta: { year: "1990", series: "Dragon Ball Z" } },
+      { id: "db_cellsaga", label: "Cell Saga", type: "movie", franchise: "dragonball", icon: "📺", description: "Androids and the bio-engineered Cell threaten Earth. Gohan ascends to Super Saiyan 2.", meta: { year: "1992", series: "Dragon Ball Z" } },
+      { id: "db_buusaga", label: "Buu Saga", type: "movie", franchise: "dragonball", icon: "📺", description: "Majin Buu is unleashed. Goku achieves Super Saiyan 3 and Vegito is born from Potara fusion.", meta: { year: "1994", series: "Dragon Ball Z" } },
+      { id: "db_super", label: "Dragon Ball Super", type: "movie", franchise: "dragonball", icon: "📺", description: "Gods, multiversal tournaments, and Ultra Instinct. The story expands beyond Universe 7.", meta: { year: "2015", series: "Dragon Ball Super" } },
+      // Events / Transformations
+      { id: "db_ssj", label: "First Super Saiyan", type: "event", franchise: "dragonball", icon: "💥", description: "Goku transforms into a Super Saiyan for the first time on Planet Namek after Frieza kills Krillin.", meta: { significance: "Legendary", trigger: "Krillin's death" } },
+      { id: "db_ui", label: "Ultra Instinct", type: "event", franchise: "dragonball", icon: "💥", description: "Goku achieves the angelic technique Ultra Instinct during the Tournament of Power — body moves on its own.", meta: { significance: "Divine", trigger: "Spirit Bomb absorption" } },
+      { id: "db_cellgames", label: "Cell Games", type: "event", franchise: "dragonball", icon: "💥", description: "Cell hosts a tournament. Gohan snaps into SSJ2 and defeats Cell with a one-armed Kamehameha.", meta: { significance: "Major", trigger: "Android 16's death" } },
+      { id: "db_tournament", label: "Tournament of Power", type: "event", franchise: "dragonball", icon: "💥", description: "80 fighters from 8 universes battle in a royal rumble. Losing universe gets erased. Universe 7 wins.", meta: { significance: "Multiversal", trigger: "Zeno's decree" } },
+      // Timelines
+      { id: "db_z_era", label: "Dragon Ball Z Era", type: "timeline", franchise: "dragonball", icon: "📅", description: "The Saiyan through Buu sagas. Earth faces increasingly powerful threats from across the galaxy.", meta: { period: "Age 761-774" } },
+      { id: "db_super_era", label: "Super Era", type: "timeline", franchise: "dragonball", icon: "📅", description: "Post-Buu peace interrupted by gods, alternate timelines, and multiversal tournaments.", meta: { period: "Age 778-780" } },
+    ],
+    edges: [
+      { source: "db_goku", target: "db_vegeta", label: "eternal rivals", type: "rivalry" },
+      { source: "db_goku", target: "db_gohan", label: "father of", type: "family" },
+      { source: "db_piccolo", target: "db_gohan", label: "mentors", type: "mentorship" },
+      { source: "db_goku", target: "db_frieza", label: "nemesis", type: "conflict" },
+      { source: "db_gohan", target: "db_cell", label: "defeats", type: "conflict" },
+      { source: "db_goku", target: "db_buu", label: "defeats (Kid)", type: "conflict" },
+      { source: "db_goku", target: "db_beerus", label: "challenges", type: "rivalry" },
+      { source: "db_vegeta", target: "db_saiyan", label: "invades Earth", type: "appearance" },
+      { source: "db_goku", target: "db_saiyan", label: "defends Earth", type: "appearance" },
+      { source: "db_goku", target: "db_namek", label: "arrives on Namek", type: "appearance" },
+      { source: "db_frieza", target: "db_namek", label: "main villain", type: "antagonist" },
+      { source: "db_gohan", target: "db_cellsaga", label: "ascends SSJ2", type: "pivotal" },
+      { source: "db_cell", target: "db_cellsaga", label: "main villain", type: "antagonist" },
+      { source: "db_buu", target: "db_buusaga", label: "main villain", type: "antagonist" },
+      { source: "db_vegeta", target: "db_buusaga", label: "sacrifices self", type: "pivotal" },
+      { source: "db_goku", target: "db_super", label: "protagonist", type: "appearance" },
+      { source: "db_beerus", target: "db_super", label: "catalyst", type: "appearance" },
+      { source: "db_goku", target: "db_ssj", label: "achieves", type: "transformation" },
+      { source: "db_ssj", target: "db_namek", label: "occurs in", type: "event_in" },
+      { source: "db_frieza", target: "db_ssj", label: "triggers", type: "causal" },
+      { source: "db_goku", target: "db_ui", label: "achieves", type: "transformation" },
+      { source: "db_ui", target: "db_tournament", label: "achieved during", type: "event_in" },
+      { source: "db_cellgames", target: "db_cellsaga", label: "climax of", type: "event_in" },
+      { source: "db_gohan", target: "db_cellgames", label: "wins", type: "pivotal" },
+      { source: "db_tournament", target: "db_super", label: "occurs in", type: "event_in" },
+      { source: "db_saiyan", target: "db_z_era", label: "part of", type: "timeline" },
+      { source: "db_namek", target: "db_z_era", label: "part of", type: "timeline" },
+      { source: "db_cellsaga", target: "db_z_era", label: "part of", type: "timeline" },
+      { source: "db_buusaga", target: "db_z_era", label: "part of", type: "timeline" },
+      { source: "db_super", target: "db_super_era", label: "part of", type: "timeline" },
+    ]
+  }
+};
+
+// ============================================
+// GRAPH ENGINE
+// ============================================
+
+class ForceGraph {
+  constructor(canvas) {
+    this.canvas = canvas;
+    this.ctx = canvas.getContext('2d');
+    this.nodes = [];
+    this.edges = [];
+    this.width = window.innerWidth;
+    this.height = window.innerHeight;
+    this.canvas.width = this.width * window.devicePixelRatio;
+    this.canvas.height = this.height * window.devicePixelRatio;
+    this.ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    
+    // Camera
+    this.camera = { x: 0, y: 0, zoom: 1 };
+    this.targetCamera = { x: 0, y: 0, zoom: 1 };
+    
+    // Interaction
+    this.isDragging = false;
+    this.dragNode = null;
+    this.isPanning = false;
+    this.lastMouse = { x: 0, y: 0 };
+    this.mouseWorld = { x: 0, y: 0 };
+    this.hoveredNode = null;
+    this.selectedNode = null;
+    
+    // Physics
+    this.damping = 0.92;
+    this.repulsion = 2500;
+    this.attraction = 0.003;
+    this.idealLength = 180;
+    this.centerForce = 0.0003;
+    
+    // Particles
+    this.particles = [];
+    this.time = 0;
+    
+    // Filter state
+    this.activeFilter = 'all';
+    this.activeFranchise = 'all';
+    
+    this.setupEvents();
+    this.animate();
+  }
+  
+  loadData(franchise) {
+    this.nodes = [];
+    this.edges = [];
+    
+    const franchises = franchise === 'all' 
+      ? Object.keys(UNIVERSE_DATA) 
+      : [franchise];
+    
+    let offsetX = 0;
+    franchises.forEach((f, fi) => {
+      const data = UNIVERSE_DATA[f];
+      const centerX = (fi - (franchises.length - 1) / 2) * 600;
+      
+      data.nodes.forEach(n => {
+        this.nodes.push({
+          ...n,
+          x: centerX + (Math.random() - 0.5) * 400,
+          y: (Math.random() - 0.5) * 400,
+          vx: 0,
+          vy: 0,
+          radius: n.type === 'character' ? 28 : n.type === 'movie' ? 26 : n.type === 'event' ? 24 : 22,
+          visible: true,
+          alpha: 1,
+          targetAlpha: 1,
+          pulsePhase: Math.random() * Math.PI * 2
+        });
+      });
+      
+      data.edges.forEach(e => {
+        this.edges.push({ ...e, alpha: 0.6 });
+      });
+    });
+    
+    this.applyFilters();
+    this.updateStats();
+  }
+  
+  applyFilters() {
+    this.nodes.forEach(n => {
+      const typeMatch = this.activeFilter === 'all' || n.type === this.activeFilter;
+      const franchiseMatch = this.activeFranchise === 'all' || n.franchise === this.activeFranchise;
+      n.targetAlpha = (typeMatch && franchiseMatch) ? 1 : 0.08;
+      n.visible = typeMatch && franchiseMatch;
+    });
+    
+    this.edges.forEach(e => {
+      const sNode = this.nodes.find(n => n.id === e.source);
+      const tNode = this.nodes.find(n => n.id === e.target);
+      e.alpha = (sNode && tNode && sNode.visible && tNode.visible) ? 0.6 : 0.03;
+    });
+    
+    this.updateStats();
+  }
+  
+  updateStats() {
+    const visibleNodes = this.nodes.filter(n => n.visible).length;
+    const visibleEdges = this.edges.filter(e => e.alpha > 0.05).length;
+    document.getElementById('statNodes').textContent = visibleNodes;
+    document.getElementById('statEdges').textContent = visibleEdges;
+    
+    const names = { all: 'All', marvel: 'Marvel MCU', starwars: 'Star Wars', dragonball: 'Dragon Ball' };
+    document.getElementById('statFranchise').textContent = names[this.activeFranchise] || 'All';
+  }
+  
+  screenToWorld(sx, sy) {
+    return {
+      x: (sx - this.width / 2) / this.camera.zoom + this.camera.x,
+      y: (sy - this.height / 2) / this.camera.zoom + this.camera.y
+    };
+  }
+  
+  worldToScreen(wx, wy) {
+    return {
+      x: (wx - this.camera.x) * this.camera.zoom + this.width / 2,
+      y: (wy - this.camera.y) * this.camera.zoom + this.height / 2
+    };
+  }
+  
+  getNodeAt(wx, wy) {
+    for (let i = this.nodes.length - 1; i >= 0; i--) {
+      const n = this.nodes[i];
+      if (n.alpha < 0.2) continue;
+      const dx = wx - n.x;
+      const dy = wy - n.y;
+      if (dx * dx + dy * dy < n.radius * n.radius * 1.5) return n;
+    }
+    return null;
+  }
+  
+  setupEvents() {
+    const canvas = this.canvas;
+    
+    // Mouse events
+    canvas.addEventListener('mousedown', e => {
+      const world = this.screenToWorld(e.clientX, e.clientY);
+      const node = this.getNodeAt(world.x, world.y);
+      
+      if (node) {
+        this.dragNode = node;
+        this.isDragging = true;
+        canvas.style.cursor = 'grabbing';
+      } else {
+        this.isPanning = true;
+        canvas.style.cursor = 'grabbing';
+      }
+      this.lastMouse = { x: e.clientX, y: e.clientY };
+    });
+    
+    canvas.addEventListener('mousemove', e => {
+      const world = this.screenToWorld(e.clientX, e.clientY);
+      this.mouseWorld = world;
+      
+      if (this.isDragging && this.dragNode) {
+        this.dragNode.x = world.x;
+        this.dragNode.y = world.y;
+        this.dragNode.vx = 0;
+        this.dragNode.vy = 0;
+      } else if (this.isPanning) {
+        const dx = e.clientX - this.lastMouse.x;
+        const dy = e.clientY - this.lastMouse.y;
+        this.targetCamera.x -= dx / this.camera.zoom;
+        this.targetCamera.y -= dy / this.camera.zoom;
+        this.lastMouse = { x: e.clientX, y: e.clientY };
+      } else {
+        const node = this.getNodeAt(world.x, world.y);
+        this.hoveredNode = node;
+        canvas.style.cursor = node ? 'pointer' : 'grab';
+        
+        if (node && Math.random() < 0.3) {
+          this.spawnParticle(node.x, node.y, this.getNodeColor(node));
+        }
+      }
+    });
+    
+    canvas.addEventListener('mouseup', e => {
+      if (this.isDragging && this.dragNode) {
+        const world = this.screenToWorld(e.clientX, e.clientY);
+        const moved = Math.abs(world.x - this.dragNode.x) + Math.abs(world.y - this.dragNode.y);
+        if (moved < 5) {
+          this.selectNode(this.dragNode);
+        }
+      }
+      this.isDragging = false;
+      this.dragNode = null;
+      this.isPanning = false;
+      canvas.style.cursor = 'grab';
+    });
+    
+    canvas.addEventListener('click', e => {
+      if (this.isPanning) return;
+      const world = this.screenToWorld(e.clientX, e.clientY);
+      const node = this.getNodeAt(world.x, world.y);
+      if (node) this.selectNode(node);
+    });
+    
+    canvas.addEventListener('dblclick', e => {
+      const world = this.screenToWorld(e.clientX, e.clientY);
+      const node = this.getNodeAt(world.x, world.y);
+      if (node) {
+        this.targetCamera.x = node.x;
+        this.targetCamera.y = node.y;
+        this.targetCamera.zoom = 1.5;
+      }
+    });
+    
+    // Zoom
+    canvas.addEventListener('wheel', e => {
+      e.preventDefault();
+      const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
+      this.targetCamera.zoom = Math.max(0.2, Math.min(4, this.targetCamera.zoom * zoomFactor));
+    }, { passive: false });
+    
+    // Touch events
+    let lastTouchDist = 0;
+    let touchStart = null;
+    
+    canvas.addEventListener('touchstart', e => {
+      e.preventDefault();
+      if (e.touches.length === 1) {
+        const t = e.touches[0];
+        const world = this.screenToWorld(t.clientX, t.clientY);
+        const node = this.getNodeAt(world.x, world.y);
+        touchStart = { x: t.clientX, y: t.clientY, time: Date.now() };
+        
+        if (node) {
+          this.dragNode = node;
+          this.isDragging = true;
+        } else {
+          this.isPanning = true;
+        }
+        this.lastMouse = { x: t.clientX, y: t.clientY };
+      } else if (e.touches.length === 2) {
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        lastTouchDist = Math.sqrt(dx * dx + dy * dy);
+      }
+    }, { passive: false });
+    
+    canvas.addEventListener('touchmove', e => {
+      e.preventDefault();
+      if (e.touches.length === 1) {
+        const t = e.touches[0];
+        const world = this.screenToWorld(t.clientX, t.clientY);
+        
+        if (this.isDragging && this.dragNode) {
+          this.dragNode.x = world.x;
+          this.dragNode.y = world.y;
+          this.dragNode.vx = 0;
+          this.dragNode.vy = 0;
+        } else if (this.isPanning) {
+          const dx = t.clientX - this.lastMouse.x;
+          const dy = t.clientY - this.lastMouse.y;
+          this.targetCamera.x -= dx / this.camera.zoom;
+          this.targetCamera.y -= dy / this.camera.zoom;
+        }
+        this.lastMouse = { x: t.clientX, y: t.clientY };
+      } else if (e.touches.length === 2) {
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (lastTouchDist > 0) {
+          const scale = dist / lastTouchDist;
+          this.targetCamera.zoom = Math.max(0.2, Math.min(4, this.targetCamera.zoom * scale));
+        }
+        lastTouchDist = dist;
+      }
+    }, { passive: false });
+    
+    canvas.addEventListener('touchend', e => {
+      if (touchStart && Date.now() - touchStart.time < 300) {
+        const world = this.screenToWorld(touchStart.x, touchStart.y);
+        const node = this.getNodeAt(world.x, world.y);
+        if (node) this.selectNode(node);
+      }
+      this.isDragging = false;
+      this.dragNode = null;
+      this.isPanning = false;
+      lastTouchDist = 0;
+      touchStart = null;
+    });
+    
+    // Resize
+    window.addEventListener('resize', () => {
+      this.width = window.innerWidth;
+      this.height = window.innerHeight;
+      this.canvas.width = this.width * window.devicePixelRatio;
+      this.canvas.height = this.height * window.devicePixelRatio;
+      this.ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    });
+  }
+  
+  selectNode(node) {
+    this.selectedNode = node;
+    showDetail(node);
+  }
+  
+  focusNode(nodeId) {
+    const node = this.nodes.find(n => n.id === nodeId);
+    if (node) {
+      this.targetCamera.x = node.x;
+      this.targetCamera.y = node.y;
+      this.targetCamera.zoom = 1.5;
+      this.selectNode(node);
+    }
+  }
+  
+  getNodeColor(node) {
+    switch(node.type) {
+      case 'character': return '#d4af37';
+      case 'movie': return '#00d4ff';
+      case 'event': return '#ff4444';
+      case 'timeline': return '#9b59b6';
+      default: return '#ffffff';
+    }
+  }
+  
+  getNodeGlow(node) {
+    switch(node.type) {
+      case 'character': return 'rgba(212, 175, 55, 0.4)';
+      case 'movie': return 'rgba(0, 212, 255, 0.4)';
+      case 'event': return 'rgba(255, 68, 68, 0.4)';
+      case 'timeline': return 'rgba(155, 89, 182, 0.4)';
+      default: return 'rgba(255, 255, 255, 0.4)';
+    }
+  }
+  
+  spawnParticle(x, y, color) {
+    this.particles.push({
+      x, y,
+      vx: (Math.random() - 0.5) * 2,
+      vy: (Math.random() - 0.5) * 2,
+      life: 1,
+      decay: 0.02 + Math.random() * 0.02,
+      color,
+      size: 1 + Math.random() * 2
+    });
+  }
+  
+  simulate() {
+    const nodes = this.nodes.filter(n => n.alpha > 0.1);
+    
+    // Repulsion
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const a = nodes[i], b = nodes[j];
+        let dx = a.x - b.x;
+        let dy = a.y - b.y;
+        let dist = Math.sqrt(dx * dx + dy * dy) || 1;
+        let force = this.repulsion / (dist * dist);
+        force = Math.min(force, 10);
+        
+        const fx = (dx / dist) * force;
+        const fy = (dy / dist) * force;
+        
+        if (!this.isDragging || this.dragNode !== a) { a.vx += fx; a.vy += fy; }
+        if (!this.isDragging || this.dragNode !== b) { b.vx -= fx; b.vy -= fy; }
+      }
+    }
+    
+    // Attraction (edges)
+    this.edges.forEach(e => {
+      if (e.alpha < 0.05) return;
+      const a = this.nodes.find(n => n.id === e.source);
+      const b = this.nodes.find(n => n.id === e.target);
+      if (!a || !b) return;
+      
+      let dx = b.x - a.x;
+      let dy = b.y - a.y;
+      let dist = Math.sqrt(dx * dx + dy * dy) || 1;
+      let force = (dist - this.idealLength) * this.attraction;
+      
+      const fx = (dx / dist) * force;
+      const fy = (dy / dist) * force;
+      
+      if (!this.isDragging || this.dragNode !== a) { a.vx += fx; a.vy += fy; }
+      if (!this.isDragging || this.dragNode !== b) { b.vx -= fx; b.vy -= fy; }
+    });
+    
+    // Center force
+    nodes.forEach(n => {
+      if (this.isDragging && this.dragNode === n) return;
+      n.vx -= n.x * this.centerForce;
+      n.vy -= n.y * this.centerForce;
+      n.vx *= this.damping;
+      n.vy *= this.damping;
+      n.x += n.vx;
+      n.y += n.vy;
+    });
+    
+    // Alpha interpolation
+    this.nodes.forEach(n => {
+      n.alpha += (n.targetAlpha - n.alpha) * 0.05;
+    });
+    
+    // Particles
+    this.particles = this.particles.filter(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.life -= p.decay;
+      return p.life > 0;
+    });
+  }
+  
+  render() {
+    const ctx = this.ctx;
+    const w = this.width;
+    const h = this.height;
+    
+    // Clear
+    ctx.fillStyle = '#0a0a0f';
+    ctx.fillRect(0, 0, w, h);
+    
+    // Background grid
+    this.drawGrid(ctx);
+    
+    // Camera interpolation
+    this.camera.x += (this.targetCamera.x - this.camera.x) * 0.08;
+    this.camera.y += (this.targetCamera.y - this.camera.y) * 0.08;
+    this.camera.zoom += (this.targetCamera.zoom - this.camera.zoom) * 0.08;
+    
+    ctx.save();
+    ctx.translate(w / 2, h / 2);
+    ctx.scale(this.camera.zoom, this.camera.zoom);
+    ctx.translate(-this.camera.x, -this.camera.y);
+    
+    // Draw edges
+    this.edges.forEach(e => {
+      if (e.alpha < 0.01) return;
+      const a = this.nodes.find(n => n.id === e.source);
+      const b = this.nodes.find(n => n.id === e.target);
+      if (!a || !b) return;
+      
+      const isHighlighted = this.selectedNode && 
+        (e.source === this.selectedNode.id || e.target === this.selectedNode.id);
+      
+      ctx.beginPath();
+      ctx.moveTo(a.x, a.y);
+      ctx.lineTo(b.x, b.y);
+      
+      if (isHighlighted) {
+        ctx.strokeStyle = `rgba(212, 175, 55, ${e.alpha * 1.5})`;
+        ctx.lineWidth = 2.5;
+        ctx.shadowColor = 'rgba(212, 175, 55, 0.5)';
+        ctx.shadowBlur = 8;
+      } else {
+        ctx.strokeStyle = `rgba(212, 175, 55, ${e.alpha * 0.3})`;
+        ctx.lineWidth = 1;
+        ctx.shadowBlur = 0;
+      }
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+      
+      // Edge label (only when zoomed in and highlighted)
+      if (isHighlighted && this.camera.zoom > 0.8) {
+        const mx = (a.x + b.x) / 2;
+        const my = (a.y + b.y) / 2;
+        ctx.font = '10px Space Grotesk';
+        ctx.fillStyle = `rgba(168, 155, 140, ${e.alpha})`;
+        ctx.textAlign = 'center';
+        ctx.fillText(e.label, mx, my - 6);
+      }
+    });
+    
+    // Draw particles
+    this.particles.forEach(p => {
+      const screen = this.worldToScreen(p.x, p.y);
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+      ctx.fillStyle = p.color.replace(')', `, ${p.life})`).replace('rgb', 'rgba');
+      ctx.fill();
+    });
+    
+    // Draw nodes
+    this.nodes.forEach(node => {
+      if (node.alpha < 0.01) return;
+      this.drawNode(ctx, node);
+    });
+    
+    ctx.restore();
+    
+    this.time += 0.016;
+  }
+  
+  drawGrid(ctx) {
+    const spacing = 80 * this.camera.zoom;
+    const offsetX = (-this.camera.x * this.camera.zoom + this.width / 2) % spacing;
+    const offsetY = (-this.camera.y * this.camera.zoom + this.height / 2) % spacing;
+    
+    ctx.strokeStyle = 'rgba(212, 175, 55, 0.03)';
+    ctx.lineWidth = 0.5;
+    
+    for (let x = offsetX; x < this.width; x += spacing) {
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, this.height);
+      ctx.stroke();
+    }
+    for (let y = offsetY; y < this.height; y += spacing) {
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(this.width, y);
+      ctx.stroke();
+    }
+  }
+  
+  drawNode(ctx, node) {
+    const x = node.x;
+    const y = node.y;
+    const r = node.radius;
+    const color = this.getNodeColor(node);
+    const glow = this.getNodeGlow(node);
+    const isHovered = this.hoveredNode === node;
+    const isSelected = this.selectedNode === node;
+    const pulse = Math.sin(this.time * 3 + node.pulsePhase) * 0.1 + 0.9;
+    
+    ctx.globalAlpha = node.alpha;
+    
+    // Glow
+    if (isHovered || isSelected) {
+      ctx.shadowColor = color;
+      ctx.shadowBlur = 25;
+    }
+    
+    // Draw shape based on type
+    ctx.beginPath();
+    switch(node.type) {
+      case 'character':
+        ctx.arc(x, y, r * (isHovered ? 1.15 : 1) * pulse, 0, Math.PI * 2);
+        break;
+      case 'movie':
+        const rr = r * (isHovered ? 1.15 : 1);
+        this.roundedRect(ctx, x - rr * 1.3, y - rr * 0.8, rr * 2.6, rr * 1.6, 8);
+        break;
+      case 'event':
+        const er = r * (isHovered ? 1.15 : 1);
+        ctx.moveTo(x, y - er);
+        ctx.lineTo(x + er, y);
+        ctx.lineTo(x, y + er);
+        ctx.lineTo(x - er, y);
+        ctx.closePath();
+        break;
+      case 'timeline':
+        const tr = r * (isHovered ? 1.15 : 1);
+        this.roundedRect(ctx, x - tr * 2, y - tr * 0.5, tr * 4, tr * 1, 6);
+        break;
+    }
+    
+    // Fill
+    ctx.fillStyle = `rgba(18, 18, 26, ${0.9 * node.alpha})`;
+    ctx.fill();
+    
+    // Border
+    ctx.strokeStyle = color;
+    ctx.lineWidth = isSelected ? 3 : isHovered ? 2.5 : 1.5;
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+    
+    // Icon
+    if (this.camera.zoom > 0.5) {
+      ctx.font = `${r * 0.7}px sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = `rgba(240, 230, 211, ${node.alpha})`;
+      ctx.fillText(node.icon, x, y - (this.camera.zoom > 0.8 ? 4 : 0));
+    }
+    
+    // Label
+    if (this.camera.zoom > 0.6) {
+      ctx.font = `${Math.max(9, 11 / Math.max(this.camera.zoom, 0.7))}px Space Grotesk`;
+      ctx.textAlign = 'center';
+      ctx.fillStyle = `rgba(240, 230, 211, ${node.alpha * 0.9})`;
+      const labelY = node.type === 'movie' ? y + r + 12 : node.type === 'timeline' ? y + r * 0.5 + 14 : y + r + 12;
+      ctx.fillText(node.label, x, labelY);
+    }
+    
+    ctx.globalAlpha = 1;
+  }
+  
+  roundedRect(ctx, x, y, w, h, r) {
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+  }
+  
+  animate() {
+    this.simulate();
+    this.render();
+    requestAnimationFrame(() => this.animate());
+  }
+  
+  zoomIn() { this.targetCamera.zoom = Math.min(4, this.targetCamera.zoom * 1.3); }
+  zoomOut() { this.targetCamera.zoom = Math.max(0.2, this.targetCamera.zoom * 0.7); }
+  
+  zoomFit() {
+    if (this.nodes.length === 0) return;
+    const visible = this.nodes.filter(n => n.visible);
+    if (visible.length === 0) return;
+    
+    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+    visible.forEach(n => {
+      minX = Math.min(minX, n.x);
+      maxX = Math.max(maxX, n.x);
+      minY = Math.min(minY, n.y);
+      maxY = Math.max(maxY, n.y);
+    });
+    
+    const cx = (minX + maxX) / 2;
+    const cy = (minY + maxY) / 2;
+    const spanX = maxX - minX + 200;
+    const spanY = maxY - minY + 200;
+    const zoom = Math.min(this.width / spanX, this.height / spanY, 2) * 0.85;
+    
+    this.targetCamera.x = cx;
+    this.targetCamera.y = cy;
+    this.targetCamera.zoom = zoom;
+  }
+}
+
+// ============================================
+// UI LOGIC
+// ============================================
+
+let graph;
+
+function showDetail(node) {
+  const panel = document.getElementById('detailPanel');
+  const content = document.getElementById('detailContent');
+  
+  const color = graph.getNodeColor(node);
+  const typeLabels = { character: 'Character', movie: 'Movie / Show', event: 'Event', timeline: 'Timeline / Era' };
+  
+  // Find connections
+  const connections = [];
+  graph.edges.forEach(e => {
+    if (e.source === node.id) {
+      const target = graph.nodes.find(n => n.id === e.target);
+      if (target) connections.push({ node: target, label: e.label, direction: 'to' });
+    }
+    if (e.target === node.id) {
+      const source = graph.nodes.find(n => n.id === e.source);
+      if (source) connections.push({ node: source, label: e.label, direction: 'from' });
+    }
+  });
+  
+  let metaHTML = '';
+  if (node.meta) {
+    metaHTML = '<div style="margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 8px;">';
+    Object.entries(node.meta).forEach(([key, val]) => {
+      metaHTML += `<div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; padding: 6px 10px;">
+        <div style="font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">${key}</div>
+        <div style="font-size: 13px; color: var(--text-primary); margin-top: 2px;">${val}</div>
+      </div>`;
+    });
+    metaHTML += '</div>';
+  }
+  
+  let connectionsHTML = '';
+  if (connections.length > 0) {
+    connectionsHTML = `<div class="detail-section-title">Connections (${connections.length})</div><div class="detail-connections">`;
+    connections.forEach(c => {
+      const cColor = graph.getNodeColor(c.node);
+      connectionsHTML += `<div class="detail-connection" onclick="graph.focusNode('${c.node.id}')">
+        <span class="connection-dot" style="background: ${cColor}"></span>
+        <span class="connection-name">${c.node.label}</span>
+        <span class="connection-rel">${c.label}</span>
+      </div>`;
+    });
+    connectionsHTML += '</div>';
+  }
+  
+  content.innerHTML = `
+    <div class="detail-icon" style="background: ${color}22; border: 2px solid ${color};">
+      <span>${node.icon}</span>
+    </div>
+    <div class="detail-title">${node.label}</div>
+    <div class="detail-subtitle" style="color: ${color};">${typeLabels[node.type]} • ${UNIVERSE_DATA[node.franchise]?.name || ''}</div>
+    <div class="detail-description">${node.description}</div>
+    ${metaHTML}
+    ${connectionsHTML}
+  `;
+  
+  panel.classList.add('open');
+}
+
+function hideDetail() {
+  document.getElementById('detailPanel').classList.remove('open');
+  graph.selectedNode = null;
+}
+
+// Search
+function setupSearch() {
+  const input = document.getElementById('searchInput');
+  const results = document.getElementById('searchResults');
+  
+  input.addEventListener('input', () => {
+    const query = input.value.toLowerCase().trim();
+    if (query.length < 2) {
+      results.classList.remove('active');
+      return;
+    }
+    
+    const matches = graph.nodes.filter(n => 
+      n.label.toLowerCase().includes(query) || 
+      n.description.toLowerCase().includes(query)
+    ).slice(0, 8);
+    
+    if (matches.length === 0) {
+      results.classList.remove('active');
+      return;
+    }
+    
+    results.innerHTML = matches.map(n => {
+      const color = graph.getNodeColor(n);
+      return `<div class="search-result-item" onclick="graph.focusNode('${n.id}'); document.getElementById('searchResults').classList.remove('active'); document.getElementById('searchInput').value = '';">
+        <span class="search-result-dot" style="background: ${color}"></span>
+        <span class="search-result-name">${n.label}</span>
+        <span class="search-result-type">${n.type}</span>
+      </div>`;
+    }).join('');
+    
+    results.classList.add('active');
+  });
+  
+  input.addEventListener('blur', () => {
+    setTimeout(() => results.classList.remove('active'), 200);
+  });
+}
+
+// Filters
+function setupFilters() {
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      graph.activeFilter = btn.dataset.filter;
+      graph.applyFilters();
+    });
+  });
+  
+  document.querySelectorAll('.franchise-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.franchise-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      graph.activeFranchise = btn.dataset.franchise;
+      graph.loadData(btn.dataset.franchise);
+      setTimeout(() => graph.zoomFit(), 500);
+    });
+  });
+}
+
+// Zoom controls
+function setupZoom() {
+  document.getElementById('zoomIn').addEventListener('click', () => graph.zoomIn());
+  document.getElementById('zoomOut').addEventListener('click', () => graph.zoomOut());
+  document.getElementById('zoomFit').addEventListener('click', () => graph.zoomFit());
+}
+
+// Initialize
+function init() {
+  const canvas = document.getElementById('graphCanvas');
+  graph = new ForceGraph(canvas);
+  graph.loadData('all');
+  
+  setupSearch();
+  setupFilters();
+  setupZoom();
+  
+  document.getElementById('detailClose').addEventListener('click', hideDetail);
+  
+  // Hide loading
+  setTimeout(() => {
+    document.getElementById('loadingOverlay').classList.add('hidden');
+    setTimeout(() => graph.zoomFit(), 300);
+  }, 800);
+}
+
+// Start
+window.addEventListener('load', init);
+</script>
+</body>
+</html>

@@ -1,0 +1,1245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Power Scaling Charts — HEEZO Lore</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --obsidian: #0a0a0f;
+  --obsidian-light: #12121a;
+  --obsidian-lighter: #1a1a25;
+  --gold: #d4af37;
+  --gold-dim: #b8962e;
+  --gold-glow: rgba(212, 175, 55, 0.3);
+  --tier-splus: linear-gradient(135deg, #ff0080, #ff8c00, #ffef00, #00ff87, #00bfff, #8000ff, #ff0080);
+  --tier-s: #d4af37;
+  --tier-a: #9b59b6;
+  --tier-b: #3498db;
+  --tier-c: #2ecc71;
+  --tier-d: #7f8c8d;
+  --text: #e8e8e8;
+  --text-dim: #8a8a9a;
+  --glass: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --font: 'Space Grotesk', sans-serif;
+}
+
+body {
+  background: var(--obsidian);
+  color: var(--text);
+  font-family: var(--font);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--obsidian); }
+::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 3px; }
+
+/* Navigation */
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: rgba(10, 10, 15, 0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--glass-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  z-index: 1000;
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.nav-logo {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--gold);
+  text-decoration: none;
+  letter-spacing: 2px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 8px;
+}
+
+.nav-links a {
+  color: var(--text-dim);
+  text-decoration: none;
+  font-size: 13px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.nav-links a:hover {
+  color: var(--gold);
+  background: var(--gold-glow);
+}
+
+.nav-back {
+  color: var(--gold) !important;
+  font-weight: 500;
+}
+
+/* Main Container */
+.main {
+  padding-top: 80px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-bottom: 60px;
+}
+
+/* Header */
+.header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.header h1 {
+  font-size: clamp(28px, 5vw, 48px);
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--gold), #f5e6a3, var(--gold));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 8px;
+}
+
+.header p {
+  color: var(--text-dim);
+  font-size: 15px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* View Tabs */
+.view-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  margin-bottom: 30px;
+  background: var(--obsidian-light);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 4px;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.view-tab {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: var(--text-dim);
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+
+.view-tab.active {
+  background: var(--gold);
+  color: var(--obsidian);
+}
+
+.view-tab:hover:not(.active) {
+  color: var(--text);
+  background: rgba(255,255,255,0.05);
+}
+
+/* Controls Bar */
+.controls {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.search-box {
+  flex: 1;
+  min-width: 200px;
+  padding: 10px 16px;
+  background: var(--obsidian-light);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.search-box:focus {
+  border-color: var(--gold);
+}
+
+.filter-btn {
+  padding: 10px 16px;
+  background: var(--obsidian-light);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  color: var(--text-dim);
+  font-family: var(--font);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.filter-btn:hover, .filter-btn.active {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: rgba(212, 175, 55, 0.08);
+}
+
+/* View Sections */
+.view-section {
+  display: none;
+}
+
+.view-section.active {
+  display: block;
+}
+
+/* Tier List View */
+.tier-section {
+  margin-bottom: 24px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--glass-border);
+}
+
+.tier-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  background: var(--obsidian-light);
+}
+
+.tier-badge {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 16px;
+  color: #000;
+  flex-shrink: 0;
+}
+
+.tier-badge.splus { background: linear-gradient(135deg, #ff0080, #ff8c00, #ffef00, #00ff87, #00bfff, #8000ff); animation: prismatic 3s linear infinite; background-size: 400% 400%; }
+.tier-badge.s { background: var(--gold); }
+.tier-badge.a { background: var(--tier-a); color: #fff; }
+.tier-badge.b { background: var(--tier-b); color: #fff; }
+.tier-badge.c { background: var(--tier-c); color: #fff; }
+.tier-badge.d { background: var(--tier-d); color: #fff; }
+
+@keyframes prismatic {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.tier-info h3 {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.tier-info span {
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+.tier-chars {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 16px 20px;
+  background: rgba(10, 10, 15, 0.5);
+  min-height: 80px;
+}
+
+/* Character Mini Card */
+.char-mini {
+  width: 100px;
+  padding: 10px 8px;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.25s;
+  position: relative;
+  overflow: hidden;
+}
+
+.char-mini:hover {
+  transform: translateY(-4px);
+  border-color: var(--gold);
+  box-shadow: 0 8px 24px rgba(212, 175, 55, 0.15);
+}
+
+.char-mini.tier-splus:hover { border-color: #ff0080; box-shadow: 0 8px 24px rgba(255, 0, 128, 0.2); }
+.char-mini.tier-s:hover { border-color: var(--gold); box-shadow: 0 8px 24px rgba(212, 175, 55, 0.2); }
+.char-mini.tier-a:hover { border-color: var(--tier-a); box-shadow: 0 8px 24px rgba(155, 89, 182, 0.2); }
+.char-mini.tier-b:hover { border-color: var(--tier-b); box-shadow: 0 8px 24px rgba(52, 152, 219, 0.2); }
+.char-mini.tier-c:hover { border-color: var(--tier-c); box-shadow: 0 8px 24px rgba(46, 204, 113, 0.2); }
+.char-mini.tier-d:hover { border-color: var(--tier-d); box-shadow: 0 8px 24px rgba(127, 140, 141, 0.2); }
+
+.char-mini .char-icon {
+  font-size: 28px;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.char-mini .char-name {
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--text);
+}
+
+.char-mini .char-franchise {
+  font-size: 9px;
+  color: var(--text-dim);
+  margin-top: 2px;
+}
+
+/* Particles for S+ tier */
+.char-mini.tier-splus::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(from 0deg, transparent, rgba(255,0,128,0.1), transparent, rgba(0,191,255,0.1), transparent);
+  animation: spinParticle 4s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes spinParticle {
+  to { transform: rotate(360deg); }
+}
+
+/* Compare Mode */
+.compare-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.compare-selectors {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+}
+
+.compare-slot {
+  flex: 1;
+  min-width: 250px;
+  max-width: 400px;
+  padding: 20px;
+  background: var(--obsidian-light);
+  border: 2px dashed var(--glass-border);
+  border-radius: 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+
+.compare-slot:hover {
+  border-color: var(--gold);
+}
+
+.compare-slot.filled {
+  border-style: solid;
+  border-color: var(--gold);
+}
+
+.compare-slot h4 {
+  color: var(--text-dim);
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.compare-slot .slot-icon {
+  font-size: 40px;
+  margin-bottom: 8px;
+}
+
+.compare-slot .slot-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--gold);
+}
+
+.compare-vs {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--gold);
+  align-self: center;
+}
+
+.compare-result {
+  width: 100%;
+  max-width: 800px;
+  margin-top: 20px;
+}
+
+.stat-compare-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  gap: 12px;
+}
+
+.stat-compare-row .stat-label {
+  width: 100px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-dim);
+  flex-shrink: 0;
+}
+
+.stat-bar-container {
+  flex: 1;
+  height: 28px;
+  background: var(--obsidian-lighter);
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+}
+
+.stat-bar {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.stat-bar.left {
+  background: linear-gradient(90deg, var(--gold), #f5e6a3);
+  color: #000;
+  justify-content: flex-end;
+  float: right;
+}
+
+.stat-bar.right {
+  background: linear-gradient(90deg, #00bfff, #8000ff);
+  color: #fff;
+  justify-content: flex-start;
+}
+
+.compare-winner {
+  text-align: center;
+  margin-top: 24px;
+  padding: 16px;
+  background: var(--glass);
+  border: 1px solid var(--gold);
+  border-radius: 12px;
+}
+
+.compare-winner h3 {
+  color: var(--gold);
+  font-size: 20px;
+}
+
+/* Character Detail Modal */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+  z-index: 2000;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+.modal {
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: var(--obsidian-light);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 32px;
+  position: relative;
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--glass-border);
+  background: var(--obsidian);
+  color: var(--text);
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.modal-close:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.modal-icon {
+  font-size: 56px;
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.modal-name {
+  font-size: 24px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+.modal-franchise {
+  font-size: 13px;
+  color: var(--text-dim);
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+.modal-tier-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  margin: 0 auto 16px;
+  display: block;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.modal-desc {
+  font-size: 14px;
+  color: var(--text-dim);
+  line-height: 1.6;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.modal-feats {
+  margin-bottom: 20px;
+}
+
+.modal-feats h4 {
+  font-size: 13px;
+  color: var(--gold);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.modal-feats ul {
+  list-style: none;
+  padding: 0;
+}
+
+.modal-feats li {
+  font-size: 13px;
+  color: var(--text-dim);
+  padding: 4px 0;
+  padding-left: 16px;
+  position: relative;
+}
+
+.modal-feats li::before {
+  content: '⚡';
+  position: absolute;
+  left: 0;
+}
+
+/* Radar Chart */
+.radar-container {
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto 20px;
+}
+
+.radar-container canvas {
+  width: 100% !important;
+  height: auto !important;
+}
+
+/* Stats Bars in Modal */
+.modal-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.modal-stat-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.modal-stat-row .stat-name {
+  width: 90px;
+  font-size: 12px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.modal-stat-row .stat-bar-bg {
+  flex: 1;
+  height: 8px;
+  background: var(--obsidian);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.modal-stat-row .stat-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  width: 0;
+}
+
+.modal-stat-row .stat-val {
+  width: 30px;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: right;
+  font-family: var(--font);
+}
+
+/* Compare Character Picker */
+.picker-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  z-index: 3000;
+  padding: 80px 20px 20px;
+  overflow-y: auto;
+}
+
+.picker-overlay.active {
+  display: block;
+}
+
+.picker-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.picker-header h2 {
+  color: var(--gold);
+  font-size: 22px;
+  margin-bottom: 12px;
+}
+
+.picker-search {
+  max-width: 400px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 12px 16px;
+  background: var(--obsidian-light);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 14px;
+  outline: none;
+}
+
+.picker-search:focus { border-color: var(--gold); }
+
+.picker-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 12px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.picker-card {
+  padding: 16px 10px;
+  background: var(--obsidian-light);
+  border: 1px solid var(--glass-border);
+  border-radius: 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.picker-card:hover {
+  border-color: var(--gold);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.15);
+}
+
+.picker-card .p-icon { font-size: 32px; margin-bottom: 6px; }
+.picker-card .p-name { font-size: 12px; font-weight: 500; }
+.picker-card .p-franchise { font-size: 10px; color: var(--text-dim); margin-top: 2px; }
+
+.picker-close {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--glass-border);
+  background: var(--obsidian);
+  color: var(--text);
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3001;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .controls { flex-direction: column; }
+  .compare-selectors { flex-direction: column; align-items: center; }
+  .compare-slot { max-width: 100%; }
+  .stat-compare-row { flex-direction: column; gap: 4px; }
+  .stat-compare-row .stat-label { width: auto; }
+  .char-mini { width: 80px; }
+  .char-mini .char-icon { font-size: 22px; }
+  .char-mini .char-name { font-size: 10px; }
+  .picker-grid { grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); }
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-in {
+  opacity: 0;
+}
+
+.animate-in.visible {
+  animation: fadeInUp 0.4s ease-out forwards;
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-left">
+    <a href="https://heezo.vercel.app" class="nav-logo">HEEZO</a>
+    <div class="nav-links">
+      <a href="https://heezo.vercel.app">Home</a>
+      <a href="https://heezo.vercel.app/tools">Tools</a>
+      <a href="https://heezo.vercel.app/lore" class="nav-back">← Back to Lore Hub</a>
+    </div>
+  </div>
+</nav>
+
+<main class="main">
+  <div class="header">
+    <h1>⚡ Power Scaling Charts</h1>
+    <p>Compare character power levels across Marvel, DC, Dragon Ball, Anime & Gaming. Settle debates with data.</p>
+  </div>
+
+  <div class="view-tabs">
+    <button class="view-tab active" data-view="tiers">Tier List</button>
+    <button class="view-tab" data-view="compare">Compare</button>
+  </div>
+
+  <div class="controls">
+    <input type="text" class="search-box" placeholder="🔍 Search characters..." id="searchInput">
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="Marvel">Marvel</button>
+    <button class="filter-btn" data-filter="DC">DC</button>
+    <button class="filter-btn" data-filter="Dragon Ball">Dragon Ball</button>
+    <button class="filter-btn" data-filter="Anime">Anime</button>
+    <button class="filter-btn" data-filter="Gaming">Gaming</button>
+  </div>
+
+  <!-- Tier List View -->
+  <div class="view-section active" id="tiersView"></div>
+
+  <!-- Compare View -->
+  <div class="view-section" id="compareView">
+    <div class="compare-section">
+      <div class="compare-selectors">
+        <div class="compare-slot" id="slot1" onclick="openPicker(1)">
+          <h4>FIGHTER 1</h4>
+          <div class="slot-icon">❓</div>
+          <div class="slot-name">Select Character</div>
+        </div>
+        <div class="compare-vs">VS</div>
+        <div class="compare-slot" id="slot2" onclick="openPicker(2)">
+          <h4>FIGHTER 2</h4>
+          <div class="slot-icon">❓</div>
+          <div class="slot-name">Select Character</div>
+        </div>
+      </div>
+      <div class="compare-result" id="compareResult"></div>
+    </div>
+  </div>
+</main>
+
+<!-- Character Detail Modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" id="modalContent">
+    <button class="modal-close" onclick="closeModalDirect()">✕</button>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<!-- Character Picker for Compare -->
+<div class="picker-overlay" id="pickerOverlay">
+  <button class="picker-close" onclick="closePicker()">✕</button>
+  <div class="picker-header">
+    <h2>Select a Fighter</h2>
+    <input type="text" class="picker-search" placeholder="Search..." id="pickerSearch" oninput="filterPicker()">
+  </div>
+  <div class="picker-grid" id="pickerGrid"></div>
+</div>
+
+<script>
+// Character Data
+const characters = [
+  // Marvel
+  { name: "Thanos", franchise: "Marvel", tier: "S", icon: "👊", stats: { strength: 95, speed: 70, durability: 97, intelligence: 90, hax: 95, overall: 95 }, desc: "The Mad Titan. With the Infinity Gauntlet, reality bends to his will.", feats: ["Snapped half the universe","Defeated the Avengers solo","Tanked a star's power"] },
+  { name: "Thor", franchise: "Marvel", tier: "A", icon: "⚡", stats: { strength: 92, speed: 80, durability: 93, intelligence: 60, hax: 75, overall: 85 }, desc: "God of Thunder. Asgardian royalty with the power of storms.", feats: ["Stormbreaker sliced Infinity beam","Destroyed planets","Worthy of Mjolnir's full power"] },
+  { name: "Scarlet Witch", franchise: "Marvel", tier: "S", icon: "🔮", stats: { strength: 30, speed: 50, durability: 40, intelligence: 75, hax: 99, overall: 88 }, desc: "Reality warper. The Nexus Being whose chaos magic reshapes existence.", feats: ["Rewrote reality (House of M)","Destroyed Infinity Stones","Defeated the Illuminati solo"] },
+  { name: "Hulk", franchise: "Marvel", tier: "A", icon: "💚", stats: { strength: 99, speed: 55, durability: 98, intelligence: 35, hax: 20, overall: 72 }, desc: "The strongest one there is. Rage fuels infinite strength potential.", feats: ["Held a mountain","Worldbreaker destroyed a continent","Survived being disintegrated"] },
+  { name: "Iron Man", franchise: "Marvel", tier: "B", icon: "🤖", stats: { strength: 75, speed: 78, durability: 80, intelligence: 98, hax: 65, overall: 70 }, desc: "Genius billionaire in bleeding-edge nanotech armor.", feats: ["Built time travel","Wielded all Infinity Stones","Created Ultron AI"] },
+  { name: "Captain America", franchise: "Marvel", tier: "C", icon: "🛡️", stats: { strength: 45, speed: 40, durability: 50, intelligence: 70, hax: 15, overall: 38 }, desc: "Peak human. Super-soldier serum and vibranium shield.", feats: ["Wielded Mjolnir","Held back Thanos","Led the Avengers through impossible odds"] },
+  { name: "Doctor Strange", franchise: "Marvel", tier: "S", icon: "✨", stats: { strength: 25, speed: 65, durability: 45, intelligence: 95, hax: 98, overall: 90 }, desc: "Sorcerer Supreme. Master of the mystic arts and time manipulation.", feats: ["Looped Dormammu","Viewed 14M timelines","Contained multiversal threats"] },
+  { name: "Silver Surfer", franchise: "Marvel", tier: "S", icon: "🏄", stats: { strength: 90, speed: 99, durability: 92, intelligence: 80, hax: 88, overall: 92 }, desc: "Herald of Galactus. Power Cosmic grants near-limitless abilities.", feats: ["FTL travel","Destroyed planets","Energy manipulation at cosmic scale"] },
+
+  // DC
+  { name: "Superman", franchise: "DC", tier: "S", icon: "🦸", stats: { strength: 98, speed: 95, durability: 97, intelligence: 72, hax: 60, overall: 92 }, desc: "The Man of Steel. Near-limitless power under a yellow sun.", feats: ["Moved planets","Infinite Mass Punch","Survived supernovae"] },
+  { name: "Batman", franchise: "DC", tier: "C", icon: "🦇", stats: { strength: 35, speed: 35, durability: 40, intelligence: 99, hax: 55, overall: 42 }, desc: "The Dark Knight. Peak human with infinite prep time.", feats: ["Defeated the Justice League","Outsmarted Darkseid","Prep-time feats are legendary"] },
+  { name: "Wonder Woman", franchise: "DC", tier: "A", icon: "⚔️", stats: { strength: 90, speed: 88, durability: 90, intelligence: 78, hax: 65, overall: 84 }, desc: "Amazonian demigod. God-killer and champion of Themyscira.", feats: ["Kept pace with Flash","Defeated Ares","Bracelets deflect Omega Beams"] },
+  { name: "Flash", franchise: "DC", tier: "S", icon: "⚡", stats: { strength: 40, speed: 100, durability: 50, intelligence: 75, hax: 92, overall: 88 }, desc: "The Fastest Man Alive. Speed Force grants reality-warping velocity.", feats: ["Outran instant teleportation","Speed stole from every being","Phased through anything"] },
+  { name: "Darkseid", franchise: "DC", tier: "S+", icon: "👁️", stats: { strength: 97, speed: 80, durability: 99, intelligence: 95, hax: 99, overall: 98 }, desc: "God of Evil. True Form exists beyond the multiverse.", feats: ["Omega Beams erase from existence","Conquered entire universes","Anti-Life Equation"] },
+  { name: "Green Lantern", franchise: "DC", tier: "A", icon: "💚", stats: { strength: 80, speed: 85, durability: 78, intelligence: 72, hax: 88, overall: 80 }, desc: "Willpower incarnate. The ring creates anything imagined.", feats: ["Contained supernovae","Created planetary constructs","Willpower overcame Parallax"] },
+
+  // Dragon Ball
+  { name: "Goku (UI)", franchise: "Dragon Ball", tier: "S+", icon: "🟠", stats: { strength: 99, speed: 99, durability: 95, intelligence: 45, hax: 85, overall: 97 }, desc: "Ultra Instinct mastered. Body moves independently of thought.", feats: ["Shook the void of nothingness","Matched cosmic entities","Transcended mortal limits"] },
+  { name: "Vegeta (UE)", franchise: "Dragon Ball", tier: "S", icon: "🔵", stats: { strength: 97, speed: 97, durability: 93, intelligence: 70, hax: 80, overall: 94 }, desc: "Ultra Ego. Gets stronger as he takes damage. Saiyan Pride incarnate.", feats: ["Destroyed a planet casually","Hakai energy","Rivaled Ultra Instinct"] },
+  { name: "Beerus", franchise: "Dragon Ball", tier: "S+", icon: "😼", stats: { strength: 98, speed: 98, durability: 97, intelligence: 65, hax: 95, overall: 97 }, desc: "God of Destruction. Hakai erases anything from existence.", feats: ["Destroyed half a planet by tapping","Hakai erases souls","Tanked universe-shaking punches"] },
+  { name: "Jiren", franchise: "Dragon Ball", tier: "S", icon: "🔴", stats: { strength: 98, speed: 96, durability: 97, intelligence: 55, hax: 70, overall: 93 }, desc: "The mortal who surpassed the Gods of Destruction.", feats: ["Broke through time attacks","Overwhelmed Ultra Instinct","Shook an infinite void"] },
+  { name: "Frieza (Black)", franchise: "Dragon Ball", tier: "S", icon: "⚫", stats: { strength: 97, speed: 96, durability: 95, intelligence: 85, hax: 72, overall: 93 }, desc: "Black Frieza. Achieved through training in a hyperbolic chamber.", feats: ["One-shot both Goku and Vegeta","Surpassed gods","Conquered universes"] },
+  { name: "Broly", franchise: "Dragon Ball", tier: "S", icon: "💥", stats: { strength: 100, speed: 90, durability: 98, intelligence: 25, hax: 40, overall: 86 }, desc: "Legendary Super Saiyan. Limitless power growth in battle.", feats: ["Matched Gogeta Blue","Power kept rising infinitely","Tore through dimensions"] },
+
+  // Anime
+  { name: "Saitama", franchise: "Anime", tier: "S+", icon: "👨‍🦲", stats: { strength: 100, speed: 99, durability: 100, intelligence: 40, hax: 50, overall: 96 }, desc: "One Punch Man. Limitless strength. Has never been serious.", feats: ["Sneezed Jupiter away","Punched through dimensions","Zero Punch time reversal"] },
+  { name: "Gojo", franchise: "Anime", tier: "A", icon: "👁️", stats: { strength: 60, speed: 80, durability: 70, intelligence: 90, hax: 98, overall: 85 }, desc: "The Strongest Sorcerer. Infinity makes him untouchable.", feats: ["Infinity blocks all attacks","Hollow Purple erases space","Domain Expansion guarantees hit"] },
+  { name: "Naruto (Baryon)", franchise: "Anime", tier: "A", icon: "🦊", stats: { strength: 88, speed: 92, durability: 80, intelligence: 65, hax: 78, overall: 82 }, desc: "Baryon Mode. Nuclear fusion of chakra. Time-limited god form.", feats: ["Blitzed Isshiki Otsutsuki","Drained life force on contact","Surpassed all prior forms"] },
+  { name: "Luffy (Gear 5)", franchise: "Anime", tier: "A", icon: "🏴‍☠️", stats: { strength: 85, speed: 88, durability: 82, intelligence: 45, hax: 90, overall: 80 }, desc: "Sun God Nika awakened. Turns imagination into reality.", feats: ["Grabbed lightning","Turned ground to rubber","Fought on par with Kaido"] },
+  { name: "Ichigo", franchise: "Anime", tier: "A", icon: "⚔️", stats: { strength: 88, speed: 90, durability: 85, intelligence: 60, hax: 75, overall: 82 }, desc: "Hybrid of everything. Soul Reaper, Hollow, Quincy, and Human.", feats: ["Defeated transcendent beings","Mugetsu destroyed dimensions","Blitz-killed Yhwach"] },
+  { name: "Madara", franchise: "Anime", tier: "A", icon: "🌀", stats: { strength: 85, speed: 82, durability: 88, intelligence: 92, hax: 95, overall: 88 }, desc: "The Ghost of the Uchiha. Rinne-Sharingan wielder.", feats: ["Infinite Tsukuyomi trapped world","Summoned meteors","Soloed the Five Kage"] },
+
+  // Gaming
+  { name: "Kratos", franchise: "Gaming", tier: "A", icon: "🪓", stats: { strength: 95, speed: 75, durability: 92, intelligence: 65, hax: 60, overall: 80 }, desc: "God of War. Killed the entire Greek pantheon, now conquers Norse gods.", feats: ["Killed Zeus","Lifted the Nine Realms","Resisted fate itself"] },
+  { name: "Doom Slayer", franchise: "Gaming", tier: "A", icon: "💀", stats: { strength: 90, speed: 78, durability: 95, intelligence: 60, hax: 70, overall: 82 }, desc: "Unkillable. Rip and tear until it is done. Blessed by the Seraphim.", feats: ["Killed the Dark Lord (God)","Hell fears him","Immortal and unbreakable"] },
+  { name: "Asura", franchise: "Gaming", tier: "S", icon: "🤬", stats: { strength: 100, speed: 85, durability: 95, intelligence: 30, hax: 60, overall: 88 }, desc: "Wrath incarnate. Punched a planet-sized god to death.", feats: ["Punched Chakravartin (Creator God)","Destroyed stars","Rage is literally limitless"] },
+  { name: "Bayonetta", franchise: "Gaming", tier: "A", icon: "🌙", stats: { strength: 80, speed: 90, durability: 75, intelligence: 78, hax: 88, overall: 82 }, desc: "Umbra Witch. Summons demons, manipulates time, kills gods for fun.", feats: ["Killed Jubileus (God)","Headbutted a satellite","Punched to Pluto"] },
+  { name: "Kirby", franchise: "Gaming", tier: "S+", icon: "🩷", stats: { strength: 90, speed: 85, durability: 95, intelligence: 30, hax: 98, overall: 95 }, desc: "The Pink God. Copy Ability absorbs power of anything consumed.", feats: ["Defeated universe-ending threats","Cracked a planet in half","Infinite stomach dimension"] },
+  { name: "Master Chief", franchise: "Gaming", tier: "C", icon: "🎮", stats: { strength: 50, speed: 45, durability: 60, intelligence: 80, hax: 30, overall: 45 }, desc: "Spartan-117. Enhanced super-soldier with MJOLNIR armor.", feats: ["Single-handedly won wars","Survived re-entry","Defeated the Covenant"] },
+];
+
+// Tier definitions
+const tiers = [
+  { id: 'S+', name: 'S+ — Omnipotent', desc: 'Reality-breaking / Conceptual', class: 'splus' },
+  { id: 'S', name: 'S — God Tier', desc: 'Universal to Multiversal', class: 's' },
+  { id: 'A', name: 'A — Planet Level', desc: 'Planetary to Stellar', class: 'a' },
+  { id: 'B', name: 'B — City Level', desc: 'Mountain to Continental', class: 'b' },
+  { id: 'C', name: 'C — Peak Human', desc: 'Enhanced to Superhuman', class: 'c' },
+  { id: 'D', name: 'D — Below Average', desc: 'Below standard', class: 'd' },
+];
+
+// State
+let currentView = 'tiers';
+let currentFilter = 'all';
+let searchTerm = '';
+let compareSlot = null;
+let selectedChars = [null, null];
+
+// Filter characters
+function getFilteredCharacters() {
+  return characters.filter(c => {
+    const matchFilter = currentFilter === 'all' || c.franchise === currentFilter;
+    const matchSearch = !searchTerm || c.name.toLowerCase().includes(searchTerm.toLowerCase()) || c.franchise.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchFilter && matchSearch;
+  });
+}
+
+// Render Tier List
+function renderTierList() {
+  const container = document.getElementById('tiersView');
+  const filtered = getFilteredCharacters();
+  let html = '';
+
+  tiers.forEach(tier => {
+    const chars = filtered.filter(c => c.tier === tier.id);
+    if (chars.length === 0 && currentFilter !== 'all') return;
+
+    html += `<div class="tier-section animate-in">
+      <div class="tier-header">
+        <div class="tier-badge ${tier.class}">${tier.id}</div>
+        <div class="tier-info">
+          <h3>${tier.name}</h3>
+          <span>${tier.desc}</span>
+        </div>
+      </div>
+      <div class="tier-chars">`;
+
+    chars.forEach(c => {
+      html += `<div class="char-mini tier-${tier.class}" onclick="openCharModal('${c.name}')">
+        <span class="char-icon">${c.icon}</span>
+        <div class="char-name">${c.name}</div>
+        <div class="char-franchise">${c.franchise}</div>
+      </div>`;
+    });
+
+    if (chars.length === 0) {
+      html += `<div style="color: var(--text-dim); font-size: 13px; padding: 10px;">No characters in this tier for the current filter.</div>`;
+    }
+
+    html += `</div></div>`;
+  });
+
+  container.innerHTML = html;
+
+  // Animate in
+  setTimeout(() => {
+    container.querySelectorAll('.animate-in').forEach((el, i) => {
+      setTimeout(() => el.classList.add('visible'), i * 80);
+    });
+  }, 50);
+}
+
+// Open Character Modal
+function openCharModal(name) {
+  const char = characters.find(c => c.name === name);
+  if (!char) return;
+
+  const tierColors = { 'S+': '#ff0080', 'S': '#d4af37', 'A': '#9b59b6', 'B': '#3498db', 'C': '#2ecc71', 'D': '#7f8c8d' };
+  const color = tierColors[char.tier];
+
+  let html = `
+    <div class="modal-icon">${char.icon}</div>
+    <div class="modal-name">${char.name}</div>
+    <div class="modal-franchise">${char.franchise}</div>
+    <div class="modal-tier-badge" style="background: ${color}; color: ${char.tier === 'S+' || char.tier === 'S' ? '#000' : '#fff'}">${char.tier} Tier</div>
+    <div class="modal-desc">${char.desc}</div>
+
+    <div class="radar-container">
+      <canvas id="radarCanvas" width="280" height="280"></canvas>
+    </div>
+
+    <div class="modal-stats">`;
+
+  const statNames = ['strength', 'speed', 'durability', 'intelligence', 'hax', 'overall'];
+  const statLabels = ['Strength', 'Speed', 'Durability', 'Intelligence', 'Hax/Abilities', 'Overall'];
+
+  statNames.forEach((s, i) => {
+    html += `<div class="modal-stat-row">
+      <span class="stat-name">${statLabels[i]}</span>
+      <div class="stat-bar-bg">
+        <div class="stat-bar-fill" data-width="${char.stats[s]}" style="background: ${color};"></div>
+      </div>
+      <span class="stat-val">${char.stats[s]}</span>
+    </div>`;
+  });
+
+  html += `</div>
+    <div class="modal-feats">
+      <h4>Key Feats</h4>
+      <ul>${char.feats.map(f => `<li>${f}</li>`).join('')}</ul>
+    </div>`;
+
+  document.getElementById('modalBody').innerHTML = html;
+  document.getElementById('modalOverlay').classList.add('active');
+
+  // Animate stat bars
+  setTimeout(() => {
+    document.querySelectorAll('.modal-stat-row .stat-bar-fill').forEach(bar => {
+      bar.style.width = bar.dataset.width + '%';
+    });
+  }, 100);
+
+  // Draw radar chart
+  setTimeout(() => drawRadar(char), 150);
+}
+
+function drawRadar(char) {
+  const canvas = document.getElementById('radarCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const cx = 140, cy = 140, r = 100;
+  const stats = [char.stats.strength, char.stats.speed, char.stats.durability, char.stats.intelligence, char.stats.hax, char.stats.overall];
+  const labels = ['STR', 'SPD', 'DUR', 'INT', 'HAX', 'OVR'];
+  const n = 6;
+
+  ctx.clearRect(0, 0, 280, 280);
+
+  // Draw grid
+  for (let level = 1; level <= 5; level++) {
+    ctx.beginPath();
+    for (let i = 0; i <= n; i++) {
+      const angle = (Math.PI * 2 * i / n) - Math.PI / 2;
+      const x = cx + Math.cos(angle) * (r * level / 5);
+      const y = cy + Math.sin(angle) * (r * level / 5);
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  // Draw axes
+  for (let i = 0; i < n; i++) {
+    const angle = (Math.PI * 2 * i / n) - Math.PI / 2;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + Math.cos(angle) * r, cy + Math.sin(angle) * r);
+    ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+    ctx.stroke();
+  }
+
+  // Draw data
+  const tierColors = { 'S+': '#ff0080', 'S': '#d4af37', 'A': '#9b59b6', 'B': '#3498db', 'C': '#2ecc71', 'D': '#7f8c8d' };
+  const color = tierColors[char.tier];
+
+  ctx.beginPath();
+  stats.forEach((val, i) => {
+    const angle = (Math.PI * 2 * i / n) - Math.PI / 2;
+    const x = cx + Math.cos(angle) * (r * val / 100);
+    const y = cy + Math.sin(angle) * (r * val / 100);
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  });
+  ctx.closePath();
+  ctx.fillStyle = color + '33';
+  ctx.fill();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Draw points and labels
+  stats.forEach((val, i) => {
+    const angle = (Math.PI * 2 * i / n) - Math.PI / 2;
+    const x = cx + Math.cos(angle) * (r * val / 100);
+    const y = cy + Math.sin(angle) * (r * val / 100);
+
+    ctx.beginPath();
+    ctx.arc(x, y, 4, 0, Math.PI * 2);
+    ctx.fillStyle = color;
+    ctx.fill();
+
+    // Labels
+    const lx = cx + Math.cos(angle) * (r + 18);
+    const ly = cy + Math.sin(angle) * (r + 18);
+    ctx.fillStyle = '#8a8a9a';
+    ctx.font = '11px Space Grotesk';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(labels[i], lx, ly);
+  });
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById('modalOverlay')) {
+    document.getElementById('modalOverlay').classList.remove('active');
+  }
+}
+
+function closeModalDirect() {
+  document.getElementById('modalOverlay').classList.remove('active');
+}
+
+// Compare Mode
+function openPicker(slot) {
+  compareSlot = slot;
+  document.getElementById('pickerOverlay').classList.add('active');
+  document.getElementById('pickerSearch').value = '';
+  renderPicker();
+  document.getElementById('pickerSearch').focus();
+}
+
+function closePicker() {
+  document.getElementById('pickerOverlay').classList.remove('active');
+}
+
+function filterPicker() {
+  renderPicker();
+}
+
+function renderPicker() {
+  const search = document.getElementById('pickerSearch').value.toLowerCase();
+  const grid = document.getElementById('pickerGrid');
+  const filtered = characters.filter(c => !search || c.name.toLowerCase().includes(search) || c.franchise.toLowerCase().includes(search));
+
+  grid.innerHTML = filtered.map(c => `
+    <div class="picker-card" onclick="selectChar('${c.name}')">
+      <div class="p-icon">${c.icon}</div>
+      <div class="p-name">${c.name}</div>
+      <div class="p-franchise">${c.franchise}</div>
+    </div>
+  `).join('');
+}
+
+function selectChar(name) {
+  const char = characters.find(c => c.name === name);
+  if (!char) return;
+
+  selectedChars[compareSlot - 1] = char;
+  const slot = document.getElementById('slot' + compareSlot);
+  slot.classList.add('filled');
+  slot.innerHTML = `
+    <h4>FIGHTER ${compareSlot}</h4>
+    <div class="slot-icon">${char.icon}</div>
+    <div class="slot-name">${char.name}</div>
+    <div style="font-size:12px; color: var(--text-dim); margin-top:4px;">${char.franchise} • ${char.tier} Tier</div>
+  `;
+
+  closePicker();
+
+  if (selectedChars[0] && selectedChars[1]) {
+    renderComparison();
+  }
+}
+
+function renderComparison() {
+  const [c1, c2] = selectedChars;
+  const container = document.getElementById('compareResult');
+  const statNames = ['strength', 'speed', 'durability', 'intelligence', 'hax', 'overall'];
+  const statLabels = ['Strength', 'Speed', 'Durability', 'Intelligence', 'Hax/Abilities', 'Overall'];
+
+  let c1wins = 0, c2wins = 0;
+  statNames.forEach(s => {
+    if (c1.stats[s] > c2.stats[s]) c1wins++;
+    else if (c2.stats[s] > c1.stats[s]) c2wins++;
+  });
+
+  let html = '';
+  statNames.forEach((s, i) => {
+    const v1 = c1.stats[s];
+    const v2 = c2.stats[s];
+    html += `
+      <div class="stat-compare-row">
+        <div class="stat-bar-container">
+          <div class="stat-bar left" style="width: 0;" data-width="${v1}%">${v1}</div>
+        </div>
+        <div class="stat-label">${statLabels[i]}</div>
+        <div class="stat-bar-container">
+          <div class="stat-bar right" style="width: 0;" data-width="${v2}%">${v2}</div>
+        </div>
+      </div>`;
+  });
+
+  let winner = c1wins > c2wins ? c1 : c2wins > c1wins ? c2 : null;
+  html += `<div class="compare-winner">
+    <h3>${winner ? winner.icon + ' ' + winner.name + ' wins ' + (winner === c1 ? c1wins : c2wins) + '-' + (winner === c1 ? c2wins : c1wins) : '🤝 It\'s a tie!'}</h3>
+    <p style="color: var(--text-dim); font-size: 13px; margin-top: 6px;">${winner ? 'Stat advantage across categories' : 'Both fighters are evenly matched'}</p>
+  </div>`;
+
+  container.innerHTML = html;
+
+  // Animate bars
+  setTimeout(() => {
+    container.querySelectorAll('.stat-bar').forEach(bar => {
+      bar.style.width = bar.dataset.width;
+    });
+  }, 100);
+}
+
+// View switching
+document.querySelectorAll('.view-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    currentView = tab.dataset.view;
+    document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+    document.getElementById(currentView + 'View').classList.add('active');
+  });
+});
+
+// Filters
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.dataset.filter;
+    renderTierList();
+  });
+});
+
+// Search
+document.getElementById('searchInput').addEventListener('input', (e) => {
+  searchTerm = e.target.value;
+  renderTierList();
+});
+
+// Initial render
+renderTierList();
+</script>
+</body>
+</html>
