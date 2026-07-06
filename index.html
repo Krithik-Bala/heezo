@@ -970,7 +970,7 @@ button {
 
 <!-- ═══════════════════════════════════════════════════════════════
      SECTION 5: ARTICLES
-     ═══════════════════════════════════════════════════════════════ -->
+     ════════════════════════════════════════════════════════════════  -->
 <section class="articles-wrapper" id="articlesWrapper">
   <div class="articles" id="articles">
     <div class="articles-header">
@@ -1238,7 +1238,7 @@ button {
     geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
     geo.setAttribute('size', new THREE.BufferAttribute(siz, 1));
 
-    var vShader = 'attribute float size;attribute vec3 color;varying vec3 vColor;uniform float uTime;uniform vec2 uMouse;void main(){vColor=color;vec3 p=position;p.x+=sin(uTime*0.3+position.y*0.5)*0.15;p.y+=cos(uTime*0.2+position.x*0.5)*0.15;p.z+=sin(uTime*0.15+position.x*0.3)*0.1;float d=length(p.xy-uMouse*5.0);float inf=smoothstep(4.0,0.0,d)*0.6;p.xy+=normalize(uMouse*5.0-p.xy+0.001)*inf;vec4 mv=modelViewMatrix*vec4(p,1.0);gl_PointSize=size*(280.0/-mv.z);gl_Position=projectionMatrix*mv;}';
+    var vShader = 'attribute float size;attribute vec3 color;varying vec3 vColor;uniform float uTime;uniform vec2 uMouse;void main(){vColor=color;vec3 p=position;p.x+}sin(uTime*0.3+position.y*0.5)*0.15;p.y+=cos(uTime*0.2+position.x*0.5)*0.15;p.z+=sin(uTime*0.15+position.x*0.3)*0.1;float d=length(p.xy-uMouse*5.0);float inf=smoothstep(4.0,0.0,d)*0.6;p.xy+=normalize(uMouse*5.0-p.xy+0.001)*inf;vec4 mv=modelViewMatrix*vec4(p,1.0);gl_PointSize=size*(280.0/-mv.z);gl_Position=projectionMatrix*mv;}';
     var fShader = 'varying vec3 vColor;void main(){float d=length(gl_PointCoord-vec2(0.5));if(d>0.5)discard;float a=1.0-smoothstep(0.1,0.5,d);gl_FragColor=vec4(vColor,a*0.65);}';
 
     var mat = new THREE.ShaderMaterial({
@@ -1344,7 +1344,7 @@ button {
   }
 
 /* ═══════════════════════════════════════════════════════════════
-     SECTION 4: STATS — Counting Animation
+     SECTION 4: STATS - Counting Animation
      ═══════════════════════════════════════════════════════════════ */
   document.querySelectorAll('.stat-number').forEach(function(el) {
     var target = parseInt(el.dataset.target);
