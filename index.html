@@ -1,18 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script>
-// Load Space Grotesk font dynamically
-var gfl=document.createElement('link');gfl.rel='stylesheet';
-gfl.href='https://fonts.googleapis.com'+'/css2?family=Space+Grotesk'+':wght'+'@300;400;500;600;700&display=swap';document.addEventListener('DOMContentLoaded',function(){document.head.appendChild(gfl)});
-</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>HEEZO — Where Curiosity Lives</title>
 <meta name="description" content="Every franchise mapped. Every mystery decoded. Every tool free — forever.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.bunny.net">
+<link href="https://fonts.bunny.net/css?family=space-grotesk:300,400,500,600,700&display=swap" rel="stylesheet">
 <style>
 /* ═══════════════════════════════════════════════════════════════
    CSS VARIABLES & RESET
@@ -754,7 +748,6 @@ button {
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
   }
-  
   .stat-item { padding: 1rem 0.5rem; }
 }
 </style>
@@ -835,7 +828,7 @@ button {
   <div class="portals" id="portals">
     <div class="portal portal-left" id="portalLeft">
       <div class="portal-card">
-        <div class="portal-icon">⚔️</div>
+        <div class="portal-icon">&#x2694;&#xFE0F;</div>
         <h2 class="portal-title">THE LORE VAULT</h2>
         <p class="portal-desc">Every franchise mapped to obsessive detail. Watch orders, power rankings, timeline breakdowns, and Easter eggs most fans never catch.</p>
         <div class="portal-tags" id="portalLeftTags">
@@ -844,21 +837,21 @@ button {
           <span class="portal-tag">Gaming</span>
           <span class="portal-tag">TV Shows</span>
         </div>
-        <a href="/lore" class="portal-cta" id="portalLeftCta">Enter the Vault →</a>
+        <a href="/lore" class="portal-cta" id="portalLeftCta">Enter the Vault &rarr;</a>
       </div>
     </div>
     <div class="portal portal-right" id="portalRight">
       <div class="portal-card">
-        <div class="portal-icon">⚡</div>
+        <div class="portal-icon">&#x26A1;</div>
         <h2 class="portal-title">LIFE ENGINE</h2>
-        <p class="portal-desc">Free tools that actually work. Budget planners, habit trackers, AI finders, and investment calculators — no signup, no ads, no BS.</p>
+        <p class="portal-desc">Free tools that actually work. Budget planners, habit trackers, AI finders, and investment calculators &mdash; no signup, no ads, no BS.</p>
         <div class="portal-tags" id="portalRightTags">
           <span class="portal-tag">Finance</span>
           <span class="portal-tag">Health</span>
           <span class="portal-tag">Productivity</span>
           <span class="portal-tag">AI Tools</span>
         </div>
-        <a href="/life" class="portal-cta" id="portalRightCta">Launch Dashboard →</a>
+        <a href="/life" class="portal-cta" id="portalRightCta">Launch Dashboard &rarr;</a>
       </div>
     </div>
   </div>
@@ -905,7 +898,7 @@ button {
           </div>
           <div class="article-body">
             <h3 class="article-title">Taylor Swift MSG Wedding: Everything We Know</h3>
-            <p class="article-excerpt">The full breakdown of the most talked-about celebrity event of 2026 — from the venue takeover to the secret guest list.</p>
+            <p class="article-excerpt">The full breakdown of the most talked-about celebrity event of 2026 &mdash; from the venue takeover to the secret guest list.</p>
             <span class="article-date">Jul 5, 2026</span>
           </div>
         </div>
@@ -918,7 +911,7 @@ button {
           </div>
           <div class="article-body">
             <h3 class="article-title">Top 10 Anime of 2026 (So Far)</h3>
-            <p class="article-excerpt">From surprise hits to long-awaited sequels — our definitive ranking of the best anime released this year.</p>
+            <p class="article-excerpt">From surprise hits to long-awaited sequels &mdash; our definitive ranking of the best anime released this year.</p>
             <span class="article-date">Jul 1, 2026</span>
           </div>
         </div>
@@ -944,7 +937,7 @@ button {
           </div>
           <div class="article-body">
             <h3 class="article-title">House of the Dragon S3: Timeline &amp; Predictions</h3>
-            <p class="article-excerpt">Breaking down the Dance of the Dragons — which battles are next and who won't survive the season.</p>
+            <p class="article-excerpt">Breaking down the Dance of the Dragons &mdash; which battles are next and who won't survive the season.</p>
             <span class="article-date">Jun 28, 2026</span>
           </div>
         </div>
@@ -975,7 +968,7 @@ button {
     <div class="manifesto-line"><span>We do <em class="highlight">answers</em>.</span></div>
     <div class="manifesto-line"><span>Every franchise <em class="highlight">mapped</em>.</span></div>
     <div class="manifesto-line"><span>Every mystery <em class="highlight">decoded</em>.</span></div>
-    <div class="manifesto-line"><span>Every tool <em class="highlight">free</em> — forever.</span></div>
+    <div class="manifesto-line"><span>Every tool <em class="highlight">free</em> &mdash; forever.</span></div>
   </div>
 </section>
 
@@ -1003,18 +996,18 @@ button {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script>
 /* ═══════════════════════════════════════════════════════════════
-   MAIN APPLICATION
+   MAIN APPLICATION SCRIPT
    ═══════════════════════════════════════════════════════════════ */
 (function() {
   'use strict';
 
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const isMobile = window.innerWidth <= 768;
+  var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var isMobile = window.innerWidth <= 768;
 
   /* ═══════════════════════════════════════════════════════════════
-     LENIS SMOOTH SCROLL
+     LENIS SMOOTH SCROLL SETUP
      ═══════════════════════════════════════════════════════════════ */
-  const lenis = new Lenis({
+  var lenis = new Lenis({
     duration: 1.2,
     easing: function(t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); },
     touchMultiplier: 2,
@@ -1025,7 +1018,7 @@ button {
   gsap.ticker.lagSmoothing(0);
 
   /* ═══════════════════════════════════════════════════════════════
-     NAV SCROLL EFFECT
+     NAVIGATION — Background on Scroll
      ═══════════════════════════════════════════════════════════════ */
   var nav = document.getElementById('mainNav');
   ScrollTrigger.create({
@@ -1037,31 +1030,31 @@ button {
   });
 
   /* ═══════════════════════════════════════════════════════════════
-     SECTION 1: HERO — Title & Tagline
+     SECTION 1: HERO — Title Letter Animation & Tagline
      ═══════════════════════════════════════════════════════════════ */
   var heroTitle = document.getElementById('heroTitle');
   var heroTagline = document.getElementById('heroTagline');
-  var titleText = 'HEEZO';
-  var taglineText = 'Where curiosity lives';
+  var titleChars = ['H','E','E','Z','O'];
+  var taglineWords = ['Where','curiosity','lives'];
 
-  // Create letter spans for title
-  titleText.split('').forEach(function(char) {
-    var span = document.createElement('span');
-    span.className = 'letter';
-    span.textContent = char;
-    heroTitle.appendChild(span);
+  // Build title letter spans
+  titleChars.forEach(function(ch) {
+    var s = document.createElement('span');
+    s.className = 'letter';
+    s.textContent = ch;
+    heroTitle.appendChild(s);
   });
 
-  // Create word spans for tagline
-  taglineText.split(' ').forEach(function(word) {
-    var span = document.createElement('span');
-    span.className = 'word';
-    span.textContent = word;
-    heroTagline.appendChild(span);
+  // Build tagline word spans
+  taglineWords.forEach(function(w) {
+    var s = document.createElement('span');
+    s.className = 'word';
+    s.textContent = w;
+    heroTagline.appendChild(s);
   });
 
   if (!prefersReducedMotion) {
-    // Animate title letters with 3D flip
+    // 3D letter flip animation
     gsap.to('.hero-title .letter', {
       opacity: 1,
       rotateX: 0,
@@ -1071,7 +1064,7 @@ button {
       delay: 0.5,
     });
 
-    // Animate tagline words with blur-to-focus
+    // Blur-to-focus tagline
     gsap.to('.hero-tagline .word', {
       opacity: 0.8,
       filter: 'blur(0px)',
@@ -1081,7 +1074,7 @@ button {
       delay: 1.2,
     });
 
-    // Hero pin — stays fixed while user scrolls through extra height
+    // Hero pin with scroll-driven parallax
     ScrollTrigger.create({
       trigger: '#heroWrapper',
       start: 'top top',
@@ -1089,180 +1082,124 @@ button {
       pin: '#hero',
       pinSpacing: false,
       onUpdate: function(self) {
-        var progress = self.progress;
+        var p = self.progress;
         gsap.set('.hero-content', {
-          scale: 1 - (progress * 0.05),
-          opacity: 1 - (progress * 0.8),
+          scale: 1 - (p * 0.05),
+          opacity: 1 - (p * 0.8),
         });
         gsap.set('.scroll-indicator', {
-          opacity: 1 - (progress * 3),
+          opacity: 1 - (p * 3),
         });
       }
     });
   }
 
   /* ═══════════════════════════════════════════════════════════════
-     SECTION 1: HERO — WebGL Particle System (Lazy-Loaded Three.js)
+     SECTION 1: HERO — WebGL Particle System (Three.js, Lazy)
      ═══════════════════════════════════════════════════════════════ */
-  var canvas = document.getElementById('heroCanvas');
-  var particleSystemLoaded = false;
+  var heroCanvas = document.getElementById('heroCanvas');
+  var threeLoaded = false;
 
-  function initParticles() {
-    if (particleSystemLoaded || prefersReducedMotion) return;
-    particleSystemLoaded = true;
-
-    var script = document.createElement('script');
-    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160/three.min.js';
-    script.onload = function() { setupThreeJS(); };
-    document.head.appendChild(script);
+  function loadThreeAndInit() {
+    if (threeLoaded || prefersReducedMotion) return;
+    threeLoaded = true;
+    var s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160/three.min.js';
+    s.onload = buildParticleSystem;
+    document.head.appendChild(s);
   }
 
-  function setupThreeJS() {
+  function buildParticleSystem() {
+    var W = window.innerWidth, H = window.innerHeight;
     var scene = new THREE.Scene();
-    var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    var camera = new THREE.PerspectiveCamera(75, W / H, 0.1, 1000);
     camera.position.z = 5;
 
-    var renderer = new THREE.WebGLRenderer({
-      canvas: canvas,
-      alpha: true,
-      antialias: false,
-    });
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    var renderer = new THREE.WebGLRenderer({ canvas: heroCanvas, alpha: true, antialias: false });
+    renderer.setSize(W, H);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-    var particleCount = isMobile ? 500 : 2500;
-    var geometry = new THREE.BufferGeometry();
-    var positions = new Float32Array(particleCount * 3);
-    var colors = new Float32Array(particleCount * 3);
-    var sizes = new Float32Array(particleCount);
+    var count = isMobile ? 500 : 2500;
+    var geo = new THREE.BufferGeometry();
+    var pos = new Float32Array(count * 3);
+    var col = new Float32Array(count * 3);
+    var siz = new Float32Array(count);
+    var gC = [212/255, 175/255, 55/255];
+    var cC = [0, 212/255, 1];
 
-    var goldColor = { r: 212/255, g: 175/255, b: 55/255 };
-    var cyanColor = { r: 0/255, g: 212/255, b: 255/255 };
-
-    for (var i = 0; i < particleCount; i++) {
+    for (var i = 0; i < count; i++) {
       var i3 = i * 3;
-      positions[i3]     = (Math.random() - 0.5) * 12;
-      positions[i3 + 1] = (Math.random() - 0.5) * 12;
-      positions[i3 + 2] = (Math.random() - 0.5) * 8;
-
-      var isGold = Math.random() > 0.4;
-      colors[i3]     = isGold ? goldColor.r : cyanColor.r;
-      colors[i3 + 1] = isGold ? goldColor.g : cyanColor.g;
-      colors[i3 + 2] = isGold ? goldColor.b : cyanColor.b;
-
-      sizes[i] = Math.random() * 3 + 1;
+      pos[i3] = (Math.random() - 0.5) * 12;
+      pos[i3+1] = (Math.random() - 0.5) * 12;
+      pos[i3+2] = (Math.random() - 0.5) * 8;
+      var gold = Math.random() > 0.4;
+      col[i3] = gold ? gC[0] : cC[0];
+      col[i3+1] = gold ? gC[1] : cC[1];
+      col[i3+2] = gold ? gC[2] : cC[2];
+      siz[i] = Math.random() * 3 + 1;
     }
 
-    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-    geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+    geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+    geo.setAttribute('size', new THREE.BufferAttribute(siz, 1));
 
-    var vertexShader = [
-      'attribute float size;',
-      'attribute vec3 color;',
-      'varying vec3 vColor;',
-      'uniform float uTime;',
-      'uniform vec2 uMouse;',
-      'void main() {',
-      '  vColor = color;',
-      '  vec3 pos = position;',
-      '  pos.x += sin(uTime * 0.3 + position.y * 0.5) * 0.15;',
-      '  pos.y += cos(uTime * 0.2 + position.x * 0.5) * 0.15;',
-      '  pos.z += sin(uTime * 0.15 + position.x * 0.3) * 0.1;',
-      '  float dist = length(pos.xy - uMouse * 5.0);',
-      '  float influence = smoothstep(4.0, 0.0, dist) * 0.6;',
-      '  pos.xy += normalize(uMouse * 5.0 - pos.xy + 0.001) * influence;',
-      '  vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);',
-      '  gl_PointSize = size * (280.0 / -mvPosition.z);',
-      '  gl_Position = projectionMatrix * mvPosition;',
-      '}',
-    ].join('\n');
+    var vShader = 'attribute float size;attribute vec3 color;varying vec3 vColor;uniform float uTime;uniform vec2 uMouse;void main(){vColor=color;vec3 p=position;p.x+=sin(uTime*0.3+position.y*0.5)*0.15;p.y+=cos(uTime*0.2+position.x*0.5)*0.15;p.z+=sin(uTime*0.15+position.x*0.3)*0.1;float d=length(p.xy-uMouse*5.0);float inf=smoothstep(4.0,0.0,d)*0.6;p.xy+=normalize(uMouse*5.0-p.xy+0.001)*inf;vec4 mv=modelViewMatrix*vec4(p,1.0);gl_PointSize=size*(280.0/-mv.z);gl_Position=projectionMatrix*mv;}';
+    var fShader = 'varying vec3 vColor;void main(){float d=length(gl_PointCoord-vec2(0.5));if(d>0.5)discard;float a=1.0-smoothstep(0.1,0.5,d);gl_FragColor=vec4(vColor,a*0.65);}';
 
-    var fragmentShader = [
-      'varying vec3 vColor;',
-      'void main() {',
-      '  float dist = length(gl_PointCoord - vec2(0.5));',
-      '  if (dist > 0.5) discard;',
-      '  float alpha = 1.0 - smoothstep(0.1, 0.5, dist);',
-      '  gl_FragColor = vec4(vColor, alpha * 0.65);',
-      '}',
-    ].join('\n');
-
-    var material = new THREE.ShaderMaterial({
-      uniforms: {
-        uTime: { value: 0 },
-        uMouse: { value: new THREE.Vector2(0, 0) },
-      },
-      vertexShader: vertexShader,
-      fragmentShader: fragmentShader,
+    var mat = new THREE.ShaderMaterial({
+      uniforms: { uTime: {value:0}, uMouse: {value: new THREE.Vector2(0,0)} },
+      vertexShader: vShader,
+      fragmentShader: fShader,
       transparent: true,
       depthWrite: false,
       blending: THREE.AdditiveBlending,
     });
 
-    var particles = new THREE.Points(geometry, material);
-    scene.add(particles);
+    var pts = new THREE.Points(geo, mat);
+    scene.add(pts);
 
-    // Mouse tracking with spring physics
-    var mouseX = 0, mouseY = 0;
-    var targetMouseX = 0, targetMouseY = 0;
-
+    var mx = 0, my = 0, tmx = 0, tmy = 0;
     document.addEventListener('mousemove', function(e) {
-      targetMouseX = (e.clientX / window.innerWidth) * 2 - 1;
-      targetMouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+      tmx = (e.clientX / W) * 2 - 1;
+      tmy = -(e.clientY / H) * 2 + 1;
     });
 
-    // Resize handler
     window.addEventListener('resize', function() {
-      camera.aspect = window.innerWidth / window.innerHeight;
+      W = window.innerWidth; H = window.innerHeight;
+      camera.aspect = W / H;
       camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setSize(W, H);
     });
 
-    // Animation loop with visibility check
-    var animating = true;
-    var time = 0;
-
-    function animate() {
-      if (!animating) return;
-      requestAnimationFrame(animate);
-      time += 0.008;
-
-      // Spring physics for mouse
-      mouseX += (targetMouseX - mouseX) * 0.04;
-      mouseY += (targetMouseY - mouseY) * 0.04;
-
-      material.uniforms.uTime.value = time;
-      material.uniforms.uMouse.value.x = mouseX;
-      material.uniforms.uMouse.value.y = mouseY;
-
-      // Gentle global rotation
-      particles.rotation.y = time * 0.04;
-      particles.rotation.x = Math.sin(time * 0.08) * 0.03;
-
+    var running = true, t = 0;
+    function loop() {
+      if (!running) return;
+      requestAnimationFrame(loop);
+      t += 0.008;
+      mx += (tmx - mx) * 0.04;
+      my += (tmy - my) * 0.04;
+      mat.uniforms.uTime.value = t;
+      mat.uniforms.uMouse.value.set(mx, my);
+      pts.rotation.y = t * 0.04;
+      pts.rotation.x = Math.sin(t * 0.08) * 0.03;
       renderer.render(scene, camera);
     }
+    loop();
 
-    animate();
-
-    // Pause when canvas is not visible (performance)
-    var observer = new IntersectionObserver(function(entries) {
-      entries.forEach(function(entry) {
-        animating = entry.isIntersecting;
-        if (animating) animate();
-      });
-    }, { threshold: 0.05 });
-    observer.observe(canvas);
+    // Pause when not visible
+    var obs = new IntersectionObserver(function(en) {
+      en.forEach(function(e) { running = e.isIntersecting; if (running) loop(); });
+    }, {threshold: 0.05});
+    obs.observe(heroCanvas);
   }
 
-  // Lazy-load Three.js immediately (hero is above fold)
-  initParticles();
+  loadThreeAndInit();
 
   /* ═══════════════════════════════════════════════════════════════
-     SECTION 3: PORTALS — Pinned Split-Screen
+     SECTION 3: PORTALS — Pinned Split-Screen Animation
      ═══════════════════════════════════════════════════════════════ */
   if (!prefersReducedMotion && !isMobile) {
-    var portalsTl = gsap.timeline({
+    var pTl = gsap.timeline({
       scrollTrigger: {
         trigger: '#portalsWrapper',
         start: 'top top',
@@ -1273,91 +1210,64 @@ button {
       }
     });
 
-    // Phase 1 (0-33%): Curtain open effect
-    portalsTl.fromTo('#portalLeft',
-      { xPercent: -100 },
-      { xPercent: 0, duration: 1, ease: 'power2.out' }, 0
-    );
-    portalsTl.fromTo('#portalRight',
-      { xPercent: 100 },
-      { xPercent: 0, duration: 1, ease: 'power2.out' }, 0
-    );
+    // Phase 1: Curtain open
+    pTl.fromTo('#portalLeft', {xPercent:-100}, {xPercent:0, duration:1, ease:'power2.out'}, 0);
+    pTl.fromTo('#portalRight', {xPercent:100}, {xPercent:0, duration:1, ease:'power2.out'}, 0);
 
-    // Phase 2 (33-66%): Tags stagger in
-    portalsTl.to('#portalLeftTags', { opacity: 1, duration: 0.3 }, 1);
-    portalsTl.to('#portalRightTags', { opacity: 1, duration: 0.3 }, 1);
-    portalsTl.fromTo('#portalLeftTags .portal-tag',
-      { opacity: 0, y: 20 },
-      { opacity: 1, y: 0, stagger: 0.1, duration: 0.4 }, 1.1
-    );
-    portalsTl.fromTo('#portalRightTags .portal-tag',
-      { opacity: 0, y: 20 },
-      { opacity: 1, y: 0, stagger: 0.1, duration: 0.4 }, 1.1
-    );
+    // Phase 2: Tags stagger
+    pTl.to('#portalLeftTags', {opacity:1, duration:0.3}, 1);
+    pTl.to('#portalRightTags', {opacity:1, duration:0.3}, 1);
+    pTl.fromTo('#portalLeftTags .portal-tag', {opacity:0, y:20}, {opacity:1, y:0, stagger:0.1, duration:0.4}, 1.1);
+    pTl.fromTo('#portalRightTags .portal-tag', {opacity:0, y:20}, {opacity:1, y:0, stagger:0.1, duration:0.4}, 1.1);
 
-    // Phase 3 (66-100%): CTAs appear
-    portalsTl.to('#portalLeftCta', { opacity: 1, duration: 0.5 }, 2);
-    portalsTl.to('#portalRightCta', { opacity: 1, duration: 0.5 }, 2);
+    // Phase 3: CTAs
+    pTl.to('#portalLeftCta', {opacity:1, duration:0.5}, 2);
+    pTl.to('#portalRightCta', {opacity:1, duration:0.5}, 2);
 
   } else if (!prefersReducedMotion && isMobile) {
-    // Mobile: simple scroll-triggered fade in
-    gsap.set('.portal-tags, .portal-cta', { opacity: 1 });
-    gsap.fromTo('.portal-left', { opacity: 0, y: 50 }, {
-      opacity: 1, y: 0, duration: 0.8,
-      scrollTrigger: { trigger: '.portal-left', start: 'top 80%' }
-    });
-    gsap.fromTo('.portal-right', { opacity: 0, y: 50 }, {
-      opacity: 1, y: 0, duration: 0.8,
-      scrollTrigger: { trigger: '.portal-right', start: 'top 80%' }
-    });
+    gsap.set('.portal-tags, .portal-cta', {opacity:1});
+    gsap.fromTo('.portal-left', {opacity:0, y:50}, {opacity:1, y:0, duration:0.8, scrollTrigger:{trigger:'.portal-left', start:'top 80%'}});
+    gsap.fromTo('.portal-right', {opacity:0, y:50}, {opacity:1, y:0, duration:0.8, scrollTrigger:{trigger:'.portal-right', start:'top 80%'}});
   } else {
-    // Reduced motion: show everything static
-    gsap.set('.portal-tags, .portal-cta', { opacity: 1 });
+    gsap.set('.portal-tags, .portal-cta', {opacity:1});
   }
 
   /* ═══════════════════════════════════════════════════════════════
      SECTION 4: STATS — Counting Animation
      ═══════════════════════════════════════════════════════════════ */
-  var statNumbers = document.querySelectorAll('.stat-number');
-
-  statNumbers.forEach(function(el) {
+  document.querySelectorAll('.stat-number').forEach(function(el) {
     var target = parseInt(el.dataset.target);
     var suffix = el.dataset.suffix || '';
 
-    if (prefersReducedMotion) {
-      el.textContent = target + suffix;
-      return;
-    }
+    if (prefersReducedMotion) { el.textContent = target + suffix; return; }
 
     ScrollTrigger.create({
       trigger: el,
       start: 'top 85%',
       once: true,
       onEnter: function() {
-        var obj = { val: 0 };
+        var obj = {v:0};
         gsap.to(obj, {
-          val: target,
+          v: target,
           duration: 2,
           ease: 'power2.out',
-          snap: { val: 1 },
-          onUpdate: function() {
-            el.textContent = Math.round(obj.val) + suffix;
-          },
+          snap: {v:1},
+          onUpdate: function() { el.textContent = Math.round(obj.v) + suffix; },
         });
       }
     });
   });
 
   /* ═══════════════════════════════════════════════════════════════
-     SECTION 5: ARTICLES — Horizontal Scroll
+     SECTION 5: ARTICLES — Horizontal Scroll + 3D Tilt
      ═══════════════════════════════════════════════════════════════ */
   if (!isMobile && !prefersReducedMotion) {
-    var track = document.getElementById('articlesTrack');
-    var cards = track.querySelectorAll('.article-card');
-    var totalWidth = (cards.length * 380) + ((cards.length - 1) * 32) + 128;
+    var aTrack = document.getElementById('articlesTrack');
+    var aCards = aTrack.querySelectorAll('.article-card');
+    var totalW = (aCards.length * 380) + ((aCards.length - 1) * 32) + 128;
 
-    gsap.to(track, {
-      x: function() { return -(totalWidth - window.innerWidth); },
+    gsap.to(aTrack, {
+      x: function() { return -(totalW - window.innerWidth); },
       ease: 'none',
       scrollTrigger: {
         trigger: '#articlesWrapper',
@@ -1369,50 +1279,28 @@ button {
       }
     });
 
-    // 3D tilt effect on article cards
-    cards.forEach(function(card) {
+    // 3D tilt on hover
+    aCards.forEach(function(card) {
       var inner = card.querySelector('.article-card-inner');
-      var imgBg = card.querySelector('.article-img-bg');
+      var bg = card.querySelector('.article-img-bg');
 
       card.addEventListener('mousemove', function(e) {
-        var rect = card.getBoundingClientRect();
-        var x = (e.clientX - rect.left) / rect.width - 0.5;
-        var y = (e.clientY - rect.top) / rect.height - 0.5;
-
-        gsap.to(inner, {
-          rotateY: x * 6,
-          rotateX: -y * 6,
-          duration: 0.3,
-          ease: 'power2.out',
-          transformPerspective: 1000,
-        });
-
-        // Image parallax at 0.8x
-        if (imgBg) {
-          gsap.to(imgBg, {
-            x: x * 16,
-            y: y * 16,
-            duration: 0.3,
-          });
-        }
+        var r = card.getBoundingClientRect();
+        var x = (e.clientX - r.left) / r.width - 0.5;
+        var y = (e.clientY - r.top) / r.height - 0.5;
+        gsap.to(inner, {rotateY: x*6, rotateX: -y*6, duration:0.3, ease:'power2.out', transformPerspective:1000});
+        if (bg) gsap.to(bg, {x: x*16, y: y*16, duration:0.3});
       });
 
       card.addEventListener('mouseleave', function() {
-        gsap.to(inner, {
-          rotateY: 0,
-          rotateX: 0,
-          duration: 0.5,
-          ease: 'power2.out',
-        });
-        if (imgBg) {
-          gsap.to(imgBg, { x: 0, y: 0, duration: 0.5 });
-        }
+        gsap.to(inner, {rotateY:0, rotateX:0, duration:0.5, ease:'power2.out'});
+        if (bg) gsap.to(bg, {x:0, y:0, duration:0.5});
       });
     });
   }
 
   /* ═══════════════════════════════════════════════════════════════
-     SECTION 6: MANIFESTO — Line-by-Line Reveal
+     SECTION 6: MANIFESTO — Masked Line Reveal
      ═══════════════════════════════════════════════════════════════ */
   if (!prefersReducedMotion) {
     gsap.utils.toArray('.manifesto-line span').forEach(function(line, i) {
@@ -1429,12 +1317,11 @@ button {
       });
     });
   } else {
-    // Static display for reduced motion
-    gsap.set('.manifesto-line span', { yPercent: 0 });
+    gsap.set('.manifesto-line span', {yPercent:0});
   }
 
   /* ═══════════════════════════════════════════════════════════════
-     MARQUEE PARALLAX (10% slower than scroll)
+     MARQUEE PARALLAX
      ═══════════════════════════════════════════════════════════════ */
   if (!prefersReducedMotion) {
     gsap.to('.marquee-track', {
