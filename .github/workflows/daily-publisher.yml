@@ -27,6 +27,7 @@ jobs:
       - name: Generate and publish article
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: python scripts/cloud_publisher.py
 
       - name: Commit and push
