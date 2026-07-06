@@ -160,6 +160,36 @@ button {
   transform-origin: center bottom;
 }
 
+/* Letter continuous glow animation */
+@keyframes letterGlow {
+  0%, 100% {
+    text-shadow: 0 0 10px rgba(212,175,55,0.3), 0 0 20px rgba(212,175,55,0.1);
+    filter: brightness(1);
+  }
+  50% {
+    text-shadow: 0 0 20px rgba(212,175,55,0.6), 0 0 40px rgba(0,212,255,0.3), 0 0 60px rgba(212,175,55,0.2);
+    filter: brightness(1.15);
+  }
+}
+
+.hero-title .letter {
+  -webkit-text-fill-color: transparent;
+  background: linear-gradient(135deg, var(--gold), var(--cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+.hero-title .letter.animated {
+  animation: letterGlow 3s ease-in-out infinite;
+}
+
+.hero-title .letter.animated:nth-child(2) { animation-delay: 0.3s; }
+.hero-title .letter.animated:nth-child(3) { animation-delay: 0.6s; }
+.hero-title .letter.animated:nth-child(4) { animation-delay: 0.9s; }
+.hero-title .letter.animated:nth-child(5) { animation-delay: 1.2s; }
+
+
+
 .hero-tagline {
   font-size: clamp(1rem, 2.5vw, 1.5rem);
   font-weight: 300;
@@ -297,126 +327,166 @@ button {
    SECTION 3: PORTALS
    ═══════════════════════════════════════════════════════════════ */
 .portals-wrapper {
-  height: 400vh;
   position: relative;
 }
 
-.portals {
+.portal-section {
   width: 100%;
   height: 100vh;
+  position: relative;
   display: flex;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
   background: var(--obsidian);
   z-index: 10;
 }
 
-.portal {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 3rem;
-  position: relative;
+.portal-video-wrap {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
 }
 
-.portal-card {
-  max-width: 420px;
+.portal-video-wrap video {
   width: 100%;
-  padding: 3rem;
-  border-radius: 16px;
-  border: 1px solid rgba(255,255,255,0.08);
-  background: rgba(255,255,255,0.02);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  transition: box-shadow 0.4s ease, border-color 0.4s ease;
+  height: 100%;
+  object-fit: cover;
 }
 
-.portal-left .portal-card:hover {
-  border-color: rgba(212, 175, 55, 0.3);
-  box-shadow: 0 0 60px rgba(212, 175, 55, 0.15);
+.portal-video-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(5,5,8,0.7) 0%, rgba(5,5,8,0.5) 50%, rgba(5,5,8,0.8) 100%);
+  z-index: 1;
 }
 
-.portal-right .portal-card:hover {
-  border-color: rgba(0, 212, 255, 0.3);
-  box-shadow: 0 0 60px rgba(0, 212, 255, 0.15);
+.portal-section.lore-portal .portal-video-overlay {
+  background: linear-gradient(180deg, rgba(5,5,8,0.65) 0%, rgba(30,15,0,0.4) 50%, rgba(5,5,8,0.85) 100%);
 }
 
-.portal-icon {
-  font-size: 2.5rem;
-  margin-bottom: 1.5rem;
+.portal-section.life-portal .portal-video-overlay {
+  background: linear-gradient(180deg, rgba(5,5,8,0.65) 0%, rgba(0,15,30,0.4) 50%, rgba(5,5,8,0.85) 100%);
 }
 
-.portal-title {
-  font-size: 1.75rem;
+.portal-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  max-width: 800px;
+  padding: 2rem;
+}
+
+.portal-big-title {
+  font-size: clamp(3rem, 8vw, 7rem);
   font-weight: 700;
-  letter-spacing: 0.1em;
-  margin-bottom: 1rem;
-}
-
-.portal-left .portal-title {
-  color: var(--gold);
-}
-
-.portal-right .portal-title {
-  color: var(--cyan);
-}
-
-.portal-desc {
-  font-size: 0.95rem;
-  font-weight: 300;
-  line-height: 1.7;
-  color: rgba(240, 239, 233, 0.7);
+  letter-spacing: 0.08em;
+  line-height: 1;
   margin-bottom: 1.5rem;
+  opacity: 0;
+  transform: translateY(40px);
 }
 
-.portal-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
+.lore-portal .portal-big-title {
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: none;
+  filter: drop-shadow(0 0 30px rgba(212,175,55,0.4));
+}
+
+.life-portal .portal-big-title {
+  background: linear-gradient(135deg, var(--cyan), var(--cyan-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: none;
+  filter: drop-shadow(0 0 30px rgba(0,212,255,0.4));
+}
+
+.portal-subtitle {
+  font-size: clamp(1rem, 2vw, 1.4rem);
+  font-weight: 300;
+  color: var(--text);
+  opacity: 0;
   margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.portal-tags-row {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 2.5rem;
   opacity: 0;
 }
 
-.portal-tag {
-  padding: 0.35rem 0.85rem;
+.portal-pill {
+  padding: 0.5rem 1.25rem;
   border-radius: 100px;
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   font-weight: 500;
   letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
-.portal-left .portal-tag {
-  background: rgba(212, 175, 55, 0.1);
-  border: 1px solid rgba(212, 175, 55, 0.25);
+.lore-portal .portal-pill {
+  background: rgba(212,175,55,0.1);
+  border: 1px solid rgba(212,175,55,0.3);
   color: var(--gold-light);
+  box-shadow: 0 0 12px rgba(212,175,55,0.1);
 }
 
-.portal-right .portal-tag {
-  background: rgba(0, 212, 255, 0.1);
-  border: 1px solid rgba(0, 212, 255, 0.25);
+.life-portal .portal-pill {
+  background: rgba(0,212,255,0.1);
+  border: 1px solid rgba(0,212,255,0.3);
   color: var(--cyan-light);
+  box-shadow: 0 0 12px rgba(0,212,255,0.1);
 }
 
-.portal-cta {
+.portal-cta-btn {
   display: inline-block;
-  font-size: 0.9rem;
+  padding: 1rem 2.5rem;
+  font-size: 1rem;
   font-weight: 600;
   letter-spacing: 0.05em;
+  border-radius: 6px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   opacity: 0;
-  transition: transform 0.3s ease;
 }
 
-.portal-cta:hover {
-  transform: translateX(6px);
+.lore-portal .portal-cta-btn {
+  background: var(--gold);
+  color: var(--obsidian);
 }
 
-.portal-left .portal-cta {
-  color: var(--gold);
+.lore-portal .portal-cta-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 40px rgba(212,175,55,0.5);
 }
 
-.portal-right .portal-cta {
-  color: var(--cyan);
+.life-portal .portal-cta-btn {
+  background: var(--cyan);
+  color: var(--obsidian);
+}
+
+.life-portal .portal-cta-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 40px rgba(0,212,255,0.5);
+}
+
+/* Mobile: no video, gradient fallback */
+@media (max-width: 768px) {
+  .portal-video-wrap video { display: none; }
+  .lore-portal .portal-video-wrap {
+    background: radial-gradient(ellipse at center, rgba(212,175,55,0.15) 0%, transparent 70%);
+  }
+  .life-portal .portal-video-wrap {
+    background: radial-gradient(ellipse at center, rgba(0,212,255,0.15) 0%, transparent 70%);
+  }
+  .portal-big-title { font-size: 3rem; }
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -828,40 +898,51 @@ button {
 </section>
 
 <!-- ═══════════════════════════════════════════════════════════════
-     SECTION 3: PORTALS
+     SECTION 3: PORTALS — Full-Screen Video Backgrounds
      ═══════════════════════════════════════════════════════════════ -->
-<section class="portals-wrapper" id="portalsWrapper">
-  <div class="portals" id="portals">
-    <div class="portal portal-left" id="portalLeft">
-      <div class="portal-card">
-        <div class="portal-icon">&#x2694;&#xFE0F;</div>
-        <h2 class="portal-title">THE LORE VAULT</h2>
-        <p class="portal-desc">Every franchise mapped to obsessive detail. Watch orders, power rankings, timeline breakdowns, and Easter eggs most fans never catch.</p>
-        <div class="portal-tags" id="portalLeftTags">
-          <span class="portal-tag">Movies</span>
-          <span class="portal-tag">Anime</span>
-          <span class="portal-tag">Gaming</span>
-          <span class="portal-tag">TV Shows</span>
-        </div>
-        <a href="/lore" class="portal-cta" id="portalLeftCta">Enter the Vault &rarr;</a>
-      </div>
+<div class="portals-wrapper">
+  <!-- LORE VAULT -->
+  <section class="portal-section lore-portal" id="lorePortal">
+    <div class="portal-video-wrap">
+      <video autoplay muted loop playsinline poster="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><rect fill='%23050508' width='100%25' height='100%25'/></svg>">
+        <source src="https://assets.mixkit.co/videos/3460/3460-720.mp4" type="video/mp4">
+      </video>
+      <div class="portal-video-overlay"></div>
     </div>
-    <div class="portal portal-right" id="portalRight">
-      <div class="portal-card">
-        <div class="portal-icon">&#x26A1;</div>
-        <h2 class="portal-title">LIFE ENGINE</h2>
-        <p class="portal-desc">Free tools that actually work. Budget planners, habit trackers, AI finders, and investment calculators &mdash; no signup, no ads, no BS.</p>
-        <div class="portal-tags" id="portalRightTags">
-          <span class="portal-tag">Finance</span>
-          <span class="portal-tag">Health</span>
-          <span class="portal-tag">Productivity</span>
-          <span class="portal-tag">AI Tools</span>
-        </div>
-        <a href="/life" class="portal-cta" id="portalRightCta">Launch Dashboard &rarr;</a>
+    <div class="portal-content">
+      <h2 class="portal-big-title" id="loreBigTitle">THE LORE VAULT</h2>
+      <p class="portal-subtitle" id="loreSubtitle">Every franchise mapped to obsessive detail. Watch orders, power rankings, timeline breakdowns, and Easter eggs most fans never catch.</p>
+      <div class="portal-tags-row" id="loreTags">
+        <span class="portal-pill">Movies</span>
+        <span class="portal-pill">Anime</span>
+        <span class="portal-pill">Gaming</span>
+        <span class="portal-pill">TV Shows</span>
       </div>
+      <a href="/lore" class="portal-cta-btn" id="loreCta">Enter the Vault &rarr;</a>
     </div>
-  </div>
-</section>
+  </section>
+
+  <!-- LIFE ENGINE -->
+  <section class="portal-section life-portal" id="lifePortal">
+    <div class="portal-video-wrap">
+      <video autoplay muted loop playsinline poster="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><rect fill='%23050508' width='100%25' height='100%25'/></svg>">
+        <source src="https://assets.mixkit.co/9swqxxi92d67sgw58rxpztchnl9k" type="video/mp4">
+      </video>
+      <div class="portal-video-overlay"></div>
+    </div>
+    <div class="portal-content">
+      <h2 class="portal-big-title" id="lifeBigTitle">LIFE ENGINE</h2>
+      <p class="portal-subtitle" id="lifeSubtitle">Free tools that actually work. Budget planners, habit trackers, AI finders, and investment calculators &mdash; no signup, no ads, no BS.</p>
+      <div class="portal-tags-row" id="lifeTags">
+        <span class="portal-pill">Finance</span>
+        <span class="portal-pill">Health</span>
+        <span class="portal-pill">Productivity</span>
+        <span class="portal-pill">AI Tools</span>
+      </div>
+      <a href="/life" class="portal-cta-btn" id="lifeCta">Launch Dashboard &rarr;</a>
+    </div>
+  </section>
+</div>
 
 <!-- ═══════════════════════════════════════════════════════════════
      SECTION 4: STATS
@@ -1080,6 +1161,14 @@ button {
       delay: 1.2,
     });
 
+    // After initial flip, add continuous glow class
+    gsap.delayedCall(2.0, function() {
+      document.querySelectorAll('.hero-title .letter').forEach(function(l) {
+        l.classList.add('animated');
+      });
+    });
+
+
     // Hero pin with scroll-driven parallax
     ScrollTrigger.create({
       trigger: '#heroWrapper',
@@ -1202,43 +1291,59 @@ button {
   loadThreeAndInit();
 
   /* ═══════════════════════════════════════════════════════════════
-     SECTION 3: PORTALS — Pinned Split-Screen Animation
+     SECTION 3: PORTALS — Scroll-Triggered Video Reveal
      ═══════════════════════════════════════════════════════════════ */
-  if (!prefersReducedMotion && !isMobile) {
-    var pTl = gsap.timeline({
-      scrollTrigger: {
-        trigger: '#portalsWrapper',
-        start: 'top top',
-        end: '300% top',
-        pin: '#portals',
-        pinSpacing: false,
-        scrub: 1,
-      }
+  // Lore Portal
+  if (!prefersReducedMotion) {
+    gsap.to('#loreBigTitle', {
+      opacity: 1, y: 0, duration: 1, ease: 'power3.out',
+      scrollTrigger: { trigger: '#lorePortal', start: 'top 60%', toggleActions: 'play none none none' }
+    });
+    gsap.to('#loreSubtitle', {
+      opacity: 0.85, duration: 0.8, ease: 'power2.out',
+      scrollTrigger: { trigger: '#lorePortal', start: 'top 50%', toggleActions: 'play none none none' }
+    });
+    gsap.to('#loreTags', {
+      opacity: 1, duration: 0.6,
+      scrollTrigger: { trigger: '#lorePortal', start: 'top 45%', toggleActions: 'play none none none' }
+    });
+    gsap.fromTo('#loreTags .portal-pill', {opacity:0, y:15}, {
+      opacity: 1, y: 0, stagger: 0.1, duration: 0.5, ease: 'power2.out',
+      scrollTrigger: { trigger: '#lorePortal', start: 'top 45%', toggleActions: 'play none none none' }
+    });
+    gsap.to('#loreCta', {
+      opacity: 1, duration: 0.6,
+      scrollTrigger: { trigger: '#lorePortal', start: 'top 35%', toggleActions: 'play none none none' }
     });
 
-    // Phase 1: Curtain open
-    pTl.fromTo('#portalLeft', {xPercent:-100}, {xPercent:0, duration:1, ease:'power2.out'}, 0);
-    pTl.fromTo('#portalRight', {xPercent:100}, {xPercent:0, duration:1, ease:'power2.out'}, 0);
-
-    // Phase 2: Tags stagger
-    pTl.to('#portalLeftTags', {opacity:1, duration:0.3}, 1);
-    pTl.to('#portalRightTags', {opacity:1, duration:0.3}, 1);
-    pTl.fromTo('#portalLeftTags .portal-tag', {opacity:0, y:20}, {opacity:1, y:0, stagger:0.1, duration:0.4}, 1.1);
-    pTl.fromTo('#portalRightTags .portal-tag', {opacity:0, y:20}, {opacity:1, y:0, stagger:0.1, duration:0.4}, 1.1);
-
-    // Phase 3: CTAs
-    pTl.to('#portalLeftCta', {opacity:1, duration:0.5}, 2);
-    pTl.to('#portalRightCta', {opacity:1, duration:0.5}, 2);
-
-  } else if (!prefersReducedMotion && isMobile) {
-    gsap.set('.portal-tags, .portal-cta', {opacity:1});
-    gsap.fromTo('.portal-left', {opacity:0, y:50}, {opacity:1, y:0, duration:0.8, scrollTrigger:{trigger:'.portal-left', start:'top 80%'}});
-    gsap.fromTo('.portal-right', {opacity:0, y:50}, {opacity:1, y:0, duration:0.8, scrollTrigger:{trigger:'.portal-right', start:'top 80%'}});
+    // Life Portal
+    gsap.to('#lifeBigTitle', {
+      opacity: 1, y: 0, duration: 1, ease: 'power3.out',
+      scrollTrigger: { trigger: '#lifePortal', start: 'top 60%', toggleActions: 'play none none none' }
+    });
+    gsap.to('#lifeSubtitle', {
+      opacity: 0.85, duration: 0.8, ease: 'power2.out',
+      scrollTrigger: { trigger: '#lifePortal', start: 'top 50%', toggleActions: 'play none none none' }
+    });
+    gsap.to('#lifeTags', {
+      opacity: 1, duration: 0.6,
+      scrollTrigger: { trigger: '#lifePortal', start: 'top 45%', toggleActions: 'play none none none' }
+    });
+    gsap.fromTo('#lifeTags .portal-pill', {opacity:0, y:15}, {
+      opacity: 1, y: 0, stagger: 0.1, duration: 0.5, ease: 'power2.out',
+      scrollTrigger: { trigger: '#lifePortal', start: 'top 45%', toggleActions: 'play none none none' }
+    });
+    gsap.to('#lifeCta', {
+      opacity: 1, duration: 0.6,
+      scrollTrigger: { trigger: '#lifePortal', start: 'top 35%', toggleActions: 'play none none none' }
+    });
   } else {
-    gsap.set('.portal-tags, .portal-cta', {opacity:1});
+    gsap.set('#loreBigTitle, #lifeBigTitle', {opacity:1, y:0});
+    gsap.set('#loreSubtitle, #lifeSubtitle', {opacity:0.85});
+    gsap.set('#loreTags, #lifeTags, #loreCta, #lifeCta', {opacity:1});
   }
 
-  /* ═══════════════════════════════════════════════════════════════
+/* ═══════════════════════════════════════════════════════════════
      SECTION 4: STATS — Counting Animation
      ═══════════════════════════════════════════════════════════════ */
   document.querySelectorAll('.stat-number').forEach(function(el) {
