@@ -1,7 +1,7 @@
 """
 Heezo Cloud Publisher — Runs on GitHub Actions (Gemini Free Tier)
 Generates a trending entertainment article and saves it to lore/articles/
-Only runs if the laptop-based publisher hasn't already published today.
+Sends Discord notification when published.
 """
 
 import os
@@ -22,8 +22,24 @@ if not GEMINI_API_KEY:
     print("ERROR: GEMINI_API_KEY not set")
     exit(1)
 
+DISCORD_WEBHOOK_URL = os.environ.get("DISCORD_WEBHOOK_URL", "")
+
 genai.configure(api_key=GEMINI_API_KEY)
-model = genai.GenerativeModel("gemini-1.5-flash")
+
+# Try newer model first, fall back to 1.5
+try:
+    model = genai.GenerativeModel("gemini-2.0-flash")
+    # Quick test
+    test = model.generate_content("Say hi in one word")
+    print(f"✅ Using gemini-2.0-flash")
+except Exception:
+    try:
+        model = genai.GenerativeModel("gemini-1.5-flash")
+        test = model.generate_content("Say hi in one word")
+        print(f"✅ Using gemini-1.5-flash (fallback)")
+    except Exception as e:
+        print(f"ERROR: No working Gemini model available - {e}")
+        exit(1)
 
 TODAY = datetime.now().strftime("%Y-%m-%d")
 TODAY_DISPLAY = datetime.now().strftime("%B %d, %Y")
@@ -35,29 +51,51 @@ research_prompt = """You are a trending topic researcher for an entertainment we
 Find ONE trending entertainment topic from the last 1-3 days that would make a great article.
 Focus on: Movies, Anime, Gaming, TV Shows, Pop Culture.
 
-Return ONLY a JSON object with:
+IMPORTANT: Return ONLY a valid JSON object, no extra text:
 {
   "topic": "The main topic",
-  "headline": "A catchy, clickbait-worthy headline (Heezo voice: like a genius friend texting you)",
+  "headline": "A catchy headline (conversational tone, like a genius friend texting you the coolest thing)",
   "slug": "url-friendly-slug-here",
   "category": "movies|anime|gaming|tv-shows|pop-culture",
   "key_facts": ["fact 1", "fact 2", "fact 3", "fact 4", "fact 5"],
   "angle": "What unique angle to take"
 }"""
 
-try:
-    research_response = model.generate_content(research_prompt)
-    research_text = research_response.text.strip()
-    # Extract JSON from response
-    json_match = re.search(r'\{[\s\S]*\}', research_text)
-    if json_match:
-        topic_data = json.loads(json_match.group())
-    else:
-        print("ERROR: Could not parse research response")
-        exit(1)
-except Exception as e:
-    print(f"ERROR: Research failed - {e}")
+MAX_RETRIES = 3
+topic_data = None
+
+for attempt in range(MAX_RETRIES):
+    try:
+        research_response = model.generate_content(research_prompt)
+        research_text = research_response.text.strip()
+        # Remove markdown code fences if present
+        research_text = re.sub(r'^```(?:json)?\s*', '', research_text)
+        research_text = re.sub(r'\s*```$', '', research_text)
+        # Extract JSON from response
+        json_match = re.search(r'\{[\s\S]*\}', research_text)
+        if json_match:
+            topic_data = json.loads(json_match.group())
+            break
+        else:
+            print(f"  Attempt {attempt+1}: Could not find JSON in response")
+    except json.JSONDecodeError as e:
+        print(f"  Attempt {attempt+1}: JSON parse error - {e}")
+    except Exception as e:
+        print(f"  Attempt {attempt+1}: Research failed - {e}")
+
+if not topic_data:
+    print("ERROR: Could not get topic after 3 attempts")
     exit(1)
+
+# Validate required fields
+required_fields = ["topic", "headline", "slug", "category", "key_facts", "angle"]
+for field in required_fields:
+    if field not in topic_data:
+        print(f"ERROR: Missing field '{field}' in topic data")
+        exit(1)
+
+# Clean slug
+topic_data['slug'] = re.sub(r'[^a-z0-9-]', '', topic_data['slug'].lower().replace(' ', '-'))
 
 print(f"📝 Topic: {topic_data['headline']}")
 
@@ -82,21 +120,31 @@ STRUCTURE:
 - Closing take / "Why this matters" section
 - Total: 800-1200 words
 
-Write ONLY the article body in HTML (h2 tags for headings, p tags for paragraphs). No wrapper, no head, no metadata. Just the article content."""
+Write ONLY the article body in HTML (h2 tags for headings, p tags for paragraphs). No wrapper, no head, no metadata. Just the article content HTML."""
 
-try:
-    article_response = model.generate_content(article_prompt)
-    article_body = article_response.text.strip()
-    # Clean any markdown code fences
-    article_body = re.sub(r'^```html\s*', '', article_body)
-    article_body = re.sub(r'\s*```$', '', article_body)
-except Exception as e:
-    print(f"ERROR: Article generation failed - {e}")
+article_body = None
+for attempt in range(MAX_RETRIES):
+    try:
+        article_response = model.generate_content(article_prompt)
+        article_body = article_response.text.strip()
+        # Clean any markdown code fences
+        article_body = re.sub(r'^```(?:html)?\s*', '', article_body)
+        article_body = re.sub(r'\s*```$', '', article_body)
+        if '<p>' in article_body or '<h2>' in article_body:
+            break
+        else:
+            print(f"  Attempt {attempt+1}: Response doesn't look like HTML")
+    except Exception as e:
+        print(f"  Attempt {attempt+1}: Article gen failed - {e}")
+
+if not article_body:
+    print("ERROR: Could not generate article after 3 attempts")
     exit(1)
 
 # Step 3: Calculate reading time
 word_count = len(article_body.split())
 read_time = max(3, word_count // 200)
+print(f"📊 Word count: {word_count}, Read time: {read_time} min")
 
 # Step 4: Generate full HTML page
 slug = topic_data['slug']
@@ -104,18 +152,22 @@ headline = topic_data['headline']
 category = topic_data['category']
 description = f"{headline} — Deep dive by Heezo Lore."
 
+# Escape for HTML attributes
+headline_escaped = headline.replace('"', '&quot;')
+description_escaped = description.replace('"', '&quot;')
+
 html_template = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{headline} — Heezo Lore</title>
-    <meta name="description" content="{description}">
+    <title>{headline_escaped} — Heezo Lore</title>
+    <meta name="description" content="{description_escaped}">
     <meta name="robots" content="index, follow, max-image-preview:large">
     
     <!-- Open Graph -->
-    <meta property="og:title" content="{headline}">
-    <meta property="og:description" content="{description}">
+    <meta property="og:title" content="{headline_escaped}">
+    <meta property="og:description" content="{description_escaped}">
     <meta property="og:type" content="article">
     <meta property="og:url" content="https://heezo.vercel.app/lore/articles/{slug}">
     <meta property="og:site_name" content="Heezo">
@@ -123,15 +175,15 @@ html_template = f"""<!DOCTYPE html>
     
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="{headline}">
-    <meta name="twitter:description" content="{description}">
+    <meta name="twitter:title" content="{headline_escaped}">
+    <meta name="twitter:description" content="{description_escaped}">
     
     <!-- Schema.org -->
     <script type="application/ld+json">
     {{
         "@context": "https://schema.org",
         "@type": "Article",
-        "headline": "{headline}",
+        "headline": "{headline_escaped}",
         "datePublished": "{TODAY}T12:00:00+05:30",
         "author": {{"@type": "Organization", "name": "Heezo"}},
         "publisher": {{"@type": "Organization", "name": "Heezo"}}
@@ -260,6 +312,16 @@ html_template = f"""<!DOCTYPE html>
         }}
         
         .article strong {{ color: var(--text-primary); }}
+        
+        .article ul, .article ol {{
+            margin-bottom: 1.2rem;
+            padding-left: 1.5rem;
+            color: var(--text-secondary);
+        }}
+        
+        .article li {{
+            margin-bottom: 0.5rem;
+        }}
         
         .footer {{
             text-align: center;
@@ -401,4 +463,38 @@ if os.path.exists(sitemap_path):
         f.write(sitemap)
     print("✅ Sitemap updated")
 
-print(f"\n🎉 Published: '{headline}' → /lore/articles/{slug}")
+# Step 8: Update vercel.json with new route
+vercel_path = "vercel.json"
+if os.path.exists(vercel_path):
+    try:
+        with open(vercel_path, "r", encoding="utf-8") as f:
+            vercel_config = json.load(f)
+        
+        new_route = {"src": f"/lore/articles/{slug}", "dest": f"/lore/articles/{slug}.html"}
+        if "rewrites" in vercel_config:
+            # Check if route already exists
+            existing = [r["src"] for r in vercel_config["rewrites"]]
+            if new_route["src"] not in existing:
+                vercel_config["rewrites"].append(new_route)
+                with open(vercel_path, "w", encoding="utf-8") as f:
+                    json.dump(vercel_config, f, indent=2)
+                print(f"✅ vercel.json updated with route: {new_route['src']}")
+    except Exception as e:
+        print(f"⚠️ Could not update vercel.json: {e}")
+
+# Step 9: Send Discord notification
+article_url = f"https://heezo.vercel.app/lore/articles/{slug}"
+
+if DISCORD_WEBHOOK_URL:
+    try:
+        discord_payload = {
+            "embeds": [{
+                "title": f"📰 New Article Published!",
+                "description": f"**{headline}**\n\n{description}\n\n[Read it →]({article_url})",
+                "color": 0xd4af37,  # Gold
+                "fields": [
+                    {"name": "Category", "value": category.replace("-", " ").title(), "inline": True},
+                    {"name": "Read Time", "value": f"{read_time} min", "inline": True},
+                    {"name": "Words", "value": str(word_count), "inline": True},
+                ],
+                "footer": {"text": "Heezo Auto-Publisher • Powered by Gemini"},
