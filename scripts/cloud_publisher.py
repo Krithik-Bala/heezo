@@ -482,19 +482,5 @@ if os.path.exists(vercel_path):
     except Exception as e:
         print(f"⚠️ Could not update vercel.json: {e}")
 
-# Step 9: Send Discord notification
-article_url = "https://heezo.vercel.app/lore/articles/" + slug
-
-if DISCORD_WEBHOOK_URL:
-    try:
-        embed = {
-            "title": "New Article Published!",
-            "description": "**" + headline + "**\n\n" + description + "\n\n[Read it →](" + article_url + ")",
-            "color": 0xd4af37,
-            "fields": [
-                {"name": "Category", "value": category.replace("-", " ").title(), "inline": True},
-                {"name": "Read Time", "value": str(read_time) + " min", "inline": True},
-                {"name": "Words", "value": str(word_count), "inline": True},
-            ],
-            "footer": {"text": "Heezo Auto-Publisher"},
-            "timestamp": datetime.utcnow().isoformat()
+# Done!
+print("Published: '" + headline + "' -> /lore/articles/" + slug)
