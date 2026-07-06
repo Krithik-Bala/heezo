@@ -1,1011 +1,1450 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HEEZO — Where Curiosity Lives</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
-
-        :root {
-            --bg-primary: #0a0a0a;
-            --bg-secondary: #111111;
-            --lore-gold: #d4a853;
-            --lore-amber: #f59e0b;
-            --lore-warm: #92400e;
-            --life-blue: #06b6d4;
-            --life-cyan: #22d3ee;
-            --life-electric: #0ea5e9;
-            --text-primary: #f5f5f5;
-            --text-secondary: #a3a3a3;
-            --text-muted: #525252;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        html {
-            scroll-behavior: smooth;
-            scrollbar-width: thin;
-            scrollbar-color: #333 #0a0a0a;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            overflow-x: hidden;
-            cursor: default;
-        }
-
-        h1, h2, h3, h4, h5, h6 {
-            font-family: 'Space Grotesk', sans-serif;
-        }
-
-        /* Custom Cursor Trail */
-        .cursor-glow {
-            position: fixed;
-            width: 300px;
-            height: 300px;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 9999;
-            opacity: 0.07;
-            background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, transparent 70%);
-            transform: translate(-50%, -50%);
-            transition: opacity 0.3s ease;
-        }
-
-        /* Hero Section */
-        .hero {
-            position: relative;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-
-        .hero-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-        }
-
-        .hero-gradient {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                radial-gradient(ellipse at 20% 50%, rgba(212, 168, 83, 0.05) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 50%, rgba(6, 182, 212, 0.05) 0%, transparent 50%),
-                radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.02) 0%, transparent 60%);
-            z-index: 2;
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 10;
-            text-align: center;
-        }
-
-        .hero-title {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: clamp(4rem, 12vw, 10rem);
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            background: linear-gradient(135deg, #ffffff 0%, #d4a853 25%, #ffffff 50%, #06b6d4 75%, #ffffff 100%);
-            background-size: 200% 200%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: gradientShift 8s ease-in-out infinite;
-            opacity: 0;
-            transform: translateY(40px);
-        }
-
-        @keyframes gradientShift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-
-        .hero-tagline {
-            font-size: clamp(1rem, 2.5vw, 1.5rem);
-            color: var(--text-secondary);
-            margin-top: 1.5rem;
-            letter-spacing: 0.3em;
-            text-transform: uppercase;
-            opacity: 0;
-            transform: translateY(20px);
-        }
-
-        .hero-line {
-            width: 60px;
-            height: 1px;
-            background: linear-gradient(90deg, var(--lore-gold), var(--life-blue));
-            margin: 2rem auto;
-            opacity: 0;
-            transform: scaleX(0);
-        }
-
-        .scroll-indicator {
-            position: absolute;
-            bottom: 3rem;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 10;
-            opacity: 0;
-            animation: float 3s ease-in-out infinite;
-            cursor: pointer;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateX(-50%) translateY(0); }
-            50% { transform: translateX(-50%) translateY(10px); }
-        }
-
-        .scroll-indicator span {
-            display: block;
-            width: 1px;
-            height: 40px;
-            background: linear-gradient(180deg, var(--text-secondary), transparent);
-            margin: 0 auto;
-        }
-
-        .scroll-indicator p {
-            font-size: 0.65rem;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            margin-top: 0.5rem;
-        }
-
-        /* Portals Section */
-        .portals-section {
-            position: relative;
-            padding: 8rem 2rem;
-            min-height: 100vh;
-        }
-
-        .section-header {
-            text-align: center;
-            margin-bottom: 6rem;
-        }
-
-        .section-header h2 {
-            font-size: clamp(2rem, 5vw, 3.5rem);
-            font-weight: 600;
-            opacity: 0;
-            transform: translateY(30px);
-        }
-
-        .section-header p {
-            color: var(--text-secondary);
-            font-size: 1.1rem;
-            margin-top: 1rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            opacity: 0;
-            transform: translateY(20px);
-        }
-
-        .portals-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(min(100%, 500px), 1fr));
-            gap: 3rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        /* Portal Cards */
-        .portal-card {
-            position: relative;
-            border-radius: 24px;
-            padding: 3px;
-            opacity: 0;
-            transform: translateY(50px);
-            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .portal-card:hover {
-            transform: translateY(-8px) !important;
-        }
-
-        .portal-card::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: 24px;
-            padding: 2px;
-            background: linear-gradient(135deg, transparent 0%, var(--card-accent) 50%, transparent 100%);
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-            opacity: 0.5;
-            transition: opacity 0.5s ease;
-        }
-
-        .portal-card:hover::before {
-            opacity: 1;
-        }
-
-        .portal-card-inner {
-            background: linear-gradient(135deg, rgba(17,17,17,0.95) 0%, rgba(20,20,20,0.98) 100%);
-            backdrop-filter: blur(20px);
-            border-radius: 22px;
-            padding: 3rem;
-            position: relative;
-            overflow: hidden;
-            min-height: 480px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .portal-card-inner::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 0%), var(--card-glow) 0%, transparent 50%);
-            opacity: 0;
-            transition: opacity 0.5s ease;
-            pointer-events: none;
-        }
-
-        .portal-card:hover .portal-card-inner::before {
-            opacity: 1;
-        }
-
-        /* Lore Card */
-        .portal-lore {
-            --card-accent: var(--lore-gold);
-            --card-glow: rgba(212, 168, 83, 0.08);
-        }
-
-        .portal-lore .portal-icon {
-            background: linear-gradient(135deg, rgba(212, 168, 83, 0.15), rgba(245, 158, 11, 0.05));
-            border: 1px solid rgba(212, 168, 83, 0.2);
-        }
-
-        .portal-lore .portal-title {
-            background: linear-gradient(135deg, var(--lore-gold), #fbbf24);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .portal-lore .tag {
-            background: rgba(212, 168, 83, 0.1);
-            border: 1px solid rgba(212, 168, 83, 0.2);
-            color: var(--lore-gold);
-        }
-
-        .portal-lore .portal-cta {
-            background: linear-gradient(135deg, var(--lore-gold), var(--lore-amber));
-            color: #000;
-        }
-
-        /* Life Card */
-        .portal-life {
-            --card-accent: var(--life-blue);
-            --card-glow: rgba(6, 182, 212, 0.08);
-        }
-
-        .portal-life .portal-icon {
-            background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(14, 165, 233, 0.05));
-            border: 1px solid rgba(6, 182, 212, 0.2);
-        }
-
-        .portal-life .portal-title {
-            background: linear-gradient(135deg, var(--life-blue), var(--life-cyan));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .portal-life .tag {
-            background: rgba(6, 182, 212, 0.1);
-            border: 1px solid rgba(6, 182, 212, 0.2);
-            color: var(--life-blue);
-        }
-
-        .portal-life .portal-cta {
-            background: linear-gradient(135deg, var(--life-blue), var(--life-electric));
-            color: #000;
-        }
-
-        .portal-icon {
-            width: 56px;
-            height: 56px;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .portal-title {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 2.2rem;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            margin-bottom: 0.5rem;
-        }
-
-        .portal-subtitle {
-            color: var(--text-secondary);
-            font-size: 1rem;
-            line-height: 1.6;
-            margin-bottom: 1.5rem;
-        }
-
-        .portal-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .tag {
-            padding: 0.35rem 0.85rem;
-            border-radius: 100px;
-            font-size: 0.75rem;
-            font-weight: 500;
-            letter-spacing: 0.02em;
-        }
-
-        .portal-features {
-            margin-top: auto;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.75rem;
-        }
-
-        .feature-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.82rem;
-            color: var(--text-secondary);
-            padding: 0.5rem 0;
-        }
-
-        .feature-item .dot {
-            width: 4px;
-            height: 4px;
-            border-radius: 50%;
-            flex-shrink: 0;
-        }
-
-        .portal-lore .feature-item .dot {
-            background: var(--lore-gold);
-            box-shadow: 0 0 6px var(--lore-gold);
-        }
-
-        .portal-life .feature-item .dot {
-            background: var(--life-blue);
-            box-shadow: 0 0 6px var(--life-blue);
-        }
-
-        .portal-cta {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.85rem 1.8rem;
-            border-radius: 100px;
-            font-weight: 600;
-            font-size: 0.85rem;
-            text-decoration: none;
-            margin-top: 2rem;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            cursor: pointer;
-            border: none;
-            letter-spacing: 0.02em;
-        }
-
-        .portal-cta:hover {
-            transform: scale(1.05);
-            box-shadow: 0 10px 40px -10px var(--card-accent);
-        }
-
-        .portal-cta svg {
-            transition: transform 0.3s ease;
-        }
-
-        .portal-cta:hover svg {
-            transform: translateX(4px);
-        }
-
-        /* Manifesto Section */
-        .manifesto {
-            position: relative;
-            padding: 10rem 2rem;
-            text-align: center;
-            overflow: hidden;
-        }
-
-        .manifesto::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 600px;
-            height: 600px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(212,168,83,0.03) 0%, rgba(6,182,212,0.03) 50%, transparent 70%);
-            pointer-events: none;
-        }
-
-        .manifesto-text {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: clamp(1.5rem, 4vw, 3rem);
-            font-weight: 300;
-            line-height: 1.6;
-            max-width: 800px;
-            margin: 0 auto;
-            color: var(--text-secondary);
-        }
-
-        .manifesto-text em {
-            font-style: normal;
-            color: var(--text-primary);
-            font-weight: 500;
-        }
-
-        .manifesto-text .gold {
-            color: var(--lore-gold);
-        }
-
-        .manifesto-text .cyan {
-            color: var(--life-blue);
-        }
-
-        /* Stats Strip */
-        .stats-strip {
-            display: flex;
-            justify-content: center;
-            gap: 4rem;
-            padding: 4rem 2rem;
-            border-top: 1px solid rgba(255,255,255,0.03);
-            border-bottom: 1px solid rgba(255,255,255,0.03);
-        }
-
-        .stat-item {
-            text-align: center;
-            opacity: 0;
-            transform: translateY(20px);
-        }
-
-        .stat-number {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 2.5rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--lore-gold), var(--life-blue));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .stat-label {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            margin-top: 0.3rem;
-        }
-
-        /* Footer */
-        .footer {
-            padding: 4rem 2rem;
-            border-top: 1px solid rgba(255,255,255,0.05);
-            text-align: center;
-        }
-
-        .footer-brand {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 1.2rem;
-            font-weight: 600;
-            letter-spacing: 0.1em;
-            margin-bottom: 1rem;
-            background: linear-gradient(90deg, var(--lore-gold), var(--life-blue));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .footer p {
-            color: var(--text-muted);
-            font-size: 0.8rem;
-        }
-
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            margin-top: 1.5rem;
-        }
-
-        .footer-links a {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 0.8rem;
-            transition: color 0.3s ease;
-            letter-spacing: 0.05em;
-        }
-
-        .footer-links a:hover {
-            color: var(--text-primary);
-        }
-
-        /* Ambient grid lines */
-        .ambient-grid {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 0;
-            opacity: 0.015;
-            background-image: 
-                linear-gradient(rgba(255,255,255,0.3) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.3) 1px, transparent 1px);
-            background-size: 80px 80px;
-        }
-
-        /* Noise texture overlay */
-        .noise-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 9998;
-            opacity: 0.025;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .portals-grid { gap: 2rem; }
-            .portal-card-inner { padding: 2rem; min-height: 400px; }
-            .portal-features { grid-template-columns: 1fr; }
-            .manifesto { padding: 6rem 1.5rem; }
-            .stats-strip { gap: 2rem; flex-wrap: wrap; }
-        }
-
-        /* Loading screen */
-        .loader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--bg-primary);
-            z-index: 99999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: opacity 0.8s ease, visibility 0.8s ease;
-        }
-
-        .loader.hidden {
-            opacity: 0;
-            visibility: hidden;
-        }
-
-        .loader-ring {
-            width: 40px;
-            height: 40px;
-            border: 2px solid transparent;
-            border-top: 2px solid var(--lore-gold);
-            border-right: 2px solid var(--life-blue);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Reveal animations */
-        .reveal { opacity: 0; transform: translateY(40px); }
-        .reveal.active { opacity: 1; transform: translateY(0); transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
-        .stagger-1 { transition-delay: 0.1s !important; }
-        .stagger-2 { transition-delay: 0.2s !important; }
-        .stagger-3 { transition-delay: 0.3s !important; }
-        .stagger-4 { transition-delay: 0.4s !important; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HEEZO — Where Curiosity Lives</title>
+<meta name="description" content="Every franchise mapped. Every mystery decoded. Every tool free — forever.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════════
+   CSS VARIABLES & RESET
+   ═══════════════════════════════════════════════════════════════ */
+:root {
+  --obsidian: #050508;
+  --gold: #d4af37;
+  --gold-light: #f5e6a3;
+  --cyan: #00d4ff;
+  --cyan-light: #7df9ff;
+  --text: #f0efe9;
+  --text-dim: #6a6a6a;
+  --font: 'Space Grotesk', sans-serif;
+}
+
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+}
+
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+body {
+  font-family: var(--font);
+  background: var(--obsidian);
+  color: var(--text);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   NAVIGATION
+   ═══════════════════════════════════════════════════════════════ */
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  padding: 1.25rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: background 0.4s ease, backdrop-filter 0.4s ease;
+}
+
+.nav.scrolled {
+  background: rgba(5, 5, 8, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.nav-logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  background: linear-gradient(135deg, var(--gold), var(--cyan));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.nav-links {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
+}
+
+.nav-links a {
+  font-size: 0.875rem;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  color: var(--text);
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.nav-links a:hover {
+  opacity: 1;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SECTION 1: HERO
+   ═══════════════════════════════════════════════════════════════ */
+.hero-wrapper {
+  height: 250vh;
+  position: relative;
+}
+
+.hero {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--obsidian);
+  overflow: hidden;
+}
+
+.hero-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  pointer-events: none;
+}
+
+.hero-title {
+  font-size: clamp(4rem, 12vw, 10rem);
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  line-height: 1;
+  margin-bottom: 1rem;
+  perspective: 1000px;
+}
+
+.hero-title .letter {
+  display: inline-block;
+  opacity: 0;
+  transform: rotateX(-90deg);
+  transform-origin: center bottom;
+}
+
+.hero-tagline {
+  font-size: clamp(1rem, 2.5vw, 1.5rem);
+  font-weight: 300;
+  color: var(--text);
+  opacity: 0.8;
+  margin-bottom: 2.5rem;
+}
+
+.hero-tagline .word {
+  display: inline-block;
+  opacity: 0;
+  filter: blur(8px);
+  margin: 0 0.25em;
+}
+
+.hero-ctas {
+  display: flex;
+  gap: 1.25rem;
+  justify-content: center;
+  pointer-events: auto;
+}
+
+.btn-gold {
+  padding: 0.875rem 2rem;
+  background: var(--gold);
+  color: var(--obsidian);
+  font-weight: 600;
+  font-size: 0.9rem;
+  letter-spacing: 0.05em;
+  border-radius: 4px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.btn-gold:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(212, 175, 55, 0.4);
+}
+
+.btn-cyan {
+  padding: 0.875rem 2rem;
+  border: 1px solid var(--cyan);
+  color: var(--cyan);
+  font-weight: 500;
+  font-size: 0.9rem;
+  letter-spacing: 0.05em;
+  border-radius: 4px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+}
+
+.btn-cyan:hover {
+  transform: translateY(-2px);
+  background: rgba(0, 212, 255, 0.08);
+  box-shadow: 0 8px 30px rgba(0, 212, 255, 0.3);
+}
+
+.scroll-indicator {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.scroll-indicator span {
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.scroll-line {
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(to bottom, var(--gold), transparent);
+  animation: scrollPulse 2s ease-in-out infinite;
+}
+
+@keyframes scrollPulse {
+  0%, 100% { opacity: 0.3; transform: scaleY(0.5); }
+  50% { opacity: 1; transform: scaleY(1); }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SECTION 2: MARQUEE
+   ═══════════════════════════════════════════════════════════════ */
+.marquee-section {
+  padding: 3rem 0;
+  overflow: hidden;
+  border-top: 1px solid rgba(255,255,255,0.03);
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marqueeScroll 40s linear infinite;
+}
+
+.marquee-track .marquee-content {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  padding-right: 2rem;
+}
+
+.marquee-item {
+  font-size: clamp(1rem, 2vw, 1.5rem);
+  font-weight: 300;
+  color: var(--text);
+  opacity: 0.4;
+  padding: 0 1.5rem;
+}
+
+.marquee-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--gold);
+  opacity: 0.4;
+  flex-shrink: 0;
+}
+
+@keyframes marqueeScroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SECTION 3: PORTALS
+   ═══════════════════════════════════════════════════════════════ */
+.portals-wrapper {
+  height: 400vh;
+  position: relative;
+}
+
+.portals {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  overflow: hidden;
+}
+
+.portal {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  position: relative;
+}
+
+.portal-card {
+  max-width: 420px;
+  width: 100%;
+  padding: 3rem;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.02);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: box-shadow 0.4s ease, border-color 0.4s ease;
+}
+
+.portal-left .portal-card:hover {
+  border-color: rgba(212, 175, 55, 0.3);
+  box-shadow: 0 0 60px rgba(212, 175, 55, 0.15);
+}
+
+.portal-right .portal-card:hover {
+  border-color: rgba(0, 212, 255, 0.3);
+  box-shadow: 0 0 60px rgba(0, 212, 255, 0.15);
+}
+
+.portal-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.portal-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  margin-bottom: 1rem;
+}
+
+.portal-left .portal-title {
+  color: var(--gold);
+}
+
+.portal-right .portal-title {
+  color: var(--cyan);
+}
+
+.portal-desc {
+  font-size: 0.95rem;
+  font-weight: 300;
+  line-height: 1.7;
+  color: rgba(240, 239, 233, 0.7);
+  margin-bottom: 1.5rem;
+}
+
+.portal-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  opacity: 0;
+}
+
+.portal-tag {
+  padding: 0.35rem 0.85rem;
+  border-radius: 100px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+}
+
+.portal-left .portal-tag {
+  background: rgba(212, 175, 55, 0.1);
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  color: var(--gold-light);
+}
+
+.portal-right .portal-tag {
+  background: rgba(0, 212, 255, 0.1);
+  border: 1px solid rgba(0, 212, 255, 0.25);
+  color: var(--cyan-light);
+}
+
+.portal-cta {
+  display: inline-block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  opacity: 0;
+  transition: transform 0.3s ease;
+}
+
+.portal-cta:hover {
+  transform: translateX(6px);
+}
+
+.portal-left .portal-cta {
+  color: var(--gold);
+}
+
+.portal-right .portal-cta {
+  color: var(--cyan);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SECTION 4: STATS
+   ═══════════════════════════════════════════════════════════════ */
+.stats {
+  padding: 6rem 2rem;
+  border-top: 1px solid rgba(255,255,255,0.05);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.stats-grid {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+  text-align: center;
+}
+
+.stat-item {
+  padding: 1.5rem;
+}
+
+.stat-number {
+  font-size: clamp(2.5rem, 5vw, 3.5rem);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  background: linear-gradient(135deg, var(--gold), var(--cyan));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.2;
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: var(--text-dim);
+  margin-top: 0.5rem;
+  letter-spacing: 0.03em;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SECTION 5: ARTICLES (Horizontal Scroll)
+   ═══════════════════════════════════════════════════════════════ */
+.articles-wrapper {
+  height: 400vh;
+  position: relative;
+}
+
+.articles {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.articles-header {
+  position: absolute;
+  top: 3rem;
+  left: 4rem;
+  z-index: 2;
+}
+
+.articles-header h2 {
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.articles-track {
+  display: flex;
+  gap: 2rem;
+  padding: 0 4rem;
+  will-change: transform;
+}
+
+.article-card {
+  flex-shrink: 0;
+  width: 380px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  display: block;
+}
+
+.article-card:hover {
+  border-color: rgba(255,255,255,0.12);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+}
+
+.article-card-inner {
+  transition: transform 0.1s ease-out;
+  transform-style: preserve-3d;
+}
+
+.article-img {
+  width: 100%;
+  height: 220px;
+  position: relative;
+  overflow: hidden;
+}
+
+.article-img-bg {
+  width: 100%;
+  height: 130%;
+  position: absolute;
+  top: -15%;
+  transition: transform 0.1s ease-out;
+}
+
+.article-card:nth-child(1) .article-img-bg { background: linear-gradient(135deg, #1a0a2e, #4a1942, #d4af37); }
+.article-card:nth-child(2) .article-img-bg { background: linear-gradient(135deg, #0a1628, #1e3a5f, #00d4ff); }
+.article-card:nth-child(3) .article-img-bg { background: linear-gradient(135deg, #1a0f00, #3d2200, #d4af37); }
+.article-card:nth-child(4) .article-img-bg { background: linear-gradient(135deg, #0a0a1a, #1a1a3d, #8b0000); }
+.article-card:nth-child(5) .article-img-bg { background: linear-gradient(135deg, #001a1a, #003d3d, #00d4ff); }
+
+.article-badge {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  padding: 0.3rem 0.75rem;
+  background: rgba(5,5,8,0.8);
+  backdrop-filter: blur(8px);
+  border-radius: 100px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  color: var(--gold-light);
+}
+
+.article-body {
+  padding: 1.5rem;
+}
+
+.article-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-bottom: 0.75rem;
+}
+
+.article-excerpt {
+  font-size: 0.85rem;
+  font-weight: 300;
+  line-height: 1.6;
+  color: rgba(240,239,233,0.6);
+  margin-bottom: 1rem;
+}
+
+.article-date {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  letter-spacing: 0.03em;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SECTION 6: MANIFESTO
+   ═══════════════════════════════════════════════════════════════ */
+.manifesto {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6rem 2rem;
+}
+
+.manifesto-text {
+  max-width: 800px;
+  text-align: center;
+}
+
+.manifesto-line {
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.manifesto-line span {
+  display: block;
+  font-size: clamp(1.5rem, 3.5vw, 2.5rem);
+  font-weight: 300;
+  line-height: 1.6;
+  transform: translateY(100%);
+}
+
+.manifesto-line .highlight {
+  color: var(--gold);
+  font-weight: 600;
+  font-style: normal;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SECTION 7: FOOTER
+   ═══════════════════════════════════════════════════════════════ */
+.footer {
+  padding: 4rem 2rem 3rem;
+  text-align: center;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+.footer-logo {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  background: linear-gradient(135deg, var(--gold), var(--cyan));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 1rem;
+}
+
+.footer-tagline {
+  font-size: 0.9rem;
+  font-weight: 300;
+  color: var(--text-dim);
+  margin-bottom: 2rem;
+}
+
+.footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  list-style: none;
+  flex-wrap: wrap;
+}
+
+.footer-links a {
+  font-size: 0.85rem;
+  color: var(--text);
+  opacity: 0.6;
+  transition: opacity 0.3s ease;
+  letter-spacing: 0.03em;
+}
+
+.footer-links a:hover {
+  opacity: 1;
+}
+
+.footer-copy {
+  margin-top: 3rem;
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  opacity: 0.5;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   REDUCED MOTION
+   ═══════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track { animation: none; }
+  .scroll-line { animation: none; opacity: 0.5; }
+  .hero-title .letter { opacity: 1 !important; transform: none !important; }
+  .hero-tagline .word { opacity: 1 !important; filter: none !important; }
+  .portal-tags { opacity: 1 !important; }
+  .portal-cta { opacity: 1 !important; }
+  .manifesto-line span { transform: none !important; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .nav { padding: 1rem 1.25rem; }
+  .nav-links { display: none; }
+  
+  .hero-wrapper { height: 100vh; }
+  
+  .hero-ctas {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .portals-wrapper { height: auto !important; }
+  
+  .portals {
+    flex-direction: column;
+    height: auto !important;
+    padding: 4rem 1.5rem;
+    gap: 2rem;
+  }
+
+  .portal { padding: 0; }
+
+  .portal-card {
+    padding: 2rem;
+    max-width: 100%;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+
+  .articles-wrapper { height: auto !important; }
+  
+  .articles {
+    height: auto !important;
+    flex-direction: column;
+    padding: 4rem 1.5rem;
+  }
+
+  .articles-header {
+    position: relative;
+    top: 0;
+    left: 0;
+    margin-bottom: 2rem;
+  }
+
+  .articles-track {
+    flex-direction: column;
+    padding: 0;
+    gap: 1.5rem;
+  }
+
+  .article-card {
+    width: 100%;
+  }
+
+  .article-img {
+    height: 180px;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  
+  .stat-item { padding: 1rem 0.5rem; }
+}
+</style>
 </head>
 <body>
-    <!-- Loading Screen -->
-    <div class="loader" id="loader">
-        <div class="loader-ring"></div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     NAVIGATION
+     ═══════════════════════════════════════════════════════════════ -->
+<nav class="nav" id="mainNav">
+  <a href="/" class="nav-logo">HEEZO</a>
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/lore">Lore</a></li>
+    <li><a href="/life">Life</a></li>
+    <li><a href="/lore/articles">Articles</a></li>
+    <li><a href="/about">About</a></li>
+  </ul>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 1: HERO
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="hero-wrapper" id="heroWrapper">
+  <div class="hero" id="hero">
+    <canvas class="hero-canvas" id="heroCanvas"></canvas>
+    <div class="hero-content">
+      <h1 class="hero-title" id="heroTitle"></h1>
+      <p class="hero-tagline" id="heroTagline"></p>
+      <div class="hero-ctas">
+        <a href="/lore" class="btn-gold">Enter the Lore Vault</a>
+        <a href="/life" class="btn-cyan">Launch Life Tools</a>
+      </div>
     </div>
+    <div class="scroll-indicator">
+      <span>Scroll</span>
+      <div class="scroll-line"></div>
+    </div>
+  </div>
+</section>
 
-    <!-- Background Effects -->
-    <div class="ambient-grid"></div>
-    <div class="noise-overlay"></div>
-    <div class="cursor-glow" id="cursorGlow"></div>
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 2: MARQUEE
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="marquee-section" id="marquee">
+  <div class="marquee-track">
+    <div class="marquee-content">
+      <span class="marquee-item">Watch Orders</span><span class="marquee-dot"></span>
+      <span class="marquee-item">Power Scaling</span><span class="marquee-dot"></span>
+      <span class="marquee-item">Deep Lore</span><span class="marquee-dot"></span>
+      <span class="marquee-item">Easter Eggs</span><span class="marquee-dot"></span>
+      <span class="marquee-item">Investment Calculator</span><span class="marquee-dot"></span>
+      <span class="marquee-item">AI Tool Finder</span><span class="marquee-dot"></span>
+      <span class="marquee-item">Budget Planner</span><span class="marquee-dot"></span>
+      <span class="marquee-item">Habit Tracker</span><span class="marquee-dot"></span>
+      <span class="marquee-item">Universe Explorer</span><span class="marquee-dot"></span>
+      <span class="marquee-item">Is It Worth It?</span><span class="marquee-dot"></span>
+    </div>
+    <div class="marquee-content" aria-hidden="true">
+      <span class="marquee-item">Watch Orders</span><span class="marquee-dot"></span>
+      <span class="marquee-item">Power Scaling</span><span class="marquee-dot"></span>
+      <span class="marquee-item">Deep Lore</span><span class="marquee-dot"></span>
+      <span class="marquee-item">Easter Eggs</span><span class="marquee-dot"></span>
+      <span class="marquee-item">Investment Calculator</span><span class="marquee-dot"></span>
+      <span class="marquee-item">AI Tool Finder</span><span class="marquee-dot"></span>
+      <span class="marquee-item">Budget Planner</span><span class="marquee-dot"></span>
+      <span class="marquee-item">Habit Tracker</span><span class="marquee-dot"></span>
+      <span class="marquee-item">Universe Explorer</span><span class="marquee-dot"></span>
+      <span class="marquee-item">Is It Worth It?</span><span class="marquee-dot"></span>
+    </div>
+  </div>
+</section>
 
-    <!-- Hero Section -->
-    <section class="hero" id="hero">
-        <canvas class="hero-canvas" id="heroCanvas"></canvas>
-        <div class="hero-gradient"></div>
-        <div class="hero-content">
-            <h1 class="hero-title" id="heroTitle">HEEZO</h1>
-            <div class="hero-line" id="heroLine"></div>
-            <p class="hero-tagline" id="heroTagline">Where Curiosity Lives</p>
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 3: PORTALS
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="portals-wrapper" id="portalsWrapper">
+  <div class="portals" id="portals">
+    <div class="portal portal-left" id="portalLeft">
+      <div class="portal-card">
+        <div class="portal-icon">⚔️</div>
+        <h2 class="portal-title">THE LORE VAULT</h2>
+        <p class="portal-desc">Every franchise mapped to obsessive detail. Watch orders, power rankings, timeline breakdowns, and Easter eggs most fans never catch.</p>
+        <div class="portal-tags" id="portalLeftTags">
+          <span class="portal-tag">Movies</span>
+          <span class="portal-tag">Anime</span>
+          <span class="portal-tag">Gaming</span>
+          <span class="portal-tag">TV Shows</span>
         </div>
-        <div class="scroll-indicator" id="scrollIndicator">
-            <span></span>
-            <p>Explore</p>
+        <a href="/lore" class="portal-cta" id="portalLeftCta">Enter the Vault →</a>
+      </div>
+    </div>
+    <div class="portal portal-right" id="portalRight">
+      <div class="portal-card">
+        <div class="portal-icon">⚡</div>
+        <h2 class="portal-title">LIFE ENGINE</h2>
+        <p class="portal-desc">Free tools that actually work. Budget planners, habit trackers, AI finders, and investment calculators — no signup, no ads, no BS.</p>
+        <div class="portal-tags" id="portalRightTags">
+          <span class="portal-tag">Finance</span>
+          <span class="portal-tag">Health</span>
+          <span class="portal-tag">Productivity</span>
+          <span class="portal-tag">AI Tools</span>
         </div>
-    </section>
+        <a href="/life" class="portal-cta" id="portalRightCta">Launch Dashboard →</a>
+      </div>
+    </div>
+  </div>
+</section>
 
-    <!-- Portals Section -->
-    <section class="portals-section" id="portals">
-        <div class="section-header">
-            <h2 class="reveal">Two Worlds. One Universe.</h2>
-            <p class="reveal stagger-1">Choose your path — dive into stories or optimize your reality.</p>
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 4: STATS
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="stats" id="stats">
+  <div class="stats-grid">
+    <div class="stat-item">
+      <div class="stat-number" data-target="12" data-suffix="+">0</div>
+      <div class="stat-label">Interactive Tools</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number" data-target="7" data-suffix="">0</div>
+      <div class="stat-label">Franchises Mapped</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number" data-target="50" data-suffix="+">0</div>
+      <div class="stat-label">Articles &amp; Guides</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number" data-target="100" data-suffix="%">0</div>
+      <div class="stat-label">Free Forever</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 5: ARTICLES
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="articles-wrapper" id="articlesWrapper">
+  <div class="articles" id="articles">
+    <div class="articles-header">
+      <h2>Latest from the Vault</h2>
+    </div>
+    <div class="articles-track" id="articlesTrack">
+      <a href="/lore/articles/taylor-swift-msg-wedding" class="article-card">
+        <div class="article-card-inner">
+          <div class="article-img">
+            <div class="article-img-bg"></div>
+            <span class="article-badge">Pop Culture</span>
+          </div>
+          <div class="article-body">
+            <h3 class="article-title">Taylor Swift MSG Wedding: Everything We Know</h3>
+            <p class="article-excerpt">The full breakdown of the most talked-about celebrity event of 2026 — from the venue takeover to the secret guest list.</p>
+            <span class="article-date">Jul 5, 2026</span>
+          </div>
         </div>
-
-        <div class="portals-grid">
-            <!-- LORE Portal -->
-            <div class="portal-card portal-lore" id="loreCard">
-                <div class="portal-card-inner">
-                    <div class="portal-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color: var(--lore-gold)">
-                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-                        </svg>
-                    </div>
-                    <h3 class="portal-title">LORE</h3>
-                    <p class="portal-subtitle">The Entertainment Vault. Your gateway to cinematic universes, anime deep-dives, gaming lore, and hidden Easter eggs across pop culture.</p>
-                    <div class="portal-tags">
-                        <span class="tag">Movies</span>
-                        <span class="tag">Anime</span>
-                        <span class="tag">Gaming</span>
-                        <span class="tag">Pop Culture</span>
-                        <span class="tag">Comics</span>
-                    </div>
-                    <div class="portal-features">
-                        <div class="feature-item"><span class="dot"></span>Watch Order Guides</div>
-                        <div class="feature-item"><span class="dot"></span>Universe Maps</div>
-                        <div class="feature-item"><span class="dot"></span>Easter Egg Tracker</div>
-                        <div class="feature-item"><span class="dot"></span>Lore Databases</div>
-                        <div class="feature-item"><span class="dot"></span>Theory Hub</div>
-                        <div class="feature-item"><span class="dot"></span>Timeline Explorer</div>
-                    </div>
-                    <button class="portal-cta" onclick="window.location.href='/lore'">
-                        Enter the Vault
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                    </button>
-                </div>
-            </div>
-
-            <!-- LIFE Portal -->
-            <div class="portal-card portal-life" id="lifeCard">
-                <div class="portal-card-inner">
-                    <div class="portal-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color: var(--life-blue)">
-                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-                        </svg>
-                    </div>
-                    <h3 class="portal-title">LIFE</h3>
-                    <p class="portal-subtitle">Your Operating System for Reality. Tools, insights, and strategies to optimize your finances, health, and tech stack with precision.</p>
-                    <div class="portal-tags">
-                        <span class="tag">Finance</span>
-                        <span class="tag">Technology</span>
-                        <span class="tag">Health</span>
-                        <span class="tag">Productivity</span>
-                        <span class="tag">AI Tools</span>
-                    </div>
-                    <div class="portal-features">
-                        <div class="feature-item"><span class="dot"></span>Smart Calculators</div>
-                        <div class="feature-item"><span class="dot"></span>AI Comparisons</div>
-                        <div class="feature-item"><span class="dot"></span>Budget Trackers</div>
-                        <div class="feature-item"><span class="dot"></span>Tech Reviews</div>
-                        <div class="feature-item"><span class="dot"></span>Health Metrics</div>
-                        <div class="feature-item"><span class="dot"></span>Workflow Guides</div>
-                    </div>
-                    <button class="portal-cta" onclick="window.location.href='/life'">
-                        Launch Dashboard
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                    </button>
-                </div>
-            </div>
+      </a>
+      <a href="/lore/articles/top-10-anime-2026" class="article-card">
+        <div class="article-card-inner">
+          <div class="article-img">
+            <div class="article-img-bg"></div>
+            <span class="article-badge">Anime</span>
+          </div>
+          <div class="article-body">
+            <h3 class="article-title">Top 10 Anime of 2026 (So Far)</h3>
+            <p class="article-excerpt">From surprise hits to long-awaited sequels — our definitive ranking of the best anime released this year.</p>
+            <span class="article-date">Jul 1, 2026</span>
+          </div>
         </div>
-    </section>
-
-    <!-- Stats Strip -->
-    <section class="stats-strip" id="statsStrip">
-        <div class="stat-item reveal">
-            <div class="stat-number" data-target="50">0+</div>
-            <div class="stat-label">Universes Mapped</div>
+      </a>
+      <a href="/lore/articles/elden-ring-dlc-secrets" class="article-card">
+        <div class="article-card-inner">
+          <div class="article-img">
+            <div class="article-img-bg"></div>
+            <span class="article-badge">Gaming</span>
+          </div>
+          <div class="article-body">
+            <h3 class="article-title">Elden Ring DLC: 15 Secrets You Missed</h3>
+            <p class="article-excerpt">Hidden lore, secret bosses, and obscure item locations most players walk right past in Shadow of the Erdtree.</p>
+            <span class="article-date">Jun 30, 2026</span>
+          </div>
         </div>
-        <div class="stat-item reveal stagger-1">
-            <div class="stat-number" data-target="12">0+</div>
-            <div class="stat-label">Interactive Tools</div>
+      </a>
+      <a href="/lore/articles/house-of-the-dragon-s3" class="article-card">
+        <div class="article-card-inner">
+          <div class="article-img">
+            <div class="article-img-bg"></div>
+            <span class="article-badge">TV Shows</span>
+          </div>
+          <div class="article-body">
+            <h3 class="article-title">House of the Dragon S3: Timeline &amp; Predictions</h3>
+            <p class="article-excerpt">Breaking down the Dance of the Dragons — which battles are next and who won't survive the season.</p>
+            <span class="article-date">Jun 28, 2026</span>
+          </div>
         </div>
-        <div class="stat-item reveal stagger-2">
-            <div class="stat-number" data-target="1000">0+</div>
-            <div class="stat-label">Hours of Research</div>
+      </a>
+      <a href="/lore/articles/one-piece-catch-up-guide" class="article-card">
+        <div class="article-card-inner">
+          <div class="article-img">
+            <div class="article-img-bg"></div>
+            <span class="article-badge">Anime</span>
+          </div>
+          <div class="article-body">
+            <h3 class="article-title">One Piece Catch-Up Guide: 1100+ Episodes in 30 Days</h3>
+            <p class="article-excerpt">The definitive watch-and-skip guide for new fans who want to reach Egghead without watching filler.</p>
+            <span class="article-date">Jun 25, 2026</span>
+          </div>
         </div>
-        <div class="stat-item reveal stagger-3">
-            <div class="stat-number">&infin;</div>
-            <div class="stat-label">Curiosity</div>
-        </div>
-    </section>
+      </a>
+    </div>
+  </div>
+</section>
 
-    <!-- Manifesto Section -->
-    <section class="manifesto" id="manifesto">
-        <p class="manifesto-text reveal">
-            We believe the world is split between<br>
-            <em class="gold">the stories we consume</em><br>
-            and <em class="cyan">the lives we build</em>.<br><br>
-            Heezo is where both live &mdash; curated with obsession,<br>
-            built with passion, made for the curious.
-        </p>
-    </section>
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 6: MANIFESTO
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="manifesto" id="manifesto">
+  <div class="manifesto-text">
+    <div class="manifesto-line"><span>We don't do opinions.</span></div>
+    <div class="manifesto-line"><span>We do <em class="highlight">answers</em>.</span></div>
+    <div class="manifesto-line"><span>Every franchise <em class="highlight">mapped</em>.</span></div>
+    <div class="manifesto-line"><span>Every mystery <em class="highlight">decoded</em>.</span></div>
+    <div class="manifesto-line"><span>Every tool <em class="highlight">free</em> — forever.</span></div>
+  </div>
+</section>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-brand">HEEZO</div>
-        <p>Crafted with obsession. Built for the curious.</p>
-        <div class="footer-links">
-            <a href="/lore">Lore</a>
-            <a href="/life">Life</a>
-            <a href="/lore/articles">Articles</a>
-            <a href="/about">About</a>
-            <a href="/contact">Contact</a>
-        </div>
-    </footer>
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 7: FOOTER
+     ═══════════════════════════════════════════════════════════════ -->
+<footer class="footer">
+  <div class="footer-logo">HEEZO</div>
+  <p class="footer-tagline">Crafted with obsession. Built for the curious.</p>
+  <ul class="footer-links">
+    <li><a href="/lore">Lore</a></li>
+    <li><a href="/life">Life</a></li>
+    <li><a href="/lore/articles">Articles</a></li>
+    <li><a href="/about">About</a></li>
+    <li><a href="/contact">Contact</a></li>
+  </ul>
+  <p class="footer-copy">&copy; 2026 HEEZO. All rights reserved.</p>
+</footer>
 
-    <script>
-    // ===== PARTICLE SYSTEM =====
-    const canvas = document.getElementById('heroCanvas');
-    const ctx = canvas.getContext('2d');
-    let particles = [];
-    let mouseX = 0, mouseY = 0;
+<!-- ═══════════════════════════════════════════════════════════════
+     SCRIPTS
+     ═══════════════════════════════════════════════════════════════ -->
+<script src="https://cdn.jsdelivr.net/npm/lenis@1/dist/lenis.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   MAIN APPLICATION
+   ═══════════════════════════════════════════════════════════════ */
+(function() {
+  'use strict';
 
-    function resizeCanvas() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const isMobile = window.innerWidth <= 768;
+
+  /* ═══════════════════════════════════════════════════════════════
+     LENIS SMOOTH SCROLL
+     ═══════════════════════════════════════════════════════════════ */
+  const lenis = new Lenis({
+    duration: 1.2,
+    easing: function(t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); },
+    touchMultiplier: 2,
+  });
+
+  lenis.on('scroll', ScrollTrigger.update);
+  gsap.ticker.add(function(time) { lenis.raf(time * 1000); });
+  gsap.ticker.lagSmoothing(0);
+
+  /* ═══════════════════════════════════════════════════════════════
+     NAV SCROLL EFFECT
+     ═══════════════════════════════════════════════════════════════ */
+  var nav = document.getElementById('mainNav');
+  ScrollTrigger.create({
+    trigger: '#heroWrapper',
+    start: 'top top',
+    end: '100px top',
+    onLeave: function() { nav.classList.add('scrolled'); },
+    onEnterBack: function() { nav.classList.remove('scrolled'); },
+  });
+
+  /* ═══════════════════════════════════════════════════════════════
+     SECTION 1: HERO — Title & Tagline
+     ═══════════════════════════════════════════════════════════════ */
+  var heroTitle = document.getElementById('heroTitle');
+  var heroTagline = document.getElementById('heroTagline');
+  var titleText = 'HEEZO';
+  var taglineText = 'Where curiosity lives';
+
+  // Create letter spans for title
+  titleText.split('').forEach(function(char) {
+    var span = document.createElement('span');
+    span.className = 'letter';
+    span.textContent = char;
+    heroTitle.appendChild(span);
+  });
+
+  // Create word spans for tagline
+  taglineText.split(' ').forEach(function(word) {
+    var span = document.createElement('span');
+    span.className = 'word';
+    span.textContent = word;
+    heroTagline.appendChild(span);
+  });
+
+  if (!prefersReducedMotion) {
+    // Animate title letters with 3D flip
+    gsap.to('.hero-title .letter', {
+      opacity: 1,
+      rotateX: 0,
+      duration: 0.8,
+      stagger: 0.08,
+      ease: 'back.out(1.7)',
+      delay: 0.5,
+    });
+
+    // Animate tagline words with blur-to-focus
+    gsap.to('.hero-tagline .word', {
+      opacity: 0.8,
+      filter: 'blur(0px)',
+      duration: 0.6,
+      stagger: 0.12,
+      ease: 'power2.out',
+      delay: 1.2,
+    });
+
+    // Hero pin — stays fixed while user scrolls through extra height
+    ScrollTrigger.create({
+      trigger: '#heroWrapper',
+      start: 'top top',
+      end: '150% top',
+      pin: '#hero',
+      pinSpacing: false,
+      onUpdate: function(self) {
+        var progress = self.progress;
+        gsap.set('.hero-content', {
+          scale: 1 - (progress * 0.05),
+          opacity: 1 - (progress * 0.8),
+        });
+        gsap.set('.scroll-indicator', {
+          opacity: 1 - (progress * 3),
+        });
+      }
+    });
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     SECTION 1: HERO — WebGL Particle System (Lazy-Loaded Three.js)
+     ═══════════════════════════════════════════════════════════════ */
+  var canvas = document.getElementById('heroCanvas');
+  var particleSystemLoaded = false;
+
+  function initParticles() {
+    if (particleSystemLoaded || prefersReducedMotion) return;
+    particleSystemLoaded = true;
+
+    var script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160/three.min.js';
+    script.onload = function() { setupThreeJS(); };
+    document.head.appendChild(script);
+  }
+
+  function setupThreeJS() {
+    var scene = new THREE.Scene();
+    var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.z = 5;
+
+    var renderer = new THREE.WebGLRenderer({
+      canvas: canvas,
+      alpha: true,
+      antialias: false,
+    });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    var particleCount = isMobile ? 500 : 2500;
+    var geometry = new THREE.BufferGeometry();
+    var positions = new Float32Array(particleCount * 3);
+    var colors = new Float32Array(particleCount * 3);
+    var sizes = new Float32Array(particleCount);
+
+    var goldColor = { r: 212/255, g: 175/255, b: 55/255 };
+    var cyanColor = { r: 0/255, g: 212/255, b: 255/255 };
+
+    for (var i = 0; i < particleCount; i++) {
+      var i3 = i * 3;
+      positions[i3]     = (Math.random() - 0.5) * 12;
+      positions[i3 + 1] = (Math.random() - 0.5) * 12;
+      positions[i3 + 2] = (Math.random() - 0.5) * 8;
+
+      var isGold = Math.random() > 0.4;
+      colors[i3]     = isGold ? goldColor.r : cyanColor.r;
+      colors[i3 + 1] = isGold ? goldColor.g : cyanColor.g;
+      colors[i3 + 2] = isGold ? goldColor.b : cyanColor.b;
+
+      sizes[i] = Math.random() * 3 + 1;
     }
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
 
-    class Particle {
-        constructor() { this.reset(); }
-        reset() {
-            this.x = Math.random() * canvas.width;
-            this.y = Math.random() * canvas.height;
-            this.size = Math.random() * 1.5 + 0.5;
-            this.speedX = (Math.random() - 0.5) * 0.3;
-            this.speedY = (Math.random() - 0.5) * 0.3;
-            this.opacity = Math.random() * 0.5 + 0.1;
-            this.color = Math.random() > 0.5 
-                ? `rgba(212, 168, 83, ${this.opacity})` 
-                : `rgba(6, 182, 212, ${this.opacity})`;
-            this.life = Math.random() * 200 + 100;
-            this.maxLife = this.life;
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+
+    var vertexShader = [
+      'attribute float size;',
+      'attribute vec3 color;',
+      'varying vec3 vColor;',
+      'uniform float uTime;',
+      'uniform vec2 uMouse;',
+      'void main() {',
+      '  vColor = color;',
+      '  vec3 pos = position;',
+      '  pos.x += sin(uTime * 0.3 + position.y * 0.5) * 0.15;',
+      '  pos.y += cos(uTime * 0.2 + position.x * 0.5) * 0.15;',
+      '  pos.z += sin(uTime * 0.15 + position.x * 0.3) * 0.1;',
+      '  float dist = length(pos.xy - uMouse * 5.0);',
+      '  float influence = smoothstep(4.0, 0.0, dist) * 0.6;',
+      '  pos.xy += normalize(uMouse * 5.0 - pos.xy + 0.001) * influence;',
+      '  vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);',
+      '  gl_PointSize = size * (280.0 / -mvPosition.z);',
+      '  gl_Position = projectionMatrix * mvPosition;',
+      '}',
+    ].join('\n');
+
+    var fragmentShader = [
+      'varying vec3 vColor;',
+      'void main() {',
+      '  float dist = length(gl_PointCoord - vec2(0.5));',
+      '  if (dist > 0.5) discard;',
+      '  float alpha = 1.0 - smoothstep(0.1, 0.5, dist);',
+      '  gl_FragColor = vec4(vColor, alpha * 0.65);',
+      '}',
+    ].join('\n');
+
+    var material = new THREE.ShaderMaterial({
+      uniforms: {
+        uTime: { value: 0 },
+        uMouse: { value: new THREE.Vector2(0, 0) },
+      },
+      vertexShader: vertexShader,
+      fragmentShader: fragmentShader,
+      transparent: true,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+    });
+
+    var particles = new THREE.Points(geometry, material);
+    scene.add(particles);
+
+    // Mouse tracking with spring physics
+    var mouseX = 0, mouseY = 0;
+    var targetMouseX = 0, targetMouseY = 0;
+
+    document.addEventListener('mousemove', function(e) {
+      targetMouseX = (e.clientX / window.innerWidth) * 2 - 1;
+      targetMouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+    });
+
+    // Resize handler
+    window.addEventListener('resize', function() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // Animation loop with visibility check
+    var animating = true;
+    var time = 0;
+
+    function animate() {
+      if (!animating) return;
+      requestAnimationFrame(animate);
+      time += 0.008;
+
+      // Spring physics for mouse
+      mouseX += (targetMouseX - mouseX) * 0.04;
+      mouseY += (targetMouseY - mouseY) * 0.04;
+
+      material.uniforms.uTime.value = time;
+      material.uniforms.uMouse.value.x = mouseX;
+      material.uniforms.uMouse.value.y = mouseY;
+
+      // Gentle global rotation
+      particles.rotation.y = time * 0.04;
+      particles.rotation.x = Math.sin(time * 0.08) * 0.03;
+
+      renderer.render(scene, camera);
+    }
+
+    animate();
+
+    // Pause when canvas is not visible (performance)
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        animating = entry.isIntersecting;
+        if (animating) animate();
+      });
+    }, { threshold: 0.05 });
+    observer.observe(canvas);
+  }
+
+  // Lazy-load Three.js immediately (hero is above fold)
+  initParticles();
+
+  /* ═══════════════════════════════════════════════════════════════
+     SECTION 3: PORTALS — Pinned Split-Screen
+     ═══════════════════════════════════════════════════════════════ */
+  if (!prefersReducedMotion && !isMobile) {
+    var portalsTl = gsap.timeline({
+      scrollTrigger: {
+        trigger: '#portalsWrapper',
+        start: 'top top',
+        end: '300% top',
+        pin: '#portals',
+        pinSpacing: false,
+        scrub: 1,
+      }
+    });
+
+    // Phase 1 (0-33%): Curtain open effect
+    portalsTl.fromTo('#portalLeft',
+      { xPercent: -100 },
+      { xPercent: 0, duration: 1, ease: 'power2.out' }, 0
+    );
+    portalsTl.fromTo('#portalRight',
+      { xPercent: 100 },
+      { xPercent: 0, duration: 1, ease: 'power2.out' }, 0
+    );
+
+    // Phase 2 (33-66%): Tags stagger in
+    portalsTl.to('#portalLeftTags', { opacity: 1, duration: 0.3 }, 1);
+    portalsTl.to('#portalRightTags', { opacity: 1, duration: 0.3 }, 1);
+    portalsTl.fromTo('#portalLeftTags .portal-tag',
+      { opacity: 0, y: 20 },
+      { opacity: 1, y: 0, stagger: 0.1, duration: 0.4 }, 1.1
+    );
+    portalsTl.fromTo('#portalRightTags .portal-tag',
+      { opacity: 0, y: 20 },
+      { opacity: 1, y: 0, stagger: 0.1, duration: 0.4 }, 1.1
+    );
+
+    // Phase 3 (66-100%): CTAs appear
+    portalsTl.to('#portalLeftCta', { opacity: 1, duration: 0.5 }, 2);
+    portalsTl.to('#portalRightCta', { opacity: 1, duration: 0.5 }, 2);
+
+  } else if (!prefersReducedMotion && isMobile) {
+    // Mobile: simple scroll-triggered fade in
+    gsap.set('.portal-tags, .portal-cta', { opacity: 1 });
+    gsap.fromTo('.portal-left', { opacity: 0, y: 50 }, {
+      opacity: 1, y: 0, duration: 0.8,
+      scrollTrigger: { trigger: '.portal-left', start: 'top 80%' }
+    });
+    gsap.fromTo('.portal-right', { opacity: 0, y: 50 }, {
+      opacity: 1, y: 0, duration: 0.8,
+      scrollTrigger: { trigger: '.portal-right', start: 'top 80%' }
+    });
+  } else {
+    // Reduced motion: show everything static
+    gsap.set('.portal-tags, .portal-cta', { opacity: 1 });
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     SECTION 4: STATS — Counting Animation
+     ═══════════════════════════════════════════════════════════════ */
+  var statNumbers = document.querySelectorAll('.stat-number');
+
+  statNumbers.forEach(function(el) {
+    var target = parseInt(el.dataset.target);
+    var suffix = el.dataset.suffix || '';
+
+    if (prefersReducedMotion) {
+      el.textContent = target + suffix;
+      return;
+    }
+
+    ScrollTrigger.create({
+      trigger: el,
+      start: 'top 85%',
+      once: true,
+      onEnter: function() {
+        var obj = { val: 0 };
+        gsap.to(obj, {
+          val: target,
+          duration: 2,
+          ease: 'power2.out',
+          snap: { val: 1 },
+          onUpdate: function() {
+            el.textContent = Math.round(obj.val) + suffix;
+          },
+        });
+      }
+    });
+  });
+
+  /* ═══════════════════════════════════════════════════════════════
+     SECTION 5: ARTICLES — Horizontal Scroll
+     ═══════════════════════════════════════════════════════════════ */
+  if (!isMobile && !prefersReducedMotion) {
+    var track = document.getElementById('articlesTrack');
+    var cards = track.querySelectorAll('.article-card');
+    var totalWidth = (cards.length * 380) + ((cards.length - 1) * 32) + 128;
+
+    gsap.to(track, {
+      x: function() { return -(totalWidth - window.innerWidth); },
+      ease: 'none',
+      scrollTrigger: {
+        trigger: '#articlesWrapper',
+        start: 'top top',
+        end: '300% top',
+        pin: '#articles',
+        pinSpacing: false,
+        scrub: 1,
+      }
+    });
+
+    // 3D tilt effect on article cards
+    cards.forEach(function(card) {
+      var inner = card.querySelector('.article-card-inner');
+      var imgBg = card.querySelector('.article-img-bg');
+
+      card.addEventListener('mousemove', function(e) {
+        var rect = card.getBoundingClientRect();
+        var x = (e.clientX - rect.left) / rect.width - 0.5;
+        var y = (e.clientY - rect.top) / rect.height - 0.5;
+
+        gsap.to(inner, {
+          rotateY: x * 6,
+          rotateX: -y * 6,
+          duration: 0.3,
+          ease: 'power2.out',
+          transformPerspective: 1000,
+        });
+
+        // Image parallax at 0.8x
+        if (imgBg) {
+          gsap.to(imgBg, {
+            x: x * 16,
+            y: y * 16,
+            duration: 0.3,
+          });
         }
-        update() {
-            this.x += this.speedX;
-            this.y += this.speedY;
-            this.life--;
-            const dx = mouseX - this.x;
-            const dy = mouseY - this.y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-            if (dist < 150) {
-                this.speedX += dx * 0.00005;
-                this.speedY += dy * 0.00005;
-            }
-            if (this.life <= 0 || this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) {
-                this.reset();
-            }
+      });
+
+      card.addEventListener('mouseleave', function() {
+        gsap.to(inner, {
+          rotateY: 0,
+          rotateX: 0,
+          duration: 0.5,
+          ease: 'power2.out',
+        });
+        if (imgBg) {
+          gsap.to(imgBg, { x: 0, y: 0, duration: 0.5 });
         }
-        draw() {
-            const lifeRatio = this.life / this.maxLife;
-            ctx.globalAlpha = lifeRatio * this.opacity;
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-            ctx.fillStyle = this.color;
-            ctx.fill();
-        }
-    }
-
-    const particleCount = Math.min(120, Math.floor(window.innerWidth / 10));
-    for (let i = 0; i < particleCount; i++) {
-        particles.push(new Particle());
-    }
-
-    function drawConnections() {
-        for (let i = 0; i < particles.length; i++) {
-            for (let j = i + 1; j < particles.length; j++) {
-                const dx = particles[i].x - particles[j].x;
-                const dy = particles[i].y - particles[j].y;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-                if (dist < 100) {
-                    ctx.globalAlpha = (1 - dist / 100) * 0.06;
-                    ctx.beginPath();
-                    ctx.moveTo(particles[i].x, particles[i].y);
-                    ctx.lineTo(particles[j].x, particles[j].y);
-                    ctx.strokeStyle = '#ffffff';
-                    ctx.lineWidth = 0.5;
-                    ctx.stroke();
-                }
-            }
-        }
-    }
-
-    function animateParticles() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        particles.forEach(p => { p.update(); p.draw(); });
-        drawConnections();
-        requestAnimationFrame(animateParticles);
-    }
-    animateParticles();
-
-    // ===== CURSOR GLOW =====
-    const cursorGlow = document.getElementById('cursorGlow');
-    document.addEventListener('mousemove', (e) => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-        cursorGlow.style.left = e.clientX + 'px';
-        cursorGlow.style.top = e.clientY + 'px';
+      });
     });
+  }
 
-    // ===== CARD MOUSE TRACKING =====
-    document.querySelectorAll('.portal-card-inner').forEach(card => {
-        card.addEventListener('mousemove', (e) => {
-            const rect = card.getBoundingClientRect();
-            const x = ((e.clientX - rect.left) / rect.width) * 100;
-            const y = ((e.clientY - rect.top) / rect.height) * 100;
-            card.style.setProperty('--mouse-x', x + '%');
-            card.style.setProperty('--mouse-y', y + '%');
-        });
+  /* ═══════════════════════════════════════════════════════════════
+     SECTION 6: MANIFESTO — Line-by-Line Reveal
+     ═══════════════════════════════════════════════════════════════ */
+  if (!prefersReducedMotion) {
+    gsap.utils.toArray('.manifesto-line span').forEach(function(line, i) {
+      gsap.to(line, {
+        yPercent: 0,
+        duration: 0.8,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: line.parentElement,
+          start: 'top 70%',
+          toggleActions: 'play none none none',
+        },
+        delay: i * 0.08,
+      });
     });
+  } else {
+    // Static display for reduced motion
+    gsap.set('.manifesto-line span', { yPercent: 0 });
+  }
 
-    // ===== SCROLL REVEAL =====
-    function revealOnScroll() {
-        const reveals = document.querySelectorAll('.reveal');
-        reveals.forEach(el => {
-            const windowHeight = window.innerHeight;
-            const revealTop = el.getBoundingClientRect().top;
-            if (revealTop < windowHeight - 120) {
-                el.classList.add('active');
-            }
-        });
-    }
-    window.addEventListener('scroll', revealOnScroll);
-
-    // ===== HERO ENTRANCE ANIMATION =====
-    function heroEntrance() {
-        const title = document.getElementById('heroTitle');
-        const line = document.getElementById('heroLine');
-        const tagline = document.getElementById('heroTagline');
-        const scrollInd = document.getElementById('scrollIndicator');
-
-        setTimeout(() => {
-            title.style.transition = 'opacity 1.2s ease, transform 1.2s cubic-bezier(0.16, 1, 0.3, 1)';
-            title.style.opacity = '1';
-            title.style.transform = 'translateY(0)';
-        }, 400);
-
-        setTimeout(() => {
-            line.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
-            line.style.opacity = '1';
-            line.style.transform = 'scaleX(1)';
-        }, 1000);
-
-        setTimeout(() => {
-            tagline.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
-            tagline.style.opacity = '1';
-            tagline.style.transform = 'translateY(0)';
-        }, 1200);
-
-        setTimeout(() => {
-            scrollInd.style.transition = 'opacity 1s ease';
-            scrollInd.style.opacity = '1';
-        }, 2000);
-    }
-
-    // ===== PORTAL CARDS SCROLL ANIMATION =====
-    function animatePortals() {
-        const cards = document.querySelectorAll('.portal-card');
-        cards.forEach((card, index) => {
-            const rect = card.getBoundingClientRect();
-            if (rect.top < window.innerHeight - 100) {
-                setTimeout(() => {
-                    card.style.transition = 'opacity 0.8s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
-                    card.style.opacity = '1';
-                    card.style.transform = 'translateY(0)';
-                }, index * 200);
-            }
-        });
-    }
-    window.addEventListener('scroll', animatePortals);
-
-    // ===== PARALLAX EFFECT =====
-    window.addEventListener('scroll', () => {
-        const scrolled = window.pageYOffset;
-        const hero = document.getElementById('hero');
-        if (hero) {
-            hero.style.transform = `translateY(${scrolled * 0.3}px)`;
-            hero.style.opacity = Math.max(0, 1 - (scrolled / (window.innerHeight * 0.8)));
-        }
+  /* ═══════════════════════════════════════════════════════════════
+     MARQUEE PARALLAX (10% slower than scroll)
+     ═══════════════════════════════════════════════════════════════ */
+  if (!prefersReducedMotion) {
+    gsap.to('.marquee-track', {
+      xPercent: -3,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: '.marquee-section',
+        start: 'top bottom',
+        end: 'bottom top',
+        scrub: true,
+      }
     });
+  }
 
-    // ===== COUNTER ANIMATION =====
-    function animateCounters() {
-        const stats = document.querySelectorAll('.stat-number[data-target]');
-        stats.forEach(stat => {
-            const target = parseInt(stat.getAttribute('data-target'));
-            const rect = stat.getBoundingClientRect();
-            if (rect.top < window.innerHeight - 50 && !stat.classList.contains('counted')) {
-                stat.classList.add('counted');
-                let current = 0;
-                const increment = target / 60;
-                const timer = setInterval(() => {
-                    current += increment;
-                    if (current >= target) {
-                        stat.textContent = target + '+';
-                        clearInterval(timer);
-                    } else {
-                        stat.textContent = Math.floor(current) + '+';
-                    }
-                }, 16);
-            }
-        });
-    }
-    window.addEventListener('scroll', animateCounters);
-
-    // ===== LOADING SEQUENCE =====
-    window.addEventListener('load', () => {
-        setTimeout(() => {
-            document.getElementById('loader').classList.add('hidden');
-            setTimeout(heroEntrance, 300);
-        }, 800);
-    });
-
-    // ===== SMOOTH SCROLL FOR INDICATOR =====
-    document.getElementById('scrollIndicator').addEventListener('click', () => {
-        document.getElementById('portals').scrollIntoView({ behavior: 'smooth' });
-    });
-
-    // ===== MAGNETIC BUTTON EFFECT =====
-    document.querySelectorAll('.portal-cta').forEach(btn => {
-        btn.addEventListener('mousemove', (e) => {
-            const rect = btn.getBoundingClientRect();
-            const x = e.clientX - rect.left - rect.width / 2;
-            const y = e.clientY - rect.top - rect.height / 2;
-            btn.style.transform = `translate(${x * 0.15}px, ${y * 0.15}px) scale(1.05)`;
-        });
-        btn.addEventListener('mouseleave', () => {
-            btn.style.transform = 'translate(0, 0) scale(1)';
-        });
-    });
-
-    // Initial check
-    setTimeout(() => {
-        revealOnScroll();
-        animatePortals();
-        animateCounters();
-    }, 1500);
-    </script>
+})();
+</script>
 </body>
 </html>
