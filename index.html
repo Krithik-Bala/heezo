@@ -254,6 +254,8 @@ button {
   overflow: hidden;
   border-top: 1px solid rgba(255,255,255,0.03);
   border-bottom: 1px solid rgba(255,255,255,0.03);
+  mask-image: linear-gradient(90deg, transparent, black 15%, black 85%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, black 15%, black 85%, transparent);
 }
 
 .marquee-track {
@@ -304,6 +306,8 @@ button {
   height: 100vh;
   display: flex;
   overflow: hidden;
+  background: var(--obsidian);
+  z-index: 10;
 }
 
 .portal {
@@ -470,6 +474,8 @@ button {
   display: flex;
   align-items: center;
   overflow: hidden;
+  background: var(--obsidian);
+  z-index: 10;
 }
 
 .articles-header {
@@ -890,7 +896,7 @@ button {
       <h2>Latest from the Vault</h2>
     </div>
     <div class="articles-track" id="articlesTrack">
-      <a href="/lore/articles/taylor-swift-msg-wedding" class="article-card">
+      <a href="/lore/articles/taylor-swift-kelce-msg-wedding" class="article-card">
         <div class="article-card-inner">
           <div class="article-img">
             <div class="article-img-bg"></div>
@@ -903,7 +909,7 @@ button {
           </div>
         </div>
       </a>
-      <a href="/lore/articles/top-10-anime-2026" class="article-card">
+      <a href="/lore/articles/best-anime-2025" class="article-card">
         <div class="article-card-inner">
           <div class="article-img">
             <div class="article-img-bg"></div>
@@ -916,7 +922,7 @@ button {
           </div>
         </div>
       </a>
-      <a href="/lore/articles/elden-ring-dlc-secrets" class="article-card">
+      <a href="/lore/articles/elden-ring-dlc-guide" class="article-card">
         <div class="article-card-inner">
           <div class="article-img">
             <div class="article-img-bg"></div>
@@ -942,7 +948,7 @@ button {
           </div>
         </div>
       </a>
-      <a href="/lore/articles/one-piece-catch-up-guide" class="article-card">
+      <a href="/lore/articles/one-piece-catch-up" class="article-card">
         <div class="article-card-inner">
           <div class="article-img">
             <div class="article-img-bg"></div>
