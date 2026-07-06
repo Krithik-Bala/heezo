@@ -1,0 +1,1631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Tool Finder | HEEZO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --navy: #0a1628;
+            --navy-light: #0d1f3c;
+            --cyan: #00d4ff;
+            --cyan-dim: rgba(0, 212, 255, 0.12);
+            --cyan-glow: rgba(0, 212, 255, 0.4);
+            --cyan-bright: rgba(0, 212, 255, 0.8);
+            --white: #e8f4f8;
+            --white-dim: rgba(232, 244, 248, 0.7);
+            --green: #00e676;
+            --blue: #448aff;
+            --purple: #b388ff;
+            --card-bg: rgba(13, 31, 60, 0.6);
+            --card-border: rgba(0, 212, 255, 0.12);
+            --font: 'Space Grotesk', sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font);
+            background: var(--navy);
+            color: var(--white);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Film Grain Overlay */
+        .film-grain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.03;
+        }
+
+        .film-grain svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Background ambient effects */
+        .bg-ambient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bg-ambient::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(ellipse at 20% 20%, rgba(0, 212, 255, 0.04) 0%, transparent 50%),
+                        radial-gradient(ellipse at 80% 80%, rgba(0, 212, 255, 0.02) 0%, transparent 50%),
+                        radial-gradient(ellipse at 50% 50%, rgba(0, 100, 200, 0.015) 0%, transparent 70%);
+            animation: ambientFloat 25s ease-in-out infinite;
+        }
+
+        .bg-ambient::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at 70% 30%, rgba(0, 212, 255, 0.02) 0%, transparent 40%);
+            animation: ambientFloat2 18s ease-in-out infinite;
+        }
+
+        @keyframes ambientFloat {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(2%, -1%) rotate(0.5deg); }
+            66% { transform: translate(-1%, 2%) rotate(-0.5deg); }
+        }
+
+        @keyframes ambientFloat2 {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.1); }
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 1rem 2rem;
+            background: rgba(10, 22, 40, 0.88);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s;
+        }
+
+        .nav-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--cyan);
+            text-decoration: none;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            transition: all 0.3s;
+        }
+
+        .nav-logo:hover {
+            text-shadow: 0 0 20px var(--cyan-glow), 0 0 40px rgba(0, 212, 255, 0.2);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            align-items: center;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--white-dim);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s;
+            letter-spacing: 0.5px;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--cyan);
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--cyan);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 5px;
+            z-index: 1001;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 2px;
+            background: var(--cyan);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 2px;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+            transform: scaleX(0);
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -5px);
+        }
+
+        /* Main Content */
+        main {
+            position: relative;
+            z-index: 1;
+            padding: 6.5rem 2rem 4rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--cyan);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 2rem;
+            transition: all 0.3s;
+            opacity: 0.8;
+        }
+
+        .back-link:hover {
+            opacity: 1;
+            transform: translateX(-4px);
+            text-shadow: 0 0 10px var(--cyan-glow);
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .hero h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--white) 0%, var(--cyan) 50%, rgba(0, 212, 255, 0.7) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: var(--white-dim);
+            max-width: 650px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin: 2rem 0 3rem;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease-out 0.15s both;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.2rem;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+
+        .stat-item:hover {
+            border-color: rgba(0, 212, 255, 0.3);
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.05);
+        }
+
+        .stat-item .stat-num {
+            color: var(--cyan);
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        /* Search & Filters */
+        .controls {
+            margin-bottom: 2.5rem;
+            animation: fadeInUp 0.8s ease-out 0.25s both;
+        }
+
+        .search-container {
+            position: relative;
+            max-width: 600px;
+            margin: 0 auto 1.5rem;
+        }
+
+        .search-container input {
+            width: 100%;
+            padding: 1rem 1.5rem 1rem 3.2rem;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 14px;
+            color: var(--white);
+            font-family: var(--font);
+            font-size: 1rem;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            transition: all 0.3s;
+            outline: none;
+        }
+
+        .search-container input:focus {
+            border-color: var(--cyan);
+            box-shadow: 0 0 25px rgba(0, 212, 255, 0.1), inset 0 0 15px rgba(0, 212, 255, 0.02);
+        }
+
+        .search-container input::placeholder {
+            color: rgba(232, 244, 248, 0.35);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1.1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--cyan);
+            font-size: 1.1rem;
+            opacity: 0.6;
+        }
+
+        .filter-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .filter-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: var(--white-dim);
+            margin-right: 0.4rem;
+            opacity: 0.7;
+        }
+
+        .filter-btn {
+            padding: 0.45rem 0.9rem;
+            background: rgba(13, 31, 60, 0.4);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            color: var(--white-dim);
+            font-family: var(--font);
+            font-size: 0.78rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .filter-btn:hover {
+            border-color: rgba(0, 212, 255, 0.4);
+            color: var(--cyan);
+            background: rgba(0, 212, 255, 0.05);
+        }
+
+        .filter-btn.active {
+            background: rgba(0, 212, 255, 0.12);
+            border-color: var(--cyan);
+            color: var(--cyan);
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.08), inset 0 0 10px rgba(0, 212, 255, 0.03);
+        }
+
+        .sort-select {
+            padding: 0.45rem 0.9rem;
+            background: rgba(13, 31, 60, 0.4);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            color: var(--white);
+            font-family: var(--font);
+            font-size: 0.78rem;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .sort-select:focus {
+            border-color: var(--cyan);
+        }
+
+        .sort-select option {
+            background: var(--navy);
+            color: var(--white);
+        }
+
+        /* Results Count */
+        .results-info {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: 0.8rem;
+            color: var(--white-dim);
+            opacity: 0.6;
+            letter-spacing: 0.5px;
+        }
+
+        /* Tool Grid */
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .tool-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: cardFadeIn 0.5s ease-out forwards;
+        }
+
+        .tool-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+            opacity: 0;
+            transition: all 0.5s;
+        }
+
+        .tool-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse at 50% 0%, rgba(0, 212, 255, 0.03) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s;
+            pointer-events: none;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--cyan-glow);
+            box-shadow: 0 12px 40px rgba(0, 212, 255, 0.12), 0 0 0 1px rgba(0, 212, 255, 0.08);
+        }
+
+        .tool-card:hover::before {
+            left: 0;
+            opacity: 1;
+        }
+
+        .tool-card:hover::after {
+            opacity: 1;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+
+        .card-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--white);
+            line-height: 1.3;
+        }
+
+        .card-company {
+            font-size: 0.72rem;
+            color: var(--white-dim);
+            opacity: 0.5;
+            margin-top: 0.2rem;
+            letter-spacing: 0.3px;
+        }
+
+        .card-badges {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.62rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-category {
+            background: rgba(0, 212, 255, 0.08);
+            color: var(--cyan);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .badge-free {
+            background: rgba(0, 230, 118, 0.08);
+            color: var(--green);
+            border: 1px solid rgba(0, 230, 118, 0.2);
+        }
+
+        .badge-freemium {
+            background: rgba(68, 138, 255, 0.08);
+            color: var(--blue);
+            border: 1px solid rgba(68, 138, 255, 0.2);
+        }
+
+        .badge-paid {
+            background: rgba(179, 136, 255, 0.08);
+            color: var(--purple);
+            border: 1px solid rgba(179, 136, 255, 0.2);
+        }
+
+        .card-description {
+            font-size: 0.83rem;
+            color: var(--white-dim);
+            line-height: 1.55;
+            margin-bottom: 0.85rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .card-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .stars {
+            color: var(--cyan);
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+        }
+
+        .rating-num {
+            font-size: 0.78rem;
+            color: var(--white-dim);
+            font-weight: 500;
+        }
+
+        @keyframes cardFadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(5, 10, 20, 0.88);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            opacity: 0;
+            transition: opacity 0.35s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal {
+            background: rgba(13, 25, 50, 0.96);
+            border: 1px solid rgba(0, 212, 255, 0.15);
+            border-radius: 20px;
+            padding: 2.5rem;
+            max-width: 720px;
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            position: relative;
+            transform: translateY(30px) scale(0.96);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 30px 100px rgba(0, 0, 0, 0.6), 0 0 60px rgba(0, 212, 255, 0.04);
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0) scale(1);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1.2rem;
+            right: 1.5rem;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: rgba(0, 212, 255, 0.08);
+            border: 1px solid rgba(0, 212, 255, 0.15);
+            color: var(--white);
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .modal-close:hover {
+            background: rgba(0, 212, 255, 0.18);
+            border-color: var(--cyan);
+            color: var(--cyan);
+            transform: rotate(90deg);
+        }
+
+        .modal-header {
+            margin-bottom: 1.5rem;
+            padding-right: 2.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+            background: linear-gradient(135deg, var(--white) 0%, var(--cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .modal-company {
+            font-size: 0.9rem;
+            color: var(--white-dim);
+            opacity: 0.6;
+        }
+
+        .modal-badges {
+            display: flex;
+            gap: 0.5rem;
+            margin: 1rem 0;
+            flex-wrap: wrap;
+        }
+
+        .modal-badges .badge {
+            font-size: 0.7rem;
+            padding: 0.25rem 0.7rem;
+        }
+
+        .modal-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 1rem 0 1.5rem;
+        }
+
+        .modal-rating .stars {
+            font-size: 1.3rem;
+            letter-spacing: 2px;
+        }
+
+        .modal-rating .rating-num {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--cyan);
+        }
+
+        .modal-description {
+            font-size: 0.95rem;
+            color: var(--white-dim);
+            line-height: 1.7;
+            margin-bottom: 1.8rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.08);
+        }
+
+        .modal-section {
+            margin-bottom: 1.8rem;
+        }
+
+        .modal-section-title {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--cyan);
+            margin-bottom: 0.8rem;
+        }
+
+        .pros-cons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .pros-list, .cons-list {
+            list-style: none;
+        }
+
+        .pros-list li, .cons-list li {
+            font-size: 0.84rem;
+            color: var(--white-dim);
+            margin-bottom: 0.5rem;
+            line-height: 1.5;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .pros-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--green);
+            font-weight: 700;
+        }
+
+        .cons-list li::before {
+            content: '✗';
+            position: absolute;
+            left: 0;
+            color: #ff5252;
+            font-weight: 700;
+        }
+
+        .modal-pricing {
+            background: rgba(0, 212, 255, 0.04);
+            border: 1px solid rgba(0, 212, 255, 0.1);
+            border-radius: 12px;
+            padding: 1rem 1.3rem;
+            font-size: 0.88rem;
+            color: var(--white-dim);
+            line-height: 1.7;
+            font-weight: 500;
+        }
+
+        .modal-best-for {
+            font-size: 0.88rem;
+            color: var(--white-dim);
+            line-height: 1.6;
+            padding: 0.9rem 1.2rem;
+            background: rgba(0, 230, 118, 0.04);
+            border: 1px solid rgba(0, 230, 118, 0.1);
+            border-radius: 12px;
+        }
+
+        .modal-alternatives {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .alt-link {
+            padding: 0.4rem 0.85rem;
+            background: rgba(0, 212, 255, 0.06);
+            border: 1px solid rgba(0, 212, 255, 0.15);
+            border-radius: 8px;
+            color: var(--cyan);
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .alt-link:hover {
+            background: rgba(0, 212, 255, 0.15);
+            border-color: var(--cyan);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 212, 255, 0.1);
+        }
+
+        /* Scrollbar */
+        .modal::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .modal::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .modal::-webkit-scrollbar-thumb {
+            background: rgba(0, 212, 255, 0.15);
+            border-radius: 3px;
+        }
+
+        .modal::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 212, 255, 0.3);
+        }
+
+        /* No Results */
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--white-dim);
+        }
+
+        .no-results h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: var(--white);
+        }
+
+        .no-results p {
+            opacity: 0.6;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--white-dim);
+            opacity: 0.4;
+            font-size: 0.8rem;
+            position: relative;
+            z-index: 1;
+            letter-spacing: 0.3px;
+        }
+
+        /* Pulse animation for active filters */
+        @keyframes pulseBorder {
+            0%, 100% { box-shadow: 0 0 15px rgba(0, 212, 255, 0.08); }
+            50% { box-shadow: 0 0 20px rgba(0, 212, 255, 0.15); }
+        }
+
+        .filter-btn.active {
+            animation: pulseBorder 3s ease-in-out infinite;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .tool-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hamburger {
+                display: flex;
+            }
+
+            .nav-links {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 75%;
+                max-width: 300px;
+                height: 100vh;
+                background: rgba(10, 22, 40, 0.98);
+                backdrop-filter: blur(30px);
+                -webkit-backdrop-filter: blur(30px);
+                flex-direction: column;
+                padding: 5rem 2rem 2rem;
+                gap: 1.5rem;
+                transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                border-left: 1px solid var(--card-border);
+                box-shadow: -10px 0 40px rgba(0, 0, 0, 0.3);
+            }
+
+            .nav-links.open {
+                right: 0;
+            }
+
+            .nav-links a {
+                font-size: 1.1rem;
+            }
+
+            .tool-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .filter-row {
+                justify-content: flex-start;
+                gap: 0.4rem;
+            }
+
+            .filter-btn {
+                padding: 0.4rem 0.7rem;
+                font-size: 0.72rem;
+            }
+
+            .pros-cons {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .modal {
+                padding: 1.8rem 1.5rem;
+                max-height: 90vh;
+                border-radius: 16px;
+            }
+
+            .modal-overlay {
+                padding: 1rem;
+            }
+
+            main {
+                padding: 5.5rem 1rem 3rem;
+            }
+
+            .stats-bar {
+                gap: 0.6rem;
+            }
+
+            .stat-item {
+                font-size: 0.75rem;
+                padding: 0.5rem 0.9rem;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 1.7rem;
+            }
+
+            .hero p {
+                font-size: 0.95rem;
+            }
+
+            .modal-title {
+                font-size: 1.4rem;
+            }
+
+            .card-name {
+                font-size: 1rem;
+            }
+
+            nav {
+                padding: 0.8rem 1.2rem;
+            }
+
+            .nav-logo {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Film Grain Overlay -->
+    <div class="film-grain">
+        <svg xmlns="http://www.w3.org/2000/svg">
+            <filter id="noiseFilter">
+                <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" stitchTiles="stitch"/>
+                <feColorMatrix type="saturate" values="0"/>
+            </filter>
+            <rect width="100%" height="100%" filter="url(#noiseFilter)"/>
+        </svg>
+    </div>
+
+    <!-- Background Ambient -->
+    <div class="bg-ambient"></div>
+
+    <!-- Navigation -->
+    <nav>
+        <a href="/" class="nav-logo">HEEZO</a>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="/">Home</a></li>
+            <li><a href="/life">Life</a></li>
+            <li><a href="/lore">Lore</a></li>
+            <li><a href="/about">About</a></li>
+        </ul>
+        <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <a href="/life" class="back-link">← Back to Life Hub</a>
+
+        <div class="hero">
+            <h1>AI Tool Finder</h1>
+            <p>Discover and compare the best AI tools of 2026. Curated reviews, real pricing, and honest ratings to help you find the perfect tool.</p>
+        </div>
+
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+            <div class="stat-item">
+                <span class="stat-num" id="totalTools">34</span>
+                <span>Tools Reviewed</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-num">9</span>
+                <span>Categories</span>
+            </div>
+            <div class="stat-item">
+                <span>Updated</span>
+                <span class="stat-num">July 2026</span>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <div class="search-container">
+                <span class="search-icon">⌕</span>
+                <input type="text" id="searchInput" placeholder="Search AI tools by name, category, or description..." oninput="filterTools()">
+            </div>
+
+            <div class="filter-row">
+                <span class="filter-label">Category:</span>
+                <button class="filter-btn cat-btn active" onclick="setCategory('All')">All</button>
+                <button class="filter-btn cat-btn" onclick="setCategory('Writing')">Writing</button>
+                <button class="filter-btn cat-btn" onclick="setCategory('Image Gen')">Image Gen</button>
+                <button class="filter-btn cat-btn" onclick="setCategory('Video')">Video</button>
+                <button class="filter-btn cat-btn" onclick="setCategory('Code')">Code</button>
+                <button class="filter-btn cat-btn" onclick="setCategory('Productivity')">Productivity</button>
+                <button class="filter-btn cat-btn" onclick="setCategory('Research')">Research</button>
+                <button class="filter-btn cat-btn" onclick="setCategory('Music')">Music</button>
+                <button class="filter-btn cat-btn" onclick="setCategory('Design')">Design</button>
+            </div>
+
+            <div class="filter-row">
+                <span class="filter-label">Pricing:</span>
+                <button class="filter-btn pricing-btn active" onclick="setPricing('All')">All</button>
+                <button class="filter-btn pricing-btn" onclick="setPricing('Free')">Free</button>
+                <button class="filter-btn pricing-btn" onclick="setPricing('Freemium')">Freemium</button>
+                <button class="filter-btn pricing-btn" onclick="setPricing('Paid')">Paid</button>
+                <span class="filter-label" style="margin-left: 1.5rem;">Sort:</span>
+                <select class="sort-select" id="sortSelect" onchange="filterTools()">
+                    <option value="rating">Rating (Highest)</option>
+                    <option value="name">Name A-Z</option>
+                    <option value="newest">Newest</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Results Info -->
+        <div class="results-info" id="resultsInfo">Showing 34 tools</div>
+
+        <!-- Tool Grid -->
+        <div class="tool-grid" id="toolGrid"></div>
+    </main>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
+        <div class="modal" id="modal">
+            <button class="modal-close" onclick="closeModal()">✕</button>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2026 HEEZO. AI Tool Finder — Reviews updated monthly. Pricing accurate as of July 2026.</p>
+    </footer>
+
+    <script>
+    // ===== TOOL DATABASE =====
+    var tools = [
+        {
+            id: 1, name: "ChatGPT", company: "OpenAI", category: "Writing", pricing: "Freemium",
+            pricingDetails: "Free / $8 Go / $20 Plus / $100 Pro / $200 Pro+",
+            rating: 4.7, description: "Best general-purpose AI assistant with GPT-5.5, excelling at conversation, writing, coding, and analysis across virtually every domain.",
+            pros: ["Most versatile AI assistant available", "GPT-5.5 reasoning is exceptional", "Huge plugin and custom GPT ecosystem", "DALL-E image generation included in Plus", "Voice and vision capabilities"],
+            cons: ["Pro tier expensive at $100-200/mo", "Can be verbose in responses", "Occasional hallucinations on niche topics", "Rate limits on free tier are restrictive"],
+            bestFor: "General users who want one powerful tool for everything — writing, coding, research, creative work, and daily productivity.",
+            alternatives: ["Claude", "Gemini", "Perplexity", "Grok"],
+            dateAdded: "2024-01-01"
+        },
+        {
+            id: 2, name: "Claude", company: "Anthropic", category: "Writing", pricing: "Freemium",
+            pricingDetails: "Free / $20 Pro / $100 Max / $200 Max+",
+            rating: 4.8, description: "Best for long-form writing, deep analysis, and coding with Opus 4.8 and Sonnet 5 models. Known for nuanced, thoughtful responses.",
+            pros: ["Superior long-form writing quality", "200K token context window", "Excellent at coding and debugging", "Strong safety with honest self-assessment", "Artifacts feature for live documents and code"],
+            cons: ["Smaller plugin ecosystem than ChatGPT", "No native image generation", "Max tier is expensive at $100-200/mo", "Occasional over-refusals on edge cases"],
+            bestFor: "Writers, developers, and researchers who need high-quality, nuanced, and carefully reasoned responses with long document handling.",
+            alternatives: ["ChatGPT", "Gemini", "DeepSeek", "Cursor"],
+            dateAdded: "2024-03-01"
+        },
+        {
+            id: 3, name: "Gemini", company: "Google", category: "Writing", pricing: "Freemium",
+            pricingDetails: "Free / $4.99 Plus / $19.99 Pro / $99.99 Ultra",
+            rating: 4.5, description: "Deep Google ecosystem integration with a massive 1M token context window and strong multimodal capabilities across text, image, and video.",
+            pros: ["1M token context window (largest available)", "Deep Google Workspace integration", "Excellent multimodal understanding", "Most affordable Plus tier at $4.99/mo"],
+            cons: ["Responses can feel generic or safe", "Less creative than Claude or GPT for writing", "Google data privacy concerns", "Ultra tier rarely justified for most users"],
+            bestFor: "Google Workspace power users who need AI seamlessly integrated with Gmail, Docs, Drive, and YouTube for daily productivity.",
+            alternatives: ["ChatGPT", "Claude", "Perplexity"],
+            dateAdded: "2024-02-01"
+        },
+        {
+            id: 4, name: "Perplexity", company: "Perplexity AI", category: "Writing", pricing: "Freemium",
+            pricingDetails: "Free / $20 Pro",
+            rating: 4.6, description: "AI-powered search engine with real-time web citations and source verification, bridging the gap between search and AI chat.",
+            pros: ["Real-time web search with inline citations", "Excellent source verification and transparency", "Clean, focused research interface", "Great for fact-checking and current events"],
+            cons: ["Less capable for creative or long-form writing", "Pro searches limited even on paid plan", "Not ideal for coding or technical tasks", "Model capabilities lag behind Claude/GPT"],
+            bestFor: "Researchers, journalists, students, and anyone who needs factual, well-cited answers from the web in real-time.",
+            alternatives: ["ChatGPT", "Gemini", "Consensus", "Elicit"],
+            dateAdded: "2024-01-15"
+        },
+        {
+            id: 5, name: "Grok", company: "xAI", category: "Writing", pricing: "Freemium",
+            pricingDetails: "Free / $10 Lite / $30 SuperGrok / $300 Heavy",
+            rating: 4.2, description: "Real-time X/Twitter data access with unfiltered, personality-driven responses and strong reasoning from Grok-3 architecture.",
+            pros: ["Real-time X/Twitter data integration", "Less filtered/censored responses", "Strong reasoning with Grok-3 model", "Built-in image generation (Aurora)"],
+            cons: ["Heavy tier extremely expensive at $300/mo", "Biased toward X/Twitter ecosystem", "Smaller general knowledge base", "Less polished than established competitors"],
+            bestFor: "X/Twitter power users and those who want less censored AI responses with access to real-time social media data.",
+            alternatives: ["ChatGPT", "Claude", "Perplexity"],
+            dateAdded: "2024-06-01"
+        },
+        {
+            id: 6, name: "DeepSeek", company: "DeepSeek", category: "Writing", pricing: "Free",
+            pricingDetails: "Free (web chat) / API: $0.14-$2.19 per million tokens",
+            rating: 4.4, description: "Cheapest API tokens on the market with surprisingly strong coding and reasoning performance. Open-weight models available.",
+            pros: ["Extremely cheap API pricing", "Strong coding and math performance", "Open-weight models for self-hosting", "Free unlimited web chat interface"],
+            cons: ["Chinese company raises data privacy concerns", "Slower response times than competitors", "Less polished user interface", "Inconsistent availability during peak times"],
+            bestFor: "Developers and startups who need cheap API access for production apps and strong coding assistance without high subscription costs.",
+            alternatives: ["Claude", "ChatGPT", "GitHub Copilot"],
+            dateAdded: "2025-01-01"
+        },
+        {
+            id: 7, name: "Midjourney", company: "Midjourney", category: "Image Gen", pricing: "Paid",
+            pricingDetails: "$10 Basic / $30 Standard / $60 Pro / $120 Mega",
+            rating: 4.9, description: "Industry-leading aesthetic quality for AI image generation, excelling at photorealistic renders, artistic styles, and cinematic compositions.",
+            pros: ["Best overall image quality and aesthetics", "Incredible range of artistic styles", "Photorealistic output rivals photography", "Active creative community for inspiration", "Fast generation on higher tiers"],
+            cons: ["No free tier available", "Expensive for heavy professional use", "Less precise control than Stable Diffusion", "Learning prompt craft takes time"],
+            bestFor: "Artists, designers, and creatives who need the highest quality AI-generated imagery for professional and commercial work.",
+            alternatives: ["DALL-E", "Stable Diffusion", "Adobe Firefly", "Ideogram"],
+            dateAdded: "2023-06-01"
+        },
+        {
+            id: 8, name: "DALL-E", company: "OpenAI", category: "Image Gen", pricing: "Freemium",
+            pricingDetails: "Included in ChatGPT Plus ($20/mo) / API: $0.04-$0.12 per image",
+            rating: 4.3, description: "Best text rendering in AI-generated images with seamless ChatGPT integration for conversational image editing and iteration.",
+            pros: ["Best text-in-image rendering accuracy", "Seamless ChatGPT conversation integration", "Easy iterative editing via chat", "Good natural language prompt understanding"],
+            cons: ["Less artistic quality than Midjourney", "Limited free generations per day", "Safety filters can be overly restrictive", "Slower generation than some competitors"],
+            bestFor: "ChatGPT users who want convenient, high-quality image generation with excellent text rendering and easy iterative editing.",
+            alternatives: ["Midjourney", "Stable Diffusion", "Ideogram", "Adobe Firefly"],
+            dateAdded: "2023-09-01"
+        },
+        {
+            id: 9, name: "Stable Diffusion", company: "Stability AI", category: "Image Gen", pricing: "Free",
+            pricingDetails: "Free (local) / Hosted services: $0.002-$0.05 per image",
+            rating: 4.5, description: "Open-source image generation with unlimited free local use, complete creative control, and a massive community ecosystem.",
+            pros: ["Completely free for local generation", "Full creative control and customization", "Massive ecosystem of models, LoRAs, extensions", "No content restrictions when running locally", "Active open-source community"],
+            cons: ["Requires powerful GPU (8GB+ VRAM) for local", "Steep learning curve for beginners", "Setup and configuration can be complex", "Base model quality below Midjourney"],
+            bestFor: "Technical users and artists who want unlimited, free image generation with full control over models, styles, and workflows.",
+            alternatives: ["Midjourney", "DALL-E", "Adobe Firefly", "ComfyUI"],
+            dateAdded: "2023-01-01"
+        },
+        {
+            id: 10, name: "Adobe Firefly", company: "Adobe", category: "Image Gen", pricing: "Freemium",
+            pricingDetails: "Free tier / $4.99 Premium / $22.99 Creative Cloud (includes Firefly)",
+            rating: 4.4, description: "Commercially-safe AI image generation trained on licensed content, deeply integrated with Photoshop, Illustrator, and the Adobe ecosystem.",
+            pros: ["Commercially safe — trained on licensed content", "Deep Photoshop/Illustrator integration", "Generative Fill/Expand is incredible", "Professional workflow friendly", "Vector generation for Illustrator"],
+            cons: ["Less creative range than Midjourney", "Limited free monthly generations", "Full power requires Creative Cloud subscription", "Can feel conservative in outputs"],
+            bestFor: "Professional designers and businesses who need commercially-safe AI imagery within the established Adobe creative ecosystem.",
+            alternatives: ["Midjourney", "DALL-E", "Canva AI", "Stable Diffusion"],
+            dateAdded: "2023-09-01"
+        },
+        {
+            id: 11, name: "Ideogram", company: "Ideogram", category: "Image Gen", pricing: "Freemium",
+            pricingDetails: "Free tier / $8 Basic / $20 Plus / $60 Pro",
+            rating: 4.3, description: "Excellent typography rendering in AI-generated images with strong prompt adherence and creative, artistic output quality.",
+            pros: ["Best typography/text rendering in images", "Strong prompt adherence and accuracy", "Generous free tier for testing", "Creative and varied artistic outputs"],
+            cons: ["Less photorealistic than Midjourney", "Smaller community and ecosystem", "Fewer advanced customization options", "Occasional visual artifacts in complex scenes"],
+            bestFor: "Designers and marketers who need AI-generated images with readable, well-rendered text, logos, and typography.",
+            alternatives: ["Midjourney", "DALL-E", "Adobe Firefly"],
+            dateAdded: "2024-02-01"
+        },
+        {
+            id: 12, name: "Runway", company: "Runway ML", category: "Video", pricing: "Freemium",
+            pricingDetails: "Free (125 credits) / $12 Standard / $28 Pro / $76 Max",
+            rating: 4.6, description: "Industry-leading AI video generation with Gen-4.5 model, supporting text-to-video and image-to-video with cinematic quality.",
+            pros: ["Industry-leading video quality with Gen-4.5", "Both text and image to video workflows", "Professional-grade motion controls", "Good suite of video editing tools included"],
+            cons: ["Credits burn quickly on higher quality", "Expensive for heavy professional use", "Generation can be slow (2-5 min)", "Clips limited to ~10 seconds"],
+            bestFor: "Filmmakers, content creators, and marketing teams who need high-quality AI video generation for professional projects.",
+            alternatives: ["Kling", "Pika", "HeyGen", "Sora"],
+            dateAdded: "2023-06-01"
+        },
+        {
+            id: 13, name: "Suno", company: "Suno AI", category: "Music", pricing: "Freemium",
+            pricingDetails: "Free (50 credits/day) / $10 Pro / $30 Premier",
+            rating: 4.5, description: "Best AI music generation platform creating full songs with vocals, instruments, and production quality from simple text prompts.",
+            pros: ["Full song generation from text descriptions", "Impressively natural vocal quality", "Wide range of genres and styles", "Easy and intuitive interface", "Decent free tier for experimentation"],
+            cons: ["Copyright/licensing concerns for commercial use", "Vocals can occasionally sound artificial", "Limited fine-tuning and mixing control", "Song structures can be repetitive"],
+            bestFor: "Musicians, content creators, and hobbyists who want to generate complete songs with vocals and full production from ideas.",
+            alternatives: ["Udio", "Stable Audio", "AIVA"],
+            dateAdded: "2024-01-01"
+        },
+        {
+            id: 14, name: "Kling", company: "Kuaishou", category: "Video", pricing: "Freemium",
+            pricingDetails: "Free tier / $9.90 Standard / $32.90 Pro",
+            rating: 4.4, description: "Strong motion quality and character consistency in AI video generation, competitive with Runway at more accessible price points.",
+            pros: ["Excellent motion quality and physics", "Competitive pricing vs Runway", "Generous free tier for testing", "Strong character consistency across frames"],
+            cons: ["Chinese platform may raise data concerns", "Slightly lower quality than Runway Gen-4.5", "Interface less polished than Western competitors", "Limited advanced editing tools"],
+            bestFor: "Content creators who want quality AI video generation at a more affordable price point than Runway or Sora.",
+            alternatives: ["Runway", "Pika", "HeyGen", "Sora"],
+            dateAdded: "2024-06-01"
+        },
+        {
+            id: 15, name: "Pika", company: "Pika Labs", category: "Video", pricing: "Freemium",
+            pricingDetails: "Free / $8 Standard / $28 Pro / $58 Unlimited",
+            rating: 4.2, description: "Quick and accessible AI video generation optimized for social media content with fun creative effects and easy-to-use tools.",
+            pros: ["Quick generation times", "Optimized for social media content", "Fun creative effects and lip-sync", "Affordable entry-level pricing"],
+            cons: ["Lower quality than Runway or Kling", "Short clip duration limits", "Less professional output quality", "Limited fine-grained control"],
+            bestFor: "Social media creators and casual users who need quick, fun video clips and effects without professional video expertise.",
+            alternatives: ["Runway", "Kling", "HeyGen", "CapCut"],
+            dateAdded: "2024-03-01"
+        },
+        {
+            id: 16, name: "HeyGen", company: "HeyGen", category: "Video", pricing: "Freemium",
+            pricingDetails: "Free / $24 Creator / $72 Business",
+            rating: 4.3, description: "AI avatar video creation platform specializing in realistic talking-head videos for marketing, training, and corporate communication.",
+            pros: ["Highly realistic AI avatars", "Excellent for marketing and training content", "Multiple languages and voice cloning", "Easy script-to-video pipeline"],
+            cons: ["Avatars can feel slightly uncanny", "Business tier is expensive at $72/mo", "Limited free credits for testing", "Less creative flexibility than Runway"],
+            bestFor: "Marketers, trainers, educators, and businesses who need professional talking-head videos without filming or on-camera talent.",
+            alternatives: ["Runway", "Synthesia", "D-ID", "Colossyan"],
+            dateAdded: "2024-01-01"
+        },
+        {
+            id: 17, name: "Cursor", company: "Cursor Inc", category: "Code", pricing: "Freemium",
+            pricingDetails: "Free Hobby / $20 Pro / $60 Pro+ / $200 Ultra",
+            rating: 4.8, description: "Best AI-powered code editor with multi-model support, agentic coding mode, and deep codebase understanding for professional development.",
+            pros: ["Best AI code editor experience overall", "Multi-model support (Claude, GPT, Gemini)", "Agent mode handles complex multi-file tasks", "Deep codebase indexing and understanding", "Tab completion feels magical"],
+            cons: ["Ultra tier expensive at $200/mo", "Can be slow with very large codebases", "Feature-rich interface has learning curve", "Occasional incorrect auto-completions"],
+            bestFor: "Professional developers who want the most capable AI coding assistant integrated directly into a polished, modern editor.",
+            alternatives: ["GitHub Copilot", "Claude Code", "v0", "Replit"],
+            dateAdded: "2024-01-01"
+        },
+        {
+            id: 18, name: "GitHub Copilot", company: "GitHub/Microsoft", category: "Code", pricing: "Freemium",
+            pricingDetails: "Free tier / $10 Individual / $19 Pro / $39 Business",
+            rating: 4.6, description: "Deep GitHub integration with inline code suggestions, AI chat, and workspace-wide understanding in VS Code and JetBrains IDEs.",
+            pros: ["Seamless VS Code and JetBrains integration", "Great inline completion suggestions", "Deep GitHub ecosystem connectivity", "Affordable Individual plan at $10/mo", "Workspace agent mode for complex tasks"],
+            cons: ["Agent mode less powerful than Cursor's", "Free tier quite limited in features", "May suggest license-conflicting code", "Business tier costs add up for large teams"],
+            bestFor: "Developers in the GitHub ecosystem who want reliable, affordable AI coding assistance within their existing IDE setup.",
+            alternatives: ["Cursor", "Claude Code", "Replit", "Amazon Q Developer"],
+            dateAdded: "2023-06-01"
+        },
+        {
+            id: 19, name: "v0", company: "Vercel", category: "Code", pricing: "Freemium",
+            pricingDetails: "Free / $20 Premium",
+            rating: 4.5, description: "AI-powered UI generation creating production-ready React and Next.js components from natural language prompts with live preview.",
+            pros: ["Excellent UI component generation quality", "Native React/Next.js/Tailwind output", "Live preview with instant iteration", "One-click deploy to Vercel hosting"],
+            cons: ["Limited to frontend and UI work only", "Premium needed for heavy daily use", "Generated code can be verbose", "Locked into React/Next.js ecosystem"],
+            bestFor: "Frontend developers and designers who want to rapidly prototype and build React/Next.js interfaces from descriptions.",
+            alternatives: ["Cursor", "Replit", "Bolt", "Lovable"],
+            dateAdded: "2024-06-01"
+        },
+        {
+            id: 20, name: "Replit", company: "Replit", category: "Code", pricing: "Freemium",
+            pricingDetails: "Free / $25 Pro / $45 Teams",
+            rating: 4.3, description: "Browser-based IDE with powerful AI agent that can build full-stack applications from prompts with instant deployment.",
+            pros: ["Zero local setup required", "AI agent builds full apps from scratch", "Instant deployment and hosting included", "Great for learning and rapid prototyping"],
+            cons: ["Performance limited vs local development", "Pro tier expensive for what it offers", "Less control than local dev environment", "AI agent can make architectural mistakes"],
+            bestFor: "Beginners, educators, and rapid prototypers who want AI-assisted full-stack development with zero local setup.",
+            alternatives: ["Cursor", "v0", "GitHub Copilot", "Bolt"],
+            dateAdded: "2023-09-01"
+        },
+        {
+            id: 21, name: "Claude Code", company: "Anthropic", category: "Code", pricing: "Paid",
+            pricingDetails: "Included with Claude Pro ($20/mo) / API usage-based for heavy tasks",
+            rating: 4.7, description: "Terminal-based agentic coding tool with deep codebase understanding, multi-file editing, and architectural reasoning.",
+            pros: ["Deep understanding of entire codebases", "Multi-file editing and refactoring", "Natural terminal-native workflow", "Strong architectural reasoning", "Powered by Claude Sonnet 5 / Opus 4.8"],
+            cons: ["Terminal-only with no GUI interface", "API costs can accumulate on large tasks", "Requires Claude subscription as baseline", "Newer tool, still rapidly evolving"],
+            bestFor: "Experienced developers who prefer terminal workflows and need an AI agent that deeply understands entire project architectures.",
+            alternatives: ["Cursor", "GitHub Copilot", "Aider", "Amazon Q Developer"],
+            dateAdded: "2025-06-01"
+        },
+        {
+            id: 22, name: "Notion AI", company: "Notion", category: "Productivity", pricing: "Freemium",
+            pricingDetails: "Free (limited) / $10 AI add-on per member/month",
+            rating: 4.4, description: "Integrated workspace AI for writing assistance, content summarization, and Q&A across all your Notion pages and databases.",
+            pros: ["Deep integration across entire Notion workspace", "Q&A searches all your content intelligently", "Writing, editing, and summarization tools", "Meeting notes and action item extraction"],
+            cons: ["$10/member/mo adds up quickly for teams", "Only useful within the Notion ecosystem", "Quality varies significantly by task type", "Can be noticeably slow on large workspaces"],
+            bestFor: "Notion power users and teams who want AI assistance directly within their existing workspace, docs, and wikis.",
+            alternatives: ["Gamma", "Jasper", "Grammarly", "ChatGPT"],
+            dateAdded: "2023-06-01"
+        },
+        {
+            id: 23, name: "Gamma", company: "Gamma", category: "Productivity", pricing: "Freemium",
+            pricingDetails: "Free / $10 Plus / $20 Pro",
+            rating: 4.3, description: "AI-powered presentation and document creation with beautiful automatic layouts, smart design, and easy content iteration.",
+            pros: ["Beautiful auto-layouts and design", "Fast presentation creation from prompts", "Good selection of professional templates", "Easy to iterate and refine with AI"],
+            cons: ["Less design control than PowerPoint/Keynote", "Export limitations on free tier", "Outputs can feel template-driven", "Limited animation and transition options"],
+            bestFor: "Professionals and students who need to create polished presentations quickly without design expertise.",
+            alternatives: ["Notion AI", "Canva AI", "Beautiful.ai", "Tome"],
+            dateAdded: "2024-01-01"
+        },
+        {
+            id: 24, name: "Jasper", company: "Jasper AI", category: "Productivity", pricing: "Paid",
+            pricingDetails: "$39 Creator / $59 Pro / Custom Business",
+            rating: 4.1, description: "Marketing-focused AI content platform with brand voice training, campaign workflows, and team collaboration tools.",
+            pros: ["Strong brand voice training and consistency", "Marketing-specific templates and workflows", "Campaign content creation pipeline", "Team collaboration and approval features"],
+            cons: ["Expensive compared to ChatGPT/Claude for similar output", "Content quality not always better than general AI", "Narrow use case limits versatility", "Creator tier has limited features"],
+            bestFor: "Marketing teams and agencies who need consistent brand voice across all content with workflow and collaboration features.",
+            alternatives: ["ChatGPT", "Claude", "Notion AI", "Copy.ai"],
+            dateAdded: "2023-03-01"
+        },
+        {
+            id: 25, name: "Otter.ai", company: "Otter", category: "Productivity", pricing: "Freemium",
+            pricingDetails: "Free / $16.99 Pro / $30 Business",
+            rating: 4.3, description: "AI meeting transcription and notes with real-time captions, automatic action items, and smart meeting summaries.",
+            pros: ["Excellent transcription accuracy", "Real-time captions during meetings", "Automatic meeting summaries", "Action item extraction and assignment", "Integrates with Zoom, Meet, and Teams"],
+            cons: ["Free tier has strict limits (300 min/mo)", "Pro tier pricey for individual use", "Occasional transcription errors with accents", "Storage limits on lower tiers"],
+            bestFor: "Remote workers and teams who need automatic meeting transcription, AI summaries, and action item tracking.",
+            alternatives: ["Fireflies.ai", "Grain", "tl;dv", "Notion AI"],
+            dateAdded: "2023-06-01"
+        },
+        {
+            id: 26, name: "Grammarly", company: "Grammarly", category: "Productivity", pricing: "Freemium",
+            pricingDetails: "Free / $12 Premium / $15 Business per member",
+            rating: 4.5, description: "AI writing assistant with comprehensive grammar checking, tone detection, style suggestions, and generative AI writing features.",
+            pros: ["Excellent grammar and spelling correction", "Tone and formality detection", "Works everywhere via browser extension", "Generative AI features for drafting", "Professional and academic writing modes"],
+            cons: ["Best features locked behind Premium", "Can be overly prescriptive about style", "Generative AI is basic vs ChatGPT/Claude", "Privacy concerns with continuous text analysis"],
+            bestFor: "Anyone who writes professionally and wants consistent grammar, tone, and style improvement across all platforms and apps.",
+            alternatives: ["Claude", "ChatGPT", "Notion AI", "ProWritingAid"],
+            dateAdded: "2023-01-01"
+        },
+        {
+            id: 27, name: "Elicit", company: "Elicit", category: "Research", pricing: "Freemium",
+            pricingDetails: "Free / $10 Plus / $49 Teams",
+            rating: 4.4, description: "AI research assistant specializing in academic paper discovery, analysis, literature review, and systematic research workflows.",
+            pros: ["Excellent paper discovery and relevance ranking", "Automated literature review workflows", "Extracts key findings across papers", "Systematic review methodology support"],
+            cons: ["Limited to academic/scientific papers", "Plus needed for heavy research use", "Can miss niche or recent papers", "Interface has a learning curve"],
+            bestFor: "Academic researchers, PhD students, and scientists who need to efficiently discover, review, and synthesize research literature.",
+            alternatives: ["Consensus", "SciSpace", "Perplexity", "Semantic Scholar"],
+            dateAdded: "2024-01-01"
+        },
+        {
+            id: 28, name: "Consensus", company: "Consensus", category: "Research", pricing: "Freemium",
+            pricingDetails: "Free / $8.99 Plus / $17.99 Premium",
+            rating: 4.2, description: "Science-based search engine providing evidence-based answers exclusively from peer-reviewed research papers with consensus meters.",
+            pros: ["Only uses peer-reviewed sources", "Visual consensus meters for claims", "Great for evidence-based fact-checking", "Academic credibility and trustworthiness"],
+            cons: ["Limited to published scientific research", "Smaller database than Google Scholar", "Struggles with very niche research topics", "Basic free tier with limited searches"],
+            bestFor: "Students, researchers, and science communicators who need evidence-based answers backed exclusively by peer-reviewed literature.",
+            alternatives: ["Elicit", "SciSpace", "Perplexity", "Semantic Scholar"],
+            dateAdded: "2024-03-01"
+        },
+        {
+            id: 29, name: "SciSpace", company: "SciSpace", category: "Research", pricing: "Freemium",
+            pricingDetails: "Free / $9.99 Pro",
+            rating: 4.1, description: "Research paper reading assistant with AI-powered explanations of complex passages, highlights, and citation management tools.",
+            pros: ["Excellent paper reading experience", "AI explains complex passages simply", "Citation extraction and management", "Very affordable Pro tier at $9.99"],
+            cons: ["Less powerful for systematic reviews than Elicit", "Limited features on free tier", "Can oversimplify nuanced explanations", "Smaller indexed paper database"],
+            bestFor: "Students and early researchers who struggle with dense academic papers and want AI-assisted reading and comprehension.",
+            alternatives: ["Elicit", "Consensus", "Perplexity"],
+            dateAdded: "2024-06-01"
+        },
+        {
+            id: 30, name: "Udio", company: "Udio", category: "Music", pricing: "Freemium",
+            pricingDetails: "Free / $10 Standard / $30 Pro",
+            rating: 4.4, description: "High-quality AI music generation with particularly strong vocal synthesis, genre versatility, and natural-sounding production.",
+            pros: ["Excellent vocal synthesis quality", "Wide genre and style support", "Good song structure and arrangement", "Competitive quality with Suno", "Affordable Standard tier"],
+            cons: ["Copyright and licensing concerns remain", "Free tier generation limits", "Can sound formulaic at times", "Less control than traditional DAW"],
+            bestFor: "Musicians and content creators who want high-quality AI music with particularly strong and natural-sounding vocal synthesis.",
+            alternatives: ["Suno", "Stable Audio", "AIVA", "Soundful"],
+            dateAdded: "2024-04-01"
+        },
+        {
+            id: 31, name: "Canva AI", company: "Canva", category: "Design", pricing: "Freemium",
+            pricingDetails: "Free / $12.99 Pro / $30 Teams per member",
+            rating: 4.5, description: "AI-enhanced design platform with Magic tools for image generation, background removal, writing, and presentations in one ecosystem.",
+            pros: ["Incredibly easy to use for non-designers", "Magic tools suite is powerful and versatile", "Massive template and asset library", "All-in-one design, docs, and presentation platform", "Affordable Pro tier with huge value"],
+            cons: ["Less precise than Figma or Photoshop", "Can feel template-constrained for experts", "AI features still maturing vs dedicated tools", "Export quality varies by format"],
+            bestFor: "Non-designers, small businesses, and marketers who need professional-looking designs, presentations, and social content without expertise.",
+            alternatives: ["Figma AI", "Adobe Firefly", "Gamma", "Framer AI"],
+            dateAdded: "2023-06-01"
+        },
+        {
+            id: 32, name: "Figma AI", company: "Figma", category: "Design", pricing: "Freemium",
+            pricingDetails: "Free / $15 Pro / $45 Organization per editor",
+            rating: 4.3, description: "AI features integrated into the professional UI/UX design tool for faster prototyping, auto-layout suggestions, and design generation.",
+            pros: ["Professional-grade design tool with AI assist", "AI auto-layout and design suggestions", "Generate UI designs from text descriptions", "Industry standard for UI/UX collaboration", "Excellent real-time team collaboration"],
+            cons: ["AI features still limited vs dedicated AI tools", "Significant learning curve for non-designers", "Organization tier expensive for large teams", "AI supplements but can't replace design expertise"],
+            bestFor: "UI/UX designers and product teams who want AI assistance within their professional collaborative design workflow.",
+            alternatives: ["Canva AI", "Framer AI", "v0", "Adobe XD"],
+            dateAdded: "2024-06-01"
+        },
+        {
+            id: 33, name: "Framer AI", company: "Framer", category: "Design", pricing: "Freemium",
+            pricingDetails: "Free / $5 Mini / $15 Basic / $30 Pro",
+            rating: 4.2, description: "AI-powered website builder that generates full responsive websites from text descriptions with professional design quality.",
+            pros: ["Generates complete responsive websites", "Beautiful default design aesthetic", "Easy to customize after generation", "Great for portfolios and landing pages", "Very affordable Mini tier at $5/mo"],
+            cons: ["Limited for complex web applications", "Less control than hand-coding", "CMS and database features are basic", "SEO tools limited compared to WordPress"],
+            bestFor: "Freelancers, creatives, and small businesses who want beautiful, responsive websites without coding knowledge.",
+            alternatives: ["Canva AI", "v0", "Wix AI", "Squarespace"],
+            dateAdded: "2024-09-01"
+        },
+        {
+            id: 34, name: "Sora", company: "OpenAI", category: "Video", pricing: "Freemium",
+            pricingDetails: "Included in ChatGPT Plus ($20/mo) / Pro tier for higher limits and quality",
+            rating: 4.5, description: "OpenAI's cinematic text-to-video model with strong physics understanding, prompt adherence, and integrated ChatGPT access.",
+            pros: ["Cinematic video quality and aesthetics", "Strong prompt adherence and understanding", "Included free with ChatGPT Plus subscription", "Good physics and motion understanding"],
+            cons: ["Generation times can be slow (3-8 min)", "Duration limited to 20 seconds max", "Heavy content filtering restricts creativity", "Requires Plus subscription minimum"],
+            bestFor: "ChatGPT Plus subscribers who want high-quality cinematic video generation integrated within the OpenAI ecosystem.",
+            alternatives: ["Runway", "Kling", "Pika"],
+            dateAdded: "2025-03-01"
+        }
+    ];
+
+    // ===== STATE =====
+    var currentCategory = 'All';
+    var currentPricing = 'All';
+
+    // ===== TOP-LEVEL FUNCTIONS =====
+
+    function toggleMenu() {
+        var hamburger = document.getElementById('hamburger');
+        var navLinks = document.getElementById('navLinks');
+        hamburger.classList.toggle('active');
+        navLinks.classList.toggle('open');
+    }
+
+    function setCategory(category) {
+        currentCategory = category;
+        var btns = document.querySelectorAll('.cat-btn');
+        btns.forEach(function(btn) {
+            btn.classList.remove('active');
+            if (btn.textContent === category) btn.classList.add('active');
+        });
+        filterTools();
+    }
+
+    function setPricing(pricing) {
+        currentPricing = pricing;
+        var btns = document.querySelectorAll('.pricing-btn');
+        btns.forEach(function(btn) {
+            btn.classList.remove('active');
+            if (btn.textContent === pricing) btn.classList.add('active');
+        });
+        filterTools();
+    }
+
+    function filterTools() {
+        var searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+        var sortBy = document.getElementById('sortSelect').value;
+
+        var filtered = tools.filter(function(tool) {
+            var matchesSearch = !searchTerm ||
+                               tool.name.toLowerCase().includes(searchTerm) ||
+                               tool.description.toLowerCase().includes(searchTerm) ||
+                               tool.company.toLowerCase().includes(searchTerm) ||
+                               tool.category.toLowerCase().includes(searchTerm);
+            var matchesCategory = currentCategory === 'All' || tool.category === currentCategory;
+            var matchesPricing = currentPricing === 'All' || tool.pricing === currentPricing;
+            return matchesSearch && matchesCategory && matchesPricing;
+        });
+
+        // Sort
+        if (sortBy === 'rating') {
+            filtered.sort(function(a, b) { return b.rating - a.rating; });
+        } else if (sortBy === 'name') {
+            filtered.sort(function(a, b) { return a.name.localeCompare(b.name); });
+        } else if (sortBy === 'newest') {
+            filtered.sort(function(a, b) { return new Date(b.dateAdded) - new Date(a.dateAdded); });
+        }
+
+        renderGrid(filtered);
+        document.getElementById('resultsInfo').textContent = 'Showing ' + filtered.length + ' tool' + (filtered.length !== 1 ? 's' : '');
+    }
+
+    function renderGrid(filteredTools) {
+        var grid = document.getElementById('toolGrid');
+
+        if (filteredTools.length === 0) {
+            grid.innerHTML = '<div class="no-results"><h3>No tools found</h3><p>Try adjusting your search or filters.</p></div>';
+            return;
+        }
+
+        var html = '';
+        filteredTools.forEach(function(tool, index) {
+            var stars = getStars(tool.rating);
+            var pricingClass = 'badge-' + tool.pricing.toLowerCase();
+            var delay = Math.min(index * 0.04, 1.2);
+            html += '<div class="tool-card" style="animation-delay: ' + delay + 's" onclick="openModal(' + tool.id + ')">';
+            html += '<div class="card-header"><div><div class="card-name">' + tool.name + '</div>';
+            html += '<div class="card-company">' + tool.company + '</div></div></div>';
+            html += '<div class="card-badges">';
+            html += '<span class="badge badge-category">' + tool.category + '</span>';
+            html += '<span class="badge ' + pricingClass + '">' + tool.pricing + '</span>';
+            html += '</div>';
+            html += '<div class="card-description">' + tool.description + '</div>';
+            html += '<div class="card-rating"><span class="stars">' + stars + '</span><span class="rating-num">' + tool.rating.toFixed(1) + '/5</span></div>';
+            html += '</div>';
+        });
+
+        grid.innerHTML = html;
+    }
+
+    function getStars(rating) {
+        var full = Math.floor(rating);
+        var half = (rating % 1) >= 0.3 ? 1 : 0;
+        var empty = 5 - full - half;
+        var result = '';
+        for (var i = 0; i < full; i++) result += '★';
+        if (half) result += '★';
+        for (var i = 0; i < empty; i++) result += '☆';
+        return result;
+    }
+
+    function openModal(toolId) {
+        var tool = tools.find(function(t) { return t.id === toolId; });
+        if (!tool) return;
+
+        var stars = getStars(tool.rating);
+        var pricingClass = 'badge-' + tool.pricing.toLowerCase();
+
+        var prosHtml = tool.pros.map(function(p) { return '<li>' + p + '</li>'; }).join('');
+        var consHtml = tool.cons.map(function(c) { return '<li>' + c + '</li>'; }).join('');
+        var altsHtml = tool.alternatives.map(function(alt) {
+            return '<span class="alt-link" onclick="openToolByName(\'' + alt.replace(/'/g, "\\'") + '\')">' + alt + '</span>';
+        }).join('');
+
+        var html = '';
+        html += '<div class="modal-header">';
+        html += '<div class="modal-title">' + tool.name + '</div>';
+        html += '<div class="modal-company">by ' + tool.company + '</div>';
+        html += '</div>';
+        html += '<div class="modal-badges">';
+        html += '<span class="badge badge-category">' + tool.category + '</span>';
+        html += '<span class="badge ' + pricingClass + '">' + tool.pricing + '</span>';
+        html += '</div>';
+        html += '<div class="modal-rating"><span class="stars">' + stars + '</span><span class="rating-num">' + tool.rating.toFixed(1) + ' / 5.0</span></div>';
+        html += '<div class="modal-description">' + tool.description + '</div>';
+
+        html += '<div class="modal-section"><div class="modal-section-title">Pros & Cons</div>';
+        html += '<div class="pros-cons"><ul class="pros-list">' + prosHtml + '</ul>';
+        html += '<ul class="cons-list">' + consHtml + '</ul></div></div>';
+
+        html += '<div class="modal-section"><div class="modal-section-title">Pricing Details</div>';
+        html += '<div class="modal-pricing">' + tool.pricingDetails + '</div></div>';
+
+        html += '<div class="modal-section"><div class="modal-section-title">Best For</div>';
+        html += '<div class="modal-best-for">' + tool.bestFor + '</div></div>';
+
+        html += '<div class="modal-section"><div class="modal-section-title">Alternatives</div>';
+        html += '<div class="modal-alternatives">' + altsHtml + '</div></div>';
+
+        document.getElementById('modalContent').innerHTML = html;
+
+        var overlay = document.getElementById('modalOverlay');
+        overlay.style.display = 'flex';
+        // Force reflow for CSS transition
+        void overlay.offsetHeight;
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+        var overlay = document.getElementById('modalOverlay');
+        overlay.classList.remove('active');
+        setTimeout(function() {
+            overlay.style.display = 'none';
+        }, 350);
+        document.body.style.overflow = '';
+    }
+
+    function closeModalOutside(event) {
+        if (event.target === document.getElementById('modalOverlay')) {
+            closeModal();
+        }
+    }
+
+    function openToolByName(name) {
+        var tool = tools.find(function(t) { return t.name === name; });
+        if (tool) {
+            openModal(tool.id);
+        }
+    }
+
+    function handleKeydown(event) {
+        if (event.key === 'Escape') {
+            closeModal();
+        }
+    }
+
+    function initPage() {
+        document.addEventListener('keydown', handleKeydown);
+        document.getElementById('totalTools').textContent = tools.length;
+        filterTools();
+    }
+
+    // Initialize on DOM ready
+    document.addEventListener('DOMContentLoaded', initPage);
+    </script>
+</body>
+</html>
