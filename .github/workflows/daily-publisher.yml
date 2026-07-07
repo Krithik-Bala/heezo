@@ -24,6 +24,7 @@ jobs:
         run: pip install requests google-genai
 
       - name: Generate and publish article
+        id: publish
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           KEY1: ${{ secrets.KEY1 }}
@@ -31,8 +32,11 @@ jobs:
           KEY3: ${{ secrets.KEY3 }}
           KEY4: ${{ secrets.KEY4 }}
           KEY5: ${{ secrets.KEY5 }}
-          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-        run: python scripts/cloud_publisher.py
+        run: |
+          python scripts/cloud_publisher.py | tee output.log
+          # Extract article URL from output
+          echo "article_url=$(grep ARTICLE_URL output.log | cut -d= -f2)" >> $GITHUB_OUTPUT
+          echo "article_title=$(grep ARTICLE_TITLE output.log | cut -d= -f2-)" >> $GITHUB_OUTPUT
 
       - name: Commit and push
         run: |
@@ -40,3 +44,17 @@ jobs:
           git config user.email "heezoverse@gmail.com"
           git add .
           git diff --cached --quiet || (git commit -m "New article via cloud publisher" && git push)
+
+      - name: Discord notification
+        if: success()
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          curl -H "Content-Type: application/json" -X POST "$DISCORD_WEBHOOK_URL" -d "{
+            \"embeds\": [{
+              \"title\": \"New Article Published!\",
+              \"description\": \"${{ steps.publish.outputs.article_title }}\\n\\n[Read it on Heezo](${{ steps.publish.outputs.article_url }})\",
+              \"color\": 13938487,
+              \"footer\": {\"text\": \"Heezo Auto-Publisher\"}
+            }]
+          }"
