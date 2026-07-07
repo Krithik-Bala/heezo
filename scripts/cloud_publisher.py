@@ -12,39 +12,78 @@ from datetime import datetime
 
 # Use the new google.genai package (google.generativeai is deprecated)
 from google import genai
-
-# Config — Multi-key rotation (each key from a different Google Cloud project)
-API_KEYS = []
+# Config - Multi-provider key system
+# Gemini keys (from different Google Cloud projects)
+GEMINI_KEYS = []
 for var in ["GEMINI_API_KEY", "KEY1", "KEY2", "KEY3", "KEY4", "KEY5"]:
     val = os.environ.get(var, "")
     if val:
-        API_KEYS.append(val)
+        GEMINI_KEYS.append(val)
 
-if not API_KEYS:
-    print("ERROR: No Gemini API keys found")
+# Groq keys (from different accounts - used as fallback)
+GROQ_KEYS = []
+for var in ["HE1", "HE2", "HE3", "HE4"]:
+    val = os.environ.get(var, "")
+    if val:
+        GROQ_KEYS.append(val)
+
+print(f"Loaded {len(GEMINI_KEYS)} Gemini keys + {len(GROQ_KEYS)} Groq keys")
+
+if not GEMINI_KEYS and not GROQ_KEYS:
+    print("ERROR: No API keys found at all")
     exit(1)
 
-print(f"Loaded {len(API_KEYS)} API keys for rotation")
+GEMINI_MODEL = "gemini-2.0-flash"
+GROQ_MODEL = "llama-3.1-70b-versatile"
 
-DISCORD_WEBHOOK_URL = os.environ.get("DISCORD_WEBHOOK_URL", "")
+def call_groq(prompt, key):
+    """Call Groq API via REST."""
+    r = requests.post(
+        "https://api.groq.com/openai/v1/chat/completions",
+        headers={"Authorization": "Bearer " + key, "Content-Type": "application/json"},
+        json={"model": GROQ_MODEL, "messages": [{"role": "user", "content": prompt}], "temperature": 0.7, "max_tokens": 4000}
+    )
+    if r.status_code == 429:
+        raise Exception("429 RESOURCE_EXHAUSTED")
+    r.raise_for_status()
+    return r.json()["choices"][0]["message"]["content"]
 
-MODEL = "gemini-2.0-flash"
-
-def call_gemini(prompt):
-    """Try each API key until one works."""
-    for i, key in enumerate(API_KEYS):
+def call_ai(prompt):
+    """Try Gemini keys first, then fall back to Groq."""
+    # Try Gemini
+    for i, key in enumerate(GEMINI_KEYS):
         try:
             client = genai.Client(api_key=key)
-            response = client.models.generate_content(model=MODEL, contents=prompt)
+            response = client.models.generate_content(model=GEMINI_MODEL, contents=prompt)
+            print(f"  [Gemini key {i+1} worked]")
             return response.text
         except Exception as e:
             err = str(e)
             if "429" in err or "RESOURCE_EXHAUSTED" in err:
-                print(f"  Key {i+1} exhausted, trying next...")
+                print(f"  Gemini key {i+1} exhausted, trying next...")
                 continue
             else:
-                raise e
-    raise Exception("All API keys exhausted (429 on all)")
+                print(f"  Gemini key {i+1} error: {err[:100]}")
+                continue
+
+    # Fallback to Groq
+    print("  All Gemini keys exhausted. Falling back to Groq...")
+    for i, key in enumerate(GROQ_KEYS):
+        try:
+            result = call_groq(prompt, key)
+            print(f"  [Groq key {i+1} worked]")
+            return result
+        except Exception as e:
+            err = str(e)
+            if "429" in err:
+                print(f"  Groq key {i+1} exhausted, trying next...")
+                continue
+            else:
+                print(f"  Groq key {i+1} error: {err[:100]}")
+                continue
+
+    raise Exception("ALL keys exhausted (Gemini + Groq)")
+
 
 TODAY = datetime.now().strftime("%Y-%m-%d")
 TODAY_DISPLAY = datetime.now().strftime("%B %d, %Y")
@@ -71,7 +110,7 @@ topic_data = None
 
 for attempt in range(MAX_RETRIES):
     try:
-        research_text = call_gemini(research_prompt).strip()
+        research_text = call_ai(research_prompt).strip()
         # Remove markdown code fences if present
         research_text = re.sub(r'^```(?:json)?\s*', '', research_text)
         research_text = re.sub(r'\s*```$', '', research_text)
@@ -129,7 +168,7 @@ Write ONLY the article body in HTML (h2 tags for headings, p tags for paragraphs
 article_body = None
 for attempt in range(MAX_RETRIES):
     try:
-        article_body = call_gemini(article_prompt).strip()
+        article_body = call_ai(article_prompt).strip()
         # Clean any markdown code fences
         article_body = re.sub(r'^```(?:html)?\s*', '', article_body)
         article_body = re.sub(r'\s*```$', '', article_body)
@@ -459,33 +498,3 @@ if os.path.exists(sitemap_path):
     <changefreq>never</changefreq>
     <priority>0.7</priority>
   </url>
-</urlset>"""
-    
-    sitemap = sitemap.replace("</urlset>", new_url)
-    with open(sitemap_path, "w", encoding="utf-8") as f:
-        f.write(sitemap)
-    print("✅ Sitemap updated")
-
-# Step 8: Update vercel.json with new route
-vercel_path = "vercel.json"
-if os.path.exists(vercel_path):
-    try:
-        with open(vercel_path, "r", encoding="utf-8") as f:
-            vercel_config = json.load(f)
-        
-        new_route = {"src": f"/lore/articles/{slug}", "dest": f"/lore/articles/{slug}.html"}
-        if "rewrites" in vercel_config:
-            # Check if route already exists
-            existing = [r["src"] for r in vercel_config["rewrites"]]
-            if new_route["src"] not in existing:
-                vercel_config["rewrites"].append(new_route)
-                with open(vercel_path, "w", encoding="utf-8") as f:
-                    json.dump(vercel_config, f, indent=2)
-                print(f"✅ vercel.json updated with route: {new_route['src']}")
-    except Exception as e:
-        print(f"⚠️ Could not update vercel.json: {e}")
-
-# Done!
-print("ARTICLE_URL=https://heezo.vercel.app/lore/articles/" + slug)
-print("ARTICLE_TITLE=" + headline)
-print("Published: '" + headline + "' -> /lore/articles/" + slug)
