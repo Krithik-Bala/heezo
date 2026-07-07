@@ -11,15 +11,7 @@ import requests
 from datetime import datetime
 
 # Use the new google.genai package (google.generativeai is deprecated)
-try:
-    from google import genai
-except ImportError:
-    try:
-        import google.generativeai as genai_legacy
-        print("WARNING: Using deprecated google.generativeai package")
-    except ImportError:
-        print("ERROR: No Google AI package installed")
-        exit(1)
+from google import genai
 
 # Config
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
