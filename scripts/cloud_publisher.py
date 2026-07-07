@@ -92,10 +92,13 @@ TODAY_DISPLAY = datetime.now().strftime("%B %d, %Y")
 print("🔍 Researching trending entertainment topics...")
 
 research_prompt = """You are a trending topic researcher for an entertainment website called Heezo.
-Find ONE trending entertainment topic from the last 1-3 days that would make a great article.
+The current date is """ + TODAY + """.
+Find ONE entertainment topic that is ACTIVELY TRENDING RIGHT NOW in """ + TODAY[:4] + """.
+It MUST be something that happened or was announced within the last 1-3 days. Do NOT pick old news from previous years.
 Focus on: Movies, Anime, Gaming, TV Shows, Pop Culture.
+Examples of good topics: new trailer drops, game releases, casting announcements, season premieres, award results, controversy/drama from THIS WEEK.
 
-IMPORTANT: Return ONLY a valid JSON object, no extra text:
+Return ONLY a valid JSON object, no extra text:
 {
   "topic": "The main topic",
   "headline": "A catchy headline (conversational tone, like a genius friend texting you the coolest thing)",
