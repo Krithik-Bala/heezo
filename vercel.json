@@ -45,6 +45,10 @@
       "destination": "/life/investment-calculator.html"
     },
     {
+      "source": "/life/budget-planner",
+      "destination": "/life/budget-planner.html"
+    },
+    {
       "source": "/about",
       "destination": "/about.html"
     },
