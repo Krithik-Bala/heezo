@@ -488,13 +488,3 @@ if os.path.exists(index_path):
 
 # Done - sitemap/vercel.json updates skipped (handled by vercel rewrites wildcard)
 print("Published: " + headline + " -> /lore/articles/" + slug)
-    new_url_entry += "    <changefreq>never</changefreq>\n"
-    new_url_entry += "    <priority>0.7</priority>\n"
-    new_url_entry += "  </url>\n</urlset>"
-    
-    sitemap = sitemap.replace("</urlset>", new_url_entry)
-    with open(sitemap_path, "w", encoding="utf-8") as f:
-        f.write(sitemap)
-    print("Sitemap updated")
-
-# Step 8: Update vercel.json with new route
