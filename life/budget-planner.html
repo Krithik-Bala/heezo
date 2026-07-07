@@ -1,0 +1,1570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget Planner — HEEZO LIFE</title>
+    <meta name="description" content="Interactive 50/30/20 budget planner with Indian Rupee support. Templates for students, fresh grads, working professionals & freelancers.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <script>
+        (function() {
+            var link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = 'https://fonts.googleapis.com/css2?family=Space+Grotesk:wght' + '@' + '300;400;500;600;700&display=swap';
+            document.head.appendChild(link);
+        })();
+    </script>
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --navy: #0a1628;
+            --navy-light: #0f1f3a;
+            --navy-mid: #142444;
+            --cyan: #00d4ff;
+            --cyan-glow: rgba(0, 212, 255, 0.15);
+            --cyan-dim: rgba(0, 212, 255, 0.6);
+            --cyan-border: rgba(0, 212, 255, 0.12);
+            --white: #f0f4f8;
+            --white-dim: rgba(240, 244, 248, 0.7);
+            --white-muted: #6a8a9a;
+            --glass-bg: rgba(15, 31, 58, 0.6);
+            --glass-border: rgba(0, 212, 255, 0.12);
+            --needs-color: #ff6b6b;
+            --wants-color: #feca57;
+            --savings-color: #00e88f;
+            --leftover-color: #6366f1;
+            --radius: 16px;
+            --radius-sm: 10px;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: var(--navy);
+            color: var(--white);
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Film Grain */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+        }
+
+        /* Ambient Glows */
+        .bg-glow {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .bg-glow-1 {
+            top: -15%; right: -10%;
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(0, 212, 255, 0.06) 0%, transparent 70%);
+        }
+        .bg-glow-2 {
+            bottom: -20%; left: -10%;
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.05) 0%, transparent 70%);
+        }
+        .bg-glow-3 {
+            top: 40%; left: 50%;
+            transform: translateX(-50%);
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(0, 212, 255, 0.04) 0%, transparent 70%);
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            backdrop-filter: blur(20px) saturate(1.5);
+            -webkit-backdrop-filter: blur(20px) saturate(1.5);
+            background: rgba(10, 22, 40, 0.85);
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .nav-logo {
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            color: var(--cyan);
+            text-decoration: none;
+            text-transform: uppercase;
+        }
+        .nav-links { display: flex; gap: 2rem; align-items: center; }
+        .nav-links a {
+            color: var(--white-dim);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover, .nav-links a.active { color: var(--cyan); }
+
+        /* Mobile Nav */
+        .nav-toggle { display: none; background: none; border: none; cursor: pointer; padding: 0.5rem; }
+        .nav-toggle span {
+            display: block; width: 22px; height: 2px;
+            background: var(--cyan); margin: 5px 0;
+            transition: all 0.3s;
+        }
+
+        @media (max-width: 768px) {
+            .nav-toggle { display: block; }
+            .nav-links {
+                position: fixed;
+                top: 60px; left: 0; right: 0;
+                background: rgba(10, 22, 40, 0.98);
+                backdrop-filter: blur(20px);
+                flex-direction: column;
+                padding: 2rem;
+                gap: 1.5rem;
+                transform: translateY(-120%);
+                transition: transform 0.3s ease;
+                border-bottom: 1px solid var(--glass-border);
+            }
+            .nav-links.open { transform: translateY(0); }
+        }
+
+        /* Main Layout */
+        .main {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 100px 2rem 4rem;
+        }
+
+        /* Back Link */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--white-muted);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            margin-bottom: 2rem;
+            transition: color 0.3s;
+        }
+        .back-link:hover { color: var(--cyan); }
+        .back-link svg { width: 16px; height: 16px; }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeUp 0.8s ease;
+        }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 1rem;
+            border: 1px solid var(--cyan-border);
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--cyan);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            background: rgba(0, 212, 255, 0.05);
+        }
+        .hero h1 {
+            font-size: clamp(2rem, 5vw, 3.2rem);
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            background: linear-gradient(135deg, var(--white) 0%, var(--cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero p {
+            font-size: 1.05rem;
+            color: var(--white-dim);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Glass Card */
+        .glass-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            padding: 2rem;
+            backdrop-filter: blur(12px);
+            transition: all 0.3s ease;
+        }
+        .glass-card:hover {
+            border-color: rgba(0, 212, 255, 0.25);
+            box-shadow: 0 0 40px rgba(0, 212, 255, 0.05);
+        }
+
+        /* Income Section */
+        .income-section {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            padding: 2.5rem 2rem;
+            position: relative;
+            overflow: hidden;
+            animation: fadeUp 0.8s ease;
+        }
+        .income-section::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(ellipse at center, rgba(0, 212, 255, 0.04), transparent 60%);
+            pointer-events: none;
+        }
+        .income-label {
+            font-size: 0.75rem;
+            color: var(--white-muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 500;
+            margin-bottom: 1.25rem;
+        }
+        .income-input-wrap {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(0, 212, 255, 0.04);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+            padding: 0.85rem 1.5rem;
+            transition: all 0.3s ease;
+        }
+        .income-input-wrap:focus-within {
+            border-color: var(--cyan);
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.12), inset 0 0 20px rgba(0, 212, 255, 0.03);
+        }
+        .income-symbol {
+            font-size: 2rem;
+            color: var(--cyan);
+            font-weight: 600;
+        }
+        #incomeInput {
+            background: transparent;
+            border: none;
+            outline: none;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            font-weight: 700;
+            color: var(--white);
+            width: 220px;
+            text-align: left;
+        }
+        #incomeInput::placeholder { color: var(--white-muted); opacity: 0.5; }
+        .income-hint {
+            font-size: 0.8rem;
+            color: var(--white-muted);
+            margin-top: 1rem;
+        }
+
+        /* Templates */
+        .templates-section {
+            margin-bottom: 2.5rem;
+            animation: fadeUp 0.8s ease 0.1s both;
+        }
+        .section-label {
+            font-size: 0.75rem;
+            color: var(--white-muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        .templates-row {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .template-btn {
+            background: rgba(0, 212, 255, 0.04);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+            padding: 0.7rem 1.3rem;
+            color: var(--white-dim);
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        .template-btn:hover {
+            border-color: var(--cyan-dim);
+            color: var(--cyan);
+            background: rgba(0, 212, 255, 0.08);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 212, 255, 0.1);
+        }
+        .template-btn.active {
+            border-color: var(--cyan);
+            color: var(--cyan);
+            background: rgba(0, 212, 255, 0.1);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.08);
+        }
+        .template-sub {
+            display: block;
+            font-size: 0.7rem;
+            color: var(--white-muted);
+            margin-top: 3px;
+            font-weight: 400;
+        }
+
+        /* Buckets Grid */
+        .buckets-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.25rem;
+            margin-bottom: 2.5rem;
+            animation: fadeUp 0.8s ease 0.2s both;
+        }
+
+        .bucket-card { padding: 1.75rem; }
+        .bucket-header {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-bottom: 0.75rem;
+        }
+        .bucket-icon {
+            width: 32px; height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+        .bucket-needs .bucket-icon { background: rgba(255, 107, 107, 0.12); }
+        .bucket-wants .bucket-icon { background: rgba(254, 202, 87, 0.12); }
+        .bucket-savings .bucket-icon { background: rgba(0, 232, 143, 0.12); }
+
+        .bucket-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 600;
+        }
+        .bucket-needs .bucket-title { color: var(--needs-color); }
+        .bucket-wants .bucket-title { color: var(--wants-color); }
+        .bucket-savings .bucket-title { color: var(--savings-color); }
+
+        .bucket-amount {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .bucket-slider-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+        .bucket-pct {
+            font-size: 0.9rem;
+            font-weight: 700;
+            min-width: 40px;
+            text-align: right;
+        }
+        .bucket-needs .bucket-pct { color: var(--needs-color); }
+        .bucket-wants .bucket-pct { color: var(--wants-color); }
+        .bucket-savings .bucket-pct { color: var(--savings-color); }
+
+        /* Custom Slider */
+        .slider-track { flex: 1; position: relative; }
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 4px;
+            border-radius: 2px;
+            background: rgba(255, 255, 255, 0.06);
+            outline: none;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px; height: 18px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.25);
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 18px; height: 18px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+        }
+        .bucket-needs input[type="range"]::-webkit-slider-thumb {
+            background: var(--needs-color);
+            box-shadow: 0 0 12px rgba(255, 107, 107, 0.5);
+        }
+        .bucket-wants input[type="range"]::-webkit-slider-thumb {
+            background: var(--wants-color);
+            box-shadow: 0 0 12px rgba(254, 202, 87, 0.5);
+        }
+        .bucket-savings input[type="range"]::-webkit-slider-thumb {
+            background: var(--savings-color);
+            box-shadow: 0 0 12px rgba(0, 232, 143, 0.5);
+        }
+        .bucket-needs input[type="range"]::-moz-range-thumb { background: var(--needs-color); box-shadow: 0 0 12px rgba(255, 107, 107, 0.5); }
+        .bucket-wants input[type="range"]::-moz-range-thumb { background: var(--wants-color); box-shadow: 0 0 12px rgba(254, 202, 87, 0.5); }
+        .bucket-savings input[type="range"]::-moz-range-thumb { background: var(--savings-color); box-shadow: 0 0 12px rgba(0, 232, 143, 0.5); }
+
+        /* Category Items */
+        .category-list { display: flex; flex-direction: column; gap: 0.4rem; }
+        .category-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.55rem 0.75rem;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid transparent;
+            transition: all 0.25s ease;
+        }
+        .category-item:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+        .category-name {
+            font-size: 0.82rem;
+            color: var(--white-dim);
+            font-weight: 400;
+        }
+        .category-input-wrap {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+        .category-input-wrap .sym {
+            font-size: 0.75rem;
+            color: var(--white-muted);
+        }
+        .category-input {
+            background: transparent;
+            border: none;
+            outline: none;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 500;
+            color: var(--white);
+            width: 72px;
+            text-align: right;
+            padding: 0.15rem 0;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.3s;
+        }
+        .category-input:focus { border-bottom-color: var(--cyan); }
+        .category-input::placeholder { color: var(--white-muted); opacity: 0.4; }
+
+        /* Donut Chart Section */
+        .chart-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 2.5rem;
+            padding: 2.5rem;
+            animation: fadeUp 0.8s ease 0.3s both;
+        }
+        .chart-section .section-label { margin-bottom: 1.5rem; }
+        .chart-container {
+            position: relative;
+            width: 280px;
+            height: 280px;
+        }
+        #donutCanvas {
+            width: 280px;
+            height: 280px;
+            cursor: crosshair;
+        }
+        .chart-center {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            pointer-events: none;
+        }
+        .chart-center .label {
+            font-size: 0.65rem;
+            color: var(--white-muted);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+        .chart-center .amount {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--white);
+        }
+        .chart-tooltip {
+            position: absolute;
+            background: rgba(10, 22, 40, 0.95);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            padding: 0.4rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--white);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            white-space: nowrap;
+            z-index: 10;
+            backdrop-filter: blur(8px);
+        }
+        .chart-legend {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--white-dim);
+        }
+        .legend-dot {
+            width: 10px; height: 10px;
+            border-radius: 50%;
+        }
+
+        /* Leftover Section */
+        .leftover-section {
+            margin-bottom: 2.5rem;
+            text-align: center;
+            padding: 2.5rem;
+            animation: fadeUp 0.8s ease 0.35s both;
+        }
+        .leftover-label {
+            font-size: 0.75rem;
+            color: var(--white-muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 500;
+            margin-bottom: 0.75rem;
+        }
+        .leftover-amount {
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            font-weight: 700;
+            transition: color 0.4s ease;
+        }
+        .leftover-amount.positive { color: var(--savings-color); }
+        .leftover-amount.negative { color: var(--needs-color); }
+        .leftover-amount.zero { color: var(--white-muted); }
+        .leftover-bar-wrap {
+            margin-top: 1.25rem;
+            max-width: 420px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .leftover-bar {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .leftover-bar-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1), background 0.4s ease;
+        }
+        .leftover-breakdown {
+            margin-top: 0.75rem;
+            font-size: 0.8rem;
+            color: var(--white-muted);
+        }
+
+        /* Tips Section */
+        .tips-section {
+            margin-bottom: 2.5rem;
+            animation: fadeUp 0.8s ease 0.4s both;
+        }
+        .tips-section > h2 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+            color: var(--white);
+        }
+        .tips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 0.75rem;
+        }
+        .tip-card {
+            padding: 1.1rem 1.4rem;
+            cursor: pointer;
+            user-select: none;
+        }
+        .tip-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .tip-title {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        .tip-icon { font-size: 1.15rem; }
+        .tip-chevron {
+            color: var(--white-muted);
+            font-size: 0.8rem;
+            transition: transform 0.3s ease;
+        }
+        .tip-card.open .tip-chevron { transform: rotate(180deg); }
+        .tip-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s ease;
+        }
+        .tip-card.open .tip-body {
+            max-height: 180px;
+            padding-top: 0.75rem;
+        }
+        .tip-body p {
+            font-size: 0.8rem;
+            color: var(--white-dim);
+            line-height: 1.7;
+        }
+
+        /* Action Buttons */
+        .actions-row {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 3rem;
+            animation: fadeUp 0.8s ease 0.45s both;
+        }
+        .btn {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 0.8rem 1.6rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid var(--glass-border);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(0, 212, 255, 0.04));
+            color: var(--cyan);
+            border-color: rgba(0, 212, 255, 0.3);
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.25), rgba(0, 212, 255, 0.08));
+            box-shadow: 0 4px 24px rgba(0, 212, 255, 0.15);
+            transform: translateY(-2px);
+        }
+        .btn-danger {
+            background: rgba(255, 107, 107, 0.06);
+            color: var(--needs-color);
+            border-color: rgba(255, 107, 107, 0.2);
+        }
+        .btn-danger:hover {
+            background: rgba(255, 107, 107, 0.12);
+            box-shadow: 0 4px 24px rgba(255, 107, 107, 0.12);
+            transform: translateY(-2px);
+        }
+        .btn svg { width: 16px; height: 16px; }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: rgba(10, 22, 40, 0.95);
+            border: 1px solid var(--cyan-border);
+            border-radius: var(--radius-sm);
+            padding: 0.75rem 1.5rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--white);
+            backdrop-filter: blur(16px);
+            z-index: 10000;
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            border-top: 1px solid var(--glass-border);
+            color: var(--white-muted);
+            font-size: 0.75rem;
+        }
+        .footer a { color: var(--cyan-dim); text-decoration: none; }
+        .footer a:hover { color: var(--cyan); }
+
+        /* Animations */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 212, 255, 0.3); }
+            70% { box-shadow: 0 0 0 12px rgba(0, 212, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 212, 255, 0); }
+        }
+        .pulse-anim { animation: pulse 0.6s ease-out; }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .buckets-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 768px) {
+            .main { padding: 90px 1rem 3rem; }
+            .nav { padding: 1rem 1.25rem; }
+            #incomeInput { font-size: 1.6rem; width: 160px; }
+            .income-symbol { font-size: 1.5rem; }
+            .chart-container { width: 240px; height: 240px; }
+            #donutCanvas { width: 240px; height: 240px; }
+            .tips-grid { grid-template-columns: 1fr; }
+            .bucket-card { padding: 1.5rem; }
+        }
+        @media (max-width: 480px) {
+            .template-btn { padding: 0.6rem 0.9rem; font-size: 0.75rem; }
+            .templates-row { gap: 0.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Ambient Glows -->
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+    <div class="bg-glow bg-glow-3"></div>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <a href="/" class="nav-logo">HEEZO</a>
+        <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+            <span></span><span></span><span></span>
+        </button>
+        <div class="nav-links" id="navLinks">
+            <a href="/">Home</a>
+            <a href="/life" class="active">Life</a>
+            <a href="/lore">Lore</a>
+            <a href="/about">About</a>
+        </div>
+    </nav>
+
+    <!-- Main -->
+    <main class="main">
+        <!-- Back Link -->
+        <a href="/life" class="back-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+            Back to Life
+        </a>
+
+        <!-- Hero -->
+        <section class="hero">
+            <div class="hero-badge">💰 Financial Tool</div>
+            <h1>Budget Planner</h1>
+            <p>Master your money with the 50/30/20 rule. Plan smart, track every rupee, live without guilt.</p>
+        </section>
+
+        <!-- Income Input -->
+        <section class="glass-card income-section">
+            <div class="income-label">Monthly Take-Home Income</div>
+            <div class="income-input-wrap">
+                <span class="income-symbol">₹</span>
+                <input type="text" id="incomeInput" placeholder="0" inputmode="numeric" autocomplete="off">
+            </div>
+            <div class="income-hint">Enter your monthly salary after tax deductions</div>
+        </section>
+
+        <!-- Templates -->
+        <section class="templates-section">
+            <div class="section-label">Quick Templates</div>
+            <div class="templates-row">
+                <button class="template-btn" data-template="student">
+                    🎓 Student
+                    <span class="template-sub">₹15,000/mo</span>
+                </button>
+                <button class="template-btn" data-template="graduate">
+                    🎯 Fresh Graduate
+                    <span class="template-sub">₹35,000/mo</span>
+                </button>
+                <button class="template-btn" data-template="professional">
+                    💼 Professional
+                    <span class="template-sub">₹75,000/mo</span>
+                </button>
+                <button class="template-btn" data-template="freelancer">
+                    🚀 Freelancer
+                    <span class="template-sub">₹60,000/mo</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Buckets Grid -->
+        <section class="buckets-grid">
+            <!-- Needs -->
+            <div class="glass-card bucket-card bucket-needs">
+                <div class="bucket-header">
+                    <div class="bucket-icon">⚡</div>
+                    <span class="bucket-title">Needs</span>
+                </div>
+                <div class="bucket-amount" id="needsAmount">₹0</div>
+                <div class="bucket-slider-row">
+                    <span class="bucket-pct" id="needsPct">50%</span>
+                    <div class="slider-track">
+                        <input type="range" id="needsSlider" min="0" max="100" value="50">
+                    </div>
+                </div>
+                <div class="category-list" id="needsCats"></div>
+            </div>
+
+            <!-- Wants -->
+            <div class="glass-card bucket-card bucket-wants">
+                <div class="bucket-header">
+                    <div class="bucket-icon">✨</div>
+                    <span class="bucket-title">Wants</span>
+                </div>
+                <div class="bucket-amount" id="wantsAmount">₹0</div>
+                <div class="bucket-slider-row">
+                    <span class="bucket-pct" id="wantsPct">30%</span>
+                    <div class="slider-track">
+                        <input type="range" id="wantsSlider" min="0" max="100" value="30">
+                    </div>
+                </div>
+                <div class="category-list" id="wantsCats"></div>
+            </div>
+
+            <!-- Savings -->
+            <div class="glass-card bucket-card bucket-savings">
+                <div class="bucket-header">
+                    <div class="bucket-icon">🏦</div>
+                    <span class="bucket-title">Savings</span>
+                </div>
+                <div class="bucket-amount" id="savingsAmount">₹0</div>
+                <div class="bucket-slider-row">
+                    <span class="bucket-pct" id="savingsPct">20%</span>
+                    <div class="slider-track">
+                        <input type="range" id="savingsSlider" min="0" max="100" value="20">
+                    </div>
+                </div>
+                <div class="category-list" id="savingsCats"></div>
+            </div>
+        </section>
+
+        <!-- Donut Chart -->
+        <section class="glass-card chart-section">
+            <div class="section-label">Allocation Overview</div>
+            <div class="chart-container">
+                <canvas id="donutCanvas" width="560" height="560"></canvas>
+                <div class="chart-center">
+                    <div class="label">Allocated</div>
+                    <div class="amount" id="chartTotal">₹0</div>
+                </div>
+                <div class="chart-tooltip" id="chartTooltip"></div>
+            </div>
+            <div class="chart-legend">
+                <div class="legend-item"><span class="legend-dot" style="background:var(--needs-color)"></span>Needs</div>
+                <div class="legend-item"><span class="legend-dot" style="background:var(--wants-color)"></span>Wants</div>
+                <div class="legend-item"><span class="legend-dot" style="background:var(--savings-color)"></span>Savings</div>
+            </div>
+        </section>
+
+        <!-- Leftover -->
+        <section class="glass-card leftover-section">
+            <div class="leftover-label">Remaining Balance</div>
+            <div class="leftover-amount zero" id="leftoverAmount">₹0</div>
+            <div class="leftover-bar-wrap">
+                <div class="leftover-bar">
+                    <div class="leftover-bar-fill" id="leftoverFill"></div>
+                </div>
+            </div>
+            <div class="leftover-breakdown" id="leftoverText">Income ₹0 − Allocated ₹0 = ₹0 remaining</div>
+        </section>
+
+        <!-- Tips -->
+        <section class="tips-section">
+            <h2>💡 Money-Saving Tips</h2>
+            <div class="tips-grid" id="tipsGrid"></div>
+        </section>
+
+        <!-- Actions -->
+        <div class="actions-row">
+            <button class="btn btn-primary" id="exportBtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Export Budget
+            </button>
+            <button class="btn btn-danger" id="clearBtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+                Clear All Data
+            </button>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Built with intent by <a href="/">Heezo</a> · Budget Planner v2.0</p>
+        </footer>
+    </main>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+    (function() {
+        'use strict';
+
+        // ============ CONSTANTS ============
+        const STORAGE_KEY = 'heezo-budget-planner-data';
+
+        const DEFAULT_CATEGORIES = {
+            needs: [
+                { name: 'Rent', amount: 0 },
+                { name: 'Groceries', amount: 0 },
+                { name: 'Transport', amount: 0 },
+                { name: 'Utilities', amount: 0 },
+                { name: 'Insurance', amount: 0 },
+                { name: 'EMIs', amount: 0 }
+            ],
+            wants: [
+                { name: 'Entertainment', amount: 0 },
+                { name: 'Dining Out', amount: 0 },
+                { name: 'Shopping', amount: 0 },
+                { name: 'Subscriptions', amount: 0 },
+                { name: 'Travel', amount: 0 }
+            ],
+            savings: [
+                { name: 'Emergency Fund', amount: 0 },
+                { name: 'Investments', amount: 0 },
+                { name: 'Retirement', amount: 0 },
+                { name: 'Goals', amount: 0 }
+            ]
+        };
+
+        const TEMPLATES = {
+            student: {
+                income: 15000,
+                percentages: { needs: 60, wants: 20, savings: 20 },
+                categories: {
+                    needs: [
+                        { name: 'Rent', amount: 5000 },
+                        { name: 'Groceries', amount: 2500 },
+                        { name: 'Transport', amount: 800 },
+                        { name: 'Utilities', amount: 400 },
+                        { name: 'Insurance', amount: 0 },
+                        { name: 'EMIs', amount: 300 }
+                    ],
+                    wants: [
+                        { name: 'Entertainment', amount: 500 },
+                        { name: 'Dining Out', amount: 1000 },
+                        { name: 'Shopping', amount: 500 },
+                        { name: 'Subscriptions', amount: 200 },
+                        { name: 'Travel', amount: 800 }
+                    ],
+                    savings: [
+                        { name: 'Emergency Fund', amount: 1000 },
+                        { name: 'Investments', amount: 500 },
+                        { name: 'Retirement', amount: 0 },
+                        { name: 'Goals', amount: 1500 }
+                    ]
+                }
+            },
+            graduate: {
+                income: 35000,
+                percentages: { needs: 50, wants: 30, savings: 20 },
+                categories: {
+                    needs: [
+                        { name: 'Rent', amount: 8000 },
+                        { name: 'Groceries', amount: 4000 },
+                        { name: 'Transport', amount: 2500 },
+                        { name: 'Utilities', amount: 1200 },
+                        { name: 'Insurance', amount: 800 },
+                        { name: 'EMIs', amount: 1000 }
+                    ],
+                    wants: [
+                        { name: 'Entertainment', amount: 2000 },
+                        { name: 'Dining Out', amount: 3000 },
+                        { name: 'Shopping', amount: 2500 },
+                        { name: 'Subscriptions', amount: 500 },
+                        { name: 'Travel', amount: 2500 }
+                    ],
+                    savings: [
+                        { name: 'Emergency Fund', amount: 2000 },
+                        { name: 'Investments', amount: 3000 },
+                        { name: 'Retirement', amount: 1000 },
+                        { name: 'Goals', amount: 1000 }
+                    ]
+                }
+            },
+            professional: {
+                income: 75000,
+                percentages: { needs: 45, wants: 30, savings: 25 },
+                categories: {
+                    needs: [
+                        { name: 'Rent', amount: 15000 },
+                        { name: 'Groceries', amount: 6000 },
+                        { name: 'Transport', amount: 4000 },
+                        { name: 'Utilities', amount: 2500 },
+                        { name: 'Insurance', amount: 3000 },
+                        { name: 'EMIs', amount: 3250 }
+                    ],
+                    wants: [
+                        { name: 'Entertainment', amount: 4000 },
+                        { name: 'Dining Out', amount: 5000 },
+                        { name: 'Shopping', amount: 6000 },
+                        { name: 'Subscriptions', amount: 1500 },
+                        { name: 'Travel', amount: 6000 }
+                    ],
+                    savings: [
+                        { name: 'Emergency Fund', amount: 5000 },
+                        { name: 'Investments', amount: 8000 },
+                        { name: 'Retirement', amount: 4000 },
+                        { name: 'Goals', amount: 1750 }
+                    ]
+                }
+            },
+            freelancer: {
+                income: 60000,
+                percentages: { needs: 40, wants: 25, savings: 35 },
+                categories: {
+                    needs: [
+                        { name: 'Rent', amount: 12000 },
+                        { name: 'Groceries', amount: 5000 },
+                        { name: 'Transport', amount: 2000 },
+                        { name: 'Utilities', amount: 2000 },
+                        { name: 'Insurance', amount: 2000 },
+                        { name: 'EMIs', amount: 1000 }
+                    ],
+                    wants: [
+                        { name: 'Entertainment', amount: 2500 },
+                        { name: 'Dining Out', amount: 3500 },
+                        { name: 'Shopping', amount: 4000 },
+                        { name: 'Subscriptions', amount: 1000 },
+                        { name: 'Travel', amount: 4000 }
+                    ],
+                    savings: [
+                        { name: 'Emergency Fund', amount: 7000 },
+                        { name: 'Investments', amount: 8000 },
+                        { name: 'Retirement', amount: 3500 },
+                        { name: 'Goals', amount: 2500 }
+                    ]
+                }
+            }
+        };
+
+        const TIPS = [
+            { icon: '🍳', title: 'Cook at Home More', text: 'Eating out in Indian cities costs ₹200-500 per meal. Cooking at home cuts food expenses by 60-70%. Batch-cook dal, rice, and sabzi on weekends for the whole week.' },
+            { icon: '🚌', title: 'Use Public Transport', text: 'Metro/bus passes in Delhi, Bangalore, or Mumbai cost ₹1,000-2,000/month vs ₹8,000+ in cab rides. That\'s ₹6,000+ saved every single month.' },
+            { icon: '📱', title: 'Audit Your Subscriptions', text: 'Netflix, Spotify, Hotstar, Prime, Zomato Pro — they compound fast. Keep 2-3 max, share family plans. Save ₹1,500-2,000/month effortlessly.' },
+            { icon: '🏪', title: 'Buy Staples in Bulk', text: 'Purchase rice, atta, oil, and pulses from wholesale markets or during D-Mart/Big Bazaar monthly sales. Save 20-30% compared to daily kirana shop trips.' },
+            { icon: '💳', title: 'Leverage UPI Cashbacks', text: 'GPay, PhonePe, and Paytm offer cashbacks on bill payments and groceries. Use them strategically — but never overspend chasing rewards.' },
+            { icon: '🏥', title: 'Get Health Insurance Early', text: 'A ₹5L health cover costs ₹5,000-8,000/year in your 20s vs ₹15,000+ later. One hospital visit without insurance can wipe out months of savings.' },
+            { icon: '📊', title: 'Start SIPs, Even Small', text: 'Even ₹500/month in an index fund SIP compounds to ₹4.5L+ in 15 years at 12% returns. Start today — time in market beats timing the market.' },
+            { icon: '🎯', title: 'The 24-Hour Rule', text: 'For any non-essential purchase above ₹1,000, wait 24 hours. You\'ll find that 70% of impulse purchases feel completely unnecessary the next day.' },
+            { icon: '⚡', title: 'Slash Electricity Bills', text: 'Switch to LED bulbs, use 5-star rated ACs set at 24°C, and unplug idle devices. These habits cut electricity bills by ₹500-1,500/month easily.' },
+            { icon: '🎓', title: 'Invest in Skills, Not Things', text: 'A ₹5,000 online course can boost your income by ₹10,000-50,000/month. Prioritize skill investments over material purchases for long-term wealth.' }
+        ];
+
+        // ============ STATE ============
+        let state = {
+            income: 0,
+            percentages: { needs: 50, wants: 30, savings: 20 },
+            categories: JSON.parse(JSON.stringify(DEFAULT_CATEGORIES))
+        };
+
+        // Chart animation state
+        let chartAnim = null;
+        let currentArcs = [0, 0, 0];
+        let targetArcs = [0, 0, 0];
+
+        // ============ UTILITIES ============
+        function formatINR(n) {
+            if (n === 0) return '0';
+            return Math.abs(n).toLocaleString('en-IN');
+        }
+
+        function parseNum(s) {
+            return parseInt(String(s).replace(/[^0-9]/g, ''), 10) || 0;
+        }
+
+        function showToast(msg) {
+            var t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            clearTimeout(t._timer);
+            t._timer = setTimeout(function() { t.classList.remove('show'); }, 2500);
+        }
+
+        function deepClone(obj) { return JSON.parse(JSON.stringify(obj)); }
+
+        // ============ PERSISTENCE ============
+        function save() {
+            try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+        }
+
+        function load() {
+            try {
+                var d = localStorage.getItem(STORAGE_KEY);
+                if (d) {
+                    var p = JSON.parse(d);
+                    if (p && p.income !== undefined) { state = p; return true; }
+                }
+            } catch(e) {}
+            return false;
+        }
+
+        function clearData() {
+            localStorage.removeItem(STORAGE_KEY);
+            state = { income: 0, percentages: { needs: 50, wants: 30, savings: 20 }, categories: deepClone(DEFAULT_CATEGORIES) };
+            renderAll();
+            showToast('✓ All data cleared');
+        }
+
+        // ============ PERCENTAGE LOGIC ============
+        function adjustPercentages(changed, newVal) {
+            newVal = Math.max(0, Math.min(100, Math.round(newVal)));
+            var buckets = ['needs', 'wants', 'savings'];
+            var others = buckets.filter(function(b) { return b !== changed; });
+            var oldOtherSum = others.reduce(function(s, b) { return s + state.percentages[b]; }, 0);
+            var remaining = 100 - newVal;
+
+            state.percentages[changed] = newVal;
+
+            if (oldOtherSum === 0) {
+                state.percentages[others[0]] = Math.round(remaining / 2);
+                state.percentages[others[1]] = remaining - state.percentages[others[0]];
+            } else {
+                var first = Math.round((state.percentages[others[0]] / oldOtherSum) * remaining);
+                first = Math.max(0, Math.min(remaining, first));
+                state.percentages[others[0]] = first;
+                state.percentages[others[1]] = Math.max(0, remaining - first);
+            }
+
+            // Safety: ensure sum = 100
+            var sum = buckets.reduce(function(s, b) { return s + state.percentages[b]; }, 0);
+            if (sum !== 100) {
+                state.percentages[others[1]] += (100 - sum);
+                state.percentages[others[1]] = Math.max(0, state.percentages[others[1]]);
+            }
+        }
+
+        // ============ RENDER ============
+        function renderIncome() {
+            var el = document.getElementById('incomeInput');
+            el.value = state.income > 0 ? formatINR(state.income) : '';
+        }
+
+        function renderBuckets() {
+            var inc = state.income;
+            ['needs', 'wants', 'savings'].forEach(function(b) {
+                document.getElementById(b + 'Pct').textContent = state.percentages[b] + '%';
+                document.getElementById(b + 'Slider').value = state.percentages[b];
+                document.getElementById(b + 'Amount').textContent = '₹' + formatINR(Math.round(inc * state.percentages[b] / 100));
+            });
+        }
+
+        function renderCategories() {
+            ['needs', 'wants', 'savings'].forEach(function(bucket) {
+                var container = document.getElementById(bucket + 'Cats');
+                container.innerHTML = '';
+                state.categories[bucket].forEach(function(cat, idx) {
+                    var div = document.createElement('div');
+                    div.className = 'category-item';
+                    div.innerHTML = '<span class="category-name">' + cat.name + '</span>' +
+                        '<div class="category-input-wrap"><span class="sym">₹</span>' +
+                        '<input type="text" class="category-input" data-bucket="' + bucket +
+                        '" data-idx="' + idx + '" value="' + (cat.amount > 0 ? formatINR(cat.amount) : '') +
+                        '" placeholder="0" inputmode="numeric" autocomplete="off"></div>';
+                    container.appendChild(div);
+                });
+            });
+        }
+
+        function renderLeftover() {
+            var inc = state.income;
+            var allocated = 0;
+            ['needs', 'wants', 'savings'].forEach(function(b) {
+                state.categories[b].forEach(function(c) { allocated += c.amount; });
+            });
+            var left = inc - allocated;
+
+            var el = document.getElementById('leftoverAmount');
+            el.textContent = (left >= 0 ? '₹' : '-₹') + formatINR(Math.abs(left));
+            el.className = 'leftover-amount ' + (left > 0 ? 'positive' : left < 0 ? 'negative' : 'zero');
+
+            var pct = inc > 0 ? Math.min((allocated / inc) * 100, 100) : 0;
+            var fill = document.getElementById('leftoverFill');
+            fill.style.width = pct + '%';
+            fill.style.background = left >= 0 ? 'var(--savings-color)' : 'var(--needs-color)';
+
+            document.getElementById('leftoverText').textContent =
+                'Income ₹' + formatINR(inc) + ' − Allocated ₹' + formatINR(allocated) +
+                ' = ' + (left >= 0 ? '' : '-') + '₹' + formatINR(Math.abs(left)) + ' remaining';
+
+            document.getElementById('chartTotal').textContent = '₹' + formatINR(allocated);
+        }
+
+        function renderAll() {
+            renderIncome();
+            renderBuckets();
+            renderCategories();
+            renderLeftover();
+            animateDonut();
+            save();
+        }
+
+        // ============ DONUT CHART ============
+        function getDonutData() {
+            var totals = [0, 0, 0];
+            ['needs', 'wants', 'savings'].forEach(function(b, i) {
+                state.categories[b].forEach(function(c) { totals[i] += c.amount; });
+            });
+            var sum = totals[0] + totals[1] + totals[2];
+            if (sum === 0) return { fracs: [1/3, 1/3, 1/3], total: 0, totals: [0, 0, 0] };
+            return { fracs: [totals[0]/sum, totals[1]/sum, totals[2]/sum], total: sum, totals: totals };
+        }
+
+        function animateDonut() {
+            var data = getDonutData();
+            targetArcs = [data.fracs[0] * Math.PI * 2, data.fracs[1] * Math.PI * 2, data.fracs[2] * Math.PI * 2];
+            if (chartAnim) cancelAnimationFrame(chartAnim);
+
+            var startArcs = currentArcs.slice();
+            var startTime = performance.now();
+            var duration = 500;
+
+            function step(now) {
+                var t = Math.min((now - startTime) / duration, 1);
+                var ease = 1 - Math.pow(1 - t, 3);
+                currentArcs = [
+                    startArcs[0] + (targetArcs[0] - startArcs[0]) * ease,
+                    startArcs[1] + (targetArcs[1] - startArcs[1]) * ease,
+                    startArcs[2] + (targetArcs[2] - startArcs[2]) * ease
+                ];
+                drawDonut(currentArcs);
+                if (t < 1) chartAnim = requestAnimationFrame(step);
+            }
+            chartAnim = requestAnimationFrame(step);
+        }
+
+        function drawDonut(arcs) {
+            var canvas = document.getElementById('donutCanvas');
+            var ctx = canvas.getContext('2d');
+            var dpr = window.devicePixelRatio || 1;
+            var size = canvas.offsetWidth;
+            canvas.width = size * dpr;
+            canvas.height = size * dpr;
+            ctx.scale(dpr, dpr);
+
+            var cx = size / 2, cy = size / 2;
+            var outerR = size / 2 - 8;
+            var innerR = outerR * 0.6;
+            var gap = 0.04;
+            var colors = ['#ff6b6b', '#feca57', '#00e88f'];
+            var glows = ['rgba(255,107,107,0.35)', 'rgba(254,202,87,0.35)', 'rgba(0,232,143,0.35)'];
+
+            ctx.clearRect(0, 0, size, size);
+
+            var startAngle = -Math.PI / 2;
+            arcs.forEach(function(arc, i) {
+                if (arc < 0.01) { startAngle += arc; return; }
+                var drawArc = Math.max(arc - gap, 0.01);
+                var endAngle = startAngle + drawArc;
+
+                // Glow
+                ctx.save();
+                ctx.shadowColor = glows[i];
+                ctx.shadowBlur = 18;
+                ctx.beginPath();
+                ctx.arc(cx, cy, outerR, startAngle, endAngle);
+                ctx.arc(cx, cy, innerR, endAngle, startAngle, true);
+                ctx.closePath();
+                ctx.fillStyle = colors[i];
+                ctx.fill();
+                ctx.restore();
+
+                startAngle += arc;
+            });
+
+            // Dark center
+            ctx.beginPath();
+            ctx.arc(cx, cy, innerR - 2, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(10, 22, 40, 0.92)';
+            ctx.fill();
+        }
+
+        function setupChartHover() {
+            var canvas = document.getElementById('donutCanvas');
+            var tooltip = document.getElementById('chartTooltip');
+
+            canvas.addEventListener('mousemove', function(e) {
+                var rect = canvas.getBoundingClientRect();
+                var x = e.clientX - rect.left - rect.width / 2;
+                var y = e.clientY - rect.top - rect.height / 2;
+                var dist = Math.sqrt(x * x + y * y);
+                var outerR = rect.width / 2 - 8;
+                var innerR = outerR * 0.6;
+
+                if (dist < innerR || dist > outerR) { tooltip.style.opacity = '0'; return; }
+
+                var angle = Math.atan2(y, x) + Math.PI / 2;
+                if (angle < 0) angle += Math.PI * 2;
+
+                var data = getDonutData();
+                var labels = ['Needs', 'Wants', 'Savings'];
+                var colors = ['#ff6b6b', '#feca57', '#00e88f'];
+                var cumulative = 0, found = -1;
+
+                for (var i = 0; i < 3; i++) {
+                    cumulative += data.fracs[i] * Math.PI * 2;
+                    if (angle <= cumulative) { found = i; break; }
+                }
+                if (found === -1) found = 2;
+
+                var pct = (data.fracs[found] * 100).toFixed(1);
+                var amt = formatINR(data.totals[found]);
+                tooltip.innerHTML = '<span style="color:' + colors[found] + '">' + labels[found] + '</span> · ' + pct + '% · ₹' + amt;
+                tooltip.style.opacity = '1';
+                tooltip.style.left = (e.clientX - rect.left + 14) + 'px';
+                tooltip.style.top = (e.clientY - rect.top - 32) + 'px';
+            });
+
+            canvas.addEventListener('mouseleave', function() { tooltip.style.opacity = '0'; });
+        }
+
+        // ============ TIPS ============
+        function renderTips() {
+            var grid = document.getElementById('tipsGrid');
+            grid.innerHTML = '';
+            TIPS.forEach(function(tip) {
+                var card = document.createElement('div');
+                card.className = 'glass-card tip-card';
+                card.innerHTML = '<div class="tip-header"><span class="tip-title"><span class="tip-icon">' +
+                    tip.icon + '</span>' + tip.title + '</span><span class="tip-chevron">▾</span></div>' +
+                    '<div class="tip-body"><p>' + tip.text + '</p></div>';
+                card.addEventListener('click', function() { card.classList.toggle('open'); });
+                grid.appendChild(card);
+            });
+        }
+
+        // ============ EXPORT ============
+        function exportBudget() {
+            var inc = state.income;
+            var allocated = 0;
+            ['needs', 'wants', 'savings'].forEach(function(b) {
+                state.categories[b].forEach(function(c) { allocated += c.amount; });
+            });
+            var left = inc - allocated;
+
+            var lines = [];
+            lines.push('═══════════════════════════════════════════');
+            lines.push('         HEEZO BUDGET PLANNER');
+            lines.push('═══════════════════════════════════════════');
+            lines.push('');
+            lines.push('Monthly Income:  ₹' + formatINR(inc));
+            lines.push('Split Rule:      Needs ' + state.percentages.needs + '% │ Wants ' + state.percentages.wants + '% │ Savings ' + state.percentages.savings + '%');
+            lines.push('');
+
+            var names = { needs: '⚡ NEEDS', wants: '✨ WANTS', savings: '🏦 SAVINGS' };
+            ['needs', 'wants', 'savings'].forEach(function(b) {
+                var bucketTotal = state.categories[b].reduce(function(s, c) { return s + c.amount; }, 0);
+                lines.push('───────────────────────────────────────────');
+                lines.push(names[b] + ' (' + state.percentages[b] + '% = ₹' + formatINR(Math.round(inc * state.percentages[b] / 100)) + ')');
+                lines.push('───────────────────────────────────────────');
+                state.categories[b].forEach(function(c) {
+                    if (c.amount > 0) {
+                        var pad = c.name + new Array(Math.max(1, 20 - c.name.length)).join(' ');
+                        lines.push('  ' + pad + '₹' + formatINR(c.amount));
+                    }
+                });
+                lines.push('  ' + 'SUBTOTAL' + new Array(13).join(' ') + '₹' + formatINR(bucketTotal));
+                lines.push('');
+            });
+
+            lines.push('═══════════════════════════════════════════');
+            lines.push('Total Allocated:  ₹' + formatINR(allocated));
+            lines.push('Remaining:        ' + (left >= 0 ? '' : '-') + '₹' + formatINR(Math.abs(left)));
+            lines.push('═══════════════════════════════════════════');
+            lines.push('');
+            lines.push('Generated by Heezo Budget Planner');
+            lines.push('https://heezo.in/life/budget-planner');
+
+            var text = lines.join('\n');
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(function() {
+                    showToast('✓ Budget copied to clipboard!');
+                }).catch(function() { downloadTxt(text); });
+            } else {
+                downloadTxt(text);
+            }
+        }
+
+        function downloadTxt(text) {
+            var blob = new Blob([text], { type: 'text/plain' });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'heezo-budget.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast('✓ Budget downloaded as .txt');
+        }
+
+        // ============ EVENT LISTENERS ============
+        function setupEvents() {
+            // Income
+            var incEl = document.getElementById('incomeInput');
+            incEl.addEventListener('input', function() {
+                state.income = parseNum(this.value);
+                this.value = state.income > 0 ? formatINR(state.income) : '';
+                renderBuckets();
+                renderLeftover();
+                animateDonut();
+                save();
+            });
+            incEl.addEventListener('focus', function() {
+                if (state.income > 0) this.value = String(state.income);
+            });
+            incEl.addEventListener('blur', function() {
+                this.value = state.income > 0 ? formatINR(state.income) : '';
+            });
+
+            // Sliders
+            ['needs', 'wants', 'savings'].forEach(function(b) {
+                document.getElementById(b + 'Slider').addEventListener('input', function() {
+                    adjustPercentages(b, parseInt(this.value));
+                    renderBuckets();
+                    renderLeftover();
+                    animateDonut();
+                    save();
+                });
+            });
+
+            // Category inputs (event delegation)
+            document.addEventListener('input', function(e) {
+                if (!e.target.classList.contains('category-input')) return;
+                var bucket = e.target.getAttribute('data-bucket');
+                var idx = parseInt(e.target.getAttribute('data-idx'));
+                state.categories[bucket][idx].amount = parseNum(e.target.value);
+                renderLeftover();
+                animateDonut();
+                save();
+            });
+            document.addEventListener('focus', function(e) {
+                if (!e.target.classList.contains('category-input')) return;
+                var bucket = e.target.getAttribute('data-bucket');
+                var idx = parseInt(e.target.getAttribute('data-idx'));
+                var v = state.categories[bucket][idx].amount;
+                e.target.value = v > 0 ? String(v) : '';
+            }, true);
+            document.addEventListener('blur', function(e) {
+                if (!e.target.classList.contains('category-input')) return;
+                var bucket = e.target.getAttribute('data-bucket');
+                var idx = parseInt(e.target.getAttribute('data-idx'));
+                var v = state.categories[bucket][idx].amount;
+                e.target.value = v > 0 ? formatINR(v) : '';
+            }, true);
+
+            // Templates
+            document.querySelectorAll('.template-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    var key = this.getAttribute('data-template');
+                    var tpl = TEMPLATES[key];
+                    if (!tpl) return;
+
+                    document.querySelectorAll('.template-btn').forEach(function(b) { b.classList.remove('active'); });
+                    this.classList.add('active');
+                    this.classList.add('pulse-anim');
+                    var self = this;
+                    setTimeout(function() { self.classList.remove('pulse-anim'); }, 600);
+
+                    state.income = tpl.income;
+                    state.percentages = { needs: tpl.percentages.needs, wants: tpl.percentages.wants, savings: tpl.percentages.savings };
+                    state.categories = deepClone(tpl.categories);
+                    renderAll();
+                    showToast('✓ ' + key.charAt(0).toUpperCase() + key.slice(1) + ' template loaded');
+                });
+            });
+
+            // Export & Clear
+            document.getElementById('exportBtn').addEventListener('click', exportBudget);
+            document.getElementById('clearBtn').addEventListener('click', function() {
+                if (confirm('Clear all budget data? This cannot be undone.')) clearData();
+            });
+
+            // Mobile nav toggle
+            document.getElementById('navToggle').addEventListener('click', function() {
+                document.getElementById('navLinks').classList.toggle('open');
+            });
+        }
+
+        // ============ INIT ============
+        function init() {
+            load();
+            renderAll();
+            renderTips();
+            setupEvents();
+            setupChartHover();
+
+            // Ensure chart draws immediately
+            var data = getDonutData();
+            currentArcs = [data.fracs[0] * Math.PI * 2, data.fracs[1] * Math.PI * 2, data.fracs[2] * Math.PI * 2];
+            drawDonut(currentArcs);
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+    })();
+    </script>
+</body>
+</html>
