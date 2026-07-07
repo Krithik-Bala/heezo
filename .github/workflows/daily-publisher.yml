@@ -31,6 +31,10 @@ jobs:
           KEY3: ${{ secrets.KEY3 }}
           KEY4: ${{ secrets.KEY4 }}
           KEY5: ${{ secrets.KEY5 }}
+          HE1: ${{ secrets.HE1 }}
+          HE2: ${{ secrets.HE2 }}
+          HE3: ${{ secrets.HE3 }}
+          HE4: ${{ secrets.HE4 }}
         run: python scripts/cloud_publisher.py
 
       - name: Commit and push
@@ -46,4 +50,4 @@ jobs:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
           curl -s -H "Content-Type: application/json" -X POST "$DISCORD_WEBHOOK_URL" \
-            -d '{"embeds":[{"title":"New Article Published!","description":"A new article was just published on Heezo!\n\n[Check it out](https://heezo.vercel.app/lore/articles)","color":13938487,"footer":{"text":"Heezo Auto-Publisher"}}]}'
+            -d '{"embeds":[{"title":"New Article Published!","description":"A new article was just auto-published on Heezo!\n\n[Read it](https://heezo.vercel.app/lore/articles)","color":13938487,"footer":{"text":"Heezo Auto-Publisher"}}]}'
