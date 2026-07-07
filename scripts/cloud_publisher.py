@@ -13,18 +13,38 @@ from datetime import datetime
 # Use the new google.genai package (google.generativeai is deprecated)
 from google import genai
 
-# Config
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
-if not GEMINI_API_KEY:
-    print("ERROR: GEMINI_API_KEY not set")
+# Config — Multi-key rotation (each key from a different Google Cloud project)
+API_KEYS = []
+for var in ["GEMINI_API_KEY", "KEY1", "KEY2", "KEY3", "KEY4", "KEY5"]:
+    val = os.environ.get(var, "")
+    if val:
+        API_KEYS.append(val)
+
+if not API_KEYS:
+    print("ERROR: No Gemini API keys found")
     exit(1)
+
+print(f"Loaded {len(API_KEYS)} API keys for rotation")
 
 DISCORD_WEBHOOK_URL = os.environ.get("DISCORD_WEBHOOK_URL", "")
 
-# Initialize client
-client = genai.Client(api_key=GEMINI_API_KEY)
 MODEL = "gemini-2.0-flash"
-print(f"Using model: {MODEL}")
+
+def call_gemini(prompt):
+    """Try each API key until one works."""
+    for i, key in enumerate(API_KEYS):
+        try:
+            client = genai.Client(api_key=key)
+            response = client.models.generate_content(model=MODEL, contents=prompt)
+            return response.text
+        except Exception as e:
+            err = str(e)
+            if "429" in err or "RESOURCE_EXHAUSTED" in err:
+                print(f"  Key {i+1} exhausted, trying next...")
+                continue
+            else:
+                raise e
+    raise Exception("All API keys exhausted (429 on all)")
 
 TODAY = datetime.now().strftime("%Y-%m-%d")
 TODAY_DISPLAY = datetime.now().strftime("%B %d, %Y")
@@ -51,8 +71,7 @@ topic_data = None
 
 for attempt in range(MAX_RETRIES):
     try:
-        research_response = client.models.generate_content(model=MODEL, contents=research_prompt)
-        research_text = research_response.text.strip()
+        research_text = call_gemini(research_prompt).strip()
         # Remove markdown code fences if present
         research_text = re.sub(r'^```(?:json)?\s*', '', research_text)
         research_text = re.sub(r'\s*```$', '', research_text)
@@ -110,8 +129,7 @@ Write ONLY the article body in HTML (h2 tags for headings, p tags for paragraphs
 article_body = None
 for attempt in range(MAX_RETRIES):
     try:
-        article_response = client.models.generate_content(model=MODEL, contents=article_prompt)
-        article_body = article_response.text.strip()
+        article_body = call_gemini(article_prompt).strip()
         # Clean any markdown code fences
         article_body = re.sub(r'^```(?:html)?\s*', '', article_body)
         article_body = re.sub(r'\s*```$', '', article_body)
@@ -467,5 +485,16 @@ if os.path.exists(vercel_path):
     except Exception as e:
         print(f"⚠️ Could not update vercel.json: {e}")
 
-# Done!
-print("Published: '" + headline + "' -> /lore/articles/" + slug)
+# Send Discord notification
+if DISCORD_WEBHOOK_URL:
+    try:
+        embed = {
+            "title": "New Article Published!",
+            "description": "**" + headline + "**\n\n" + description + "\n\n[Read it on Heezo](https://heezo.vercel.app/lore/articles/" + slug + ")",
+            "color": 0xd4af37,
+            "fields": [
+                {"name": "Category", "value": category.replace("-", " ").title(), "inline": True},
+                {"name": "Read Time", "value": str(read_time) + " min", "inline": True},
+                {"name": "Words", "value": str(word_count), "inline": True},
+            ],
+            "footer": {"text": "Heezo Auto-Publisher"},
