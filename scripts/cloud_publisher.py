@@ -10,11 +10,16 @@ import re
 import requests
 from datetime import datetime
 
+# Use the new google.genai package (google.generativeai is deprecated)
 try:
-    import google.generativeai as genai
+    from google import genai
 except ImportError:
-    print("ERROR: google-generativeai not installed")
-    exit(1)
+    try:
+        import google.generativeai as genai_legacy
+        print("WARNING: Using deprecated google.generativeai package")
+    except ImportError:
+        print("ERROR: No Google AI package installed")
+        exit(1)
 
 # Config
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
@@ -24,22 +29,10 @@ if not GEMINI_API_KEY:
 
 DISCORD_WEBHOOK_URL = os.environ.get("DISCORD_WEBHOOK_URL", "")
 
-genai.configure(api_key=GEMINI_API_KEY)
-
-# Try newer model first, fall back to 1.5
-try:
-    model = genai.GenerativeModel("gemini-2.0-flash")
-    # Quick test
-    test = model.generate_content("Say hi in one word")
-    print(f"✅ Using gemini-2.0-flash")
-except Exception:
-    try:
-        model = genai.GenerativeModel("gemini-1.5-flash")
-        test = model.generate_content("Say hi in one word")
-        print(f"✅ Using gemini-1.5-flash (fallback)")
-    except Exception as e:
-        print(f"ERROR: No working Gemini model available - {e}")
-        exit(1)
+# Initialize client
+client = genai.Client(api_key=GEMINI_API_KEY)
+MODEL = "gemini-2.0-flash"
+print(f"Using model: {MODEL}")
 
 TODAY = datetime.now().strftime("%Y-%m-%d")
 TODAY_DISPLAY = datetime.now().strftime("%B %d, %Y")
@@ -66,7 +59,7 @@ topic_data = None
 
 for attempt in range(MAX_RETRIES):
     try:
-        research_response = model.generate_content(research_prompt)
+        research_response = client.models.generate_content(model=MODEL, contents=research_prompt)
         research_text = research_response.text.strip()
         # Remove markdown code fences if present
         research_text = re.sub(r'^```(?:json)?\s*', '', research_text)
@@ -125,7 +118,7 @@ Write ONLY the article body in HTML (h2 tags for headings, p tags for paragraphs
 article_body = None
 for attempt in range(MAX_RETRIES):
     try:
-        article_response = model.generate_content(article_prompt)
+        article_response = client.models.generate_content(model=MODEL, contents=article_prompt)
         article_body = article_response.text.strip()
         # Clean any markdown code fences
         article_body = re.sub(r'^```(?:html)?\s*', '', article_body)
