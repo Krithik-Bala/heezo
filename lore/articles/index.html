@@ -354,7 +354,7 @@
         <a href="/" class="nav-logo">HEEZO</a>
         <ul class="nav-links">
             <li><a href="/">Home</a></li>
-            <li><a href="/tools">Tools</a></li>
+            <li><a href="/lore">Lore Hub</a></li>
             <li><a href="/lore/articles/" class="active">Articles</a></li>
         </ul>
     </nav>
@@ -498,60 +498,3 @@
                 if (currentPage > totalPages) currentPage = totalPages || 1;
 
                 const start = (currentPage - 1) * ARTICLES_PER_PAGE;
-                const end = start + ARTICLES_PER_PAGE;
-
-                // Show/hide cards
-                allCards.forEach(card => card.style.display = 'none');
-                filtered.slice(start, end).forEach((card, i) => {
-                    card.style.display = '';
-                    // First card on page 1 is featured
-                    if (currentPage === 1 && i === 0) {
-                        card.classList.add('featured');
-                    } else {
-                        card.classList.remove('featured');
-                    }
-                });
-
-                // Render pagination
-                if (totalPages <= 1) {
-                    paginationEl.innerHTML = '';
-                    return;
-                }
-                let html = '';
-                if (currentPage > 1) html += `<a href="#" data-page="${currentPage - 1}">←</a>`;
-                for (let i = 1; i <= totalPages; i++) {
-                    if (i === currentPage) {
-                        html += `<span class="active">${i}</span>`;
-                    } else {
-                        html += `<a href="#" data-page="${i}">${i}</a>`;
-                    }
-                }
-                if (currentPage < totalPages) html += `<a href="#" data-page="${currentPage + 1}">→</a>`;
-                paginationEl.innerHTML = html;
-
-                // Pagination click handlers
-                paginationEl.querySelectorAll('a').forEach(a => {
-                    a.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        currentPage = parseInt(a.dataset.page);
-                        renderPage();
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                    });
-                });
-            }
-
-            buttons.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    buttons.forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    activeCategory = btn.dataset.category;
-                    currentPage = 1;
-                    renderPage();
-                });
-            });
-
-            renderPage();
-        });
-    </script>
-</body>
-</html>
