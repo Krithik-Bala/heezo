@@ -486,15 +486,15 @@ if os.path.exists(index_path):
             f.write(index_content)
         print(f"✅ Index updated with new card")
 
-# Step 7: Update sitemap
-sitemap_path = "sitemap.xml"
-if os.path.exists(sitemap_path):
-    with open(sitemap_path, "r", encoding="utf-8") as f:
-        sitemap = f.read()
+# Done - sitemap/vercel.json updates skipped (handled by vercel rewrites wildcard)
+print("Published: " + headline + " -> /lore/articles/" + slug)
+    new_url_entry += "    <changefreq>never</changefreq>\n"
+    new_url_entry += "    <priority>0.7</priority>\n"
+    new_url_entry += "  </url>\n</urlset>"
     
-    new_url = f"""  <url>
-    <loc>https://heezo.vercel.app/lore/articles/{slug}</loc>
-    <lastmod>{TODAY}</lastmod>
-    <changefreq>never</changefreq>
-    <priority>0.7</priority>
-  </url>
+    sitemap = sitemap.replace("</urlset>", new_url_entry)
+    with open(sitemap_path, "w", encoding="utf-8") as f:
+        f.write(sitemap)
+    print("Sitemap updated")
+
+# Step 8: Update vercel.json with new route
