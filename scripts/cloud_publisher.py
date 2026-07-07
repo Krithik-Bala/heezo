@@ -34,7 +34,7 @@ if not GEMINI_KEYS and not GROQ_KEYS:
     exit(1)
 
 GEMINI_MODEL = "gemini-2.0-flash"
-GROQ_MODEL = "llama-3.1-70b-versatile"
+GROQ_MODEL = "llama-3.3-70b-versatile"
 
 def call_groq(prompt, key):
     """Call Groq API via REST."""
