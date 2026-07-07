@@ -26,6 +26,11 @@ jobs:
       - name: Generate and publish article
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          KEY1: ${{ secrets.KEY1 }}
+          KEY2: ${{ secrets.KEY2 }}
+          KEY3: ${{ secrets.KEY3 }}
+          KEY4: ${{ secrets.KEY4 }}
+          KEY5: ${{ secrets.KEY5 }}
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: python scripts/cloud_publisher.py
 
